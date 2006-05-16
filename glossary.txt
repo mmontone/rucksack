@@ -1,4 +1,4 @@
-;; $Header: /project/rucksack/cvsroot/rucksack/Attic/glossary.txt,v 1.1 2006-05-16 21:16:34 alemmens Exp $ $Date: 2006-05-16 21:16:34 $
+;; $Header: /project/rucksack/cvsroot/rucksack/Attic/glossary.txt,v 1.2 2006-05-16 22:01:27 alemmens Exp $
 
 * block
 

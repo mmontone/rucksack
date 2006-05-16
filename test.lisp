@@ -1,3 +1,5 @@
+;; $Id: test.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
+
 (in-package :test-rucksack)
 
 (defparameter *test-suite* #p"/tmp/rucksack-test-suite/")

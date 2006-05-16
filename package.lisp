@@ -1,4 +1,4 @@
-;; $Id: package.lisp,v 1.1 2006-05-16 21:16:34 alemmens Exp $ $Date: 2006-05-16 21:16:34 $
+;; $Id: package.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
 
 #-(or allegro lispworks sbcl)
   (error "Unsupported implementation: ~A" (lisp-implementation-type))

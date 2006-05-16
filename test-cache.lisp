@@ -1,3 +1,4 @@
+;; $Id: test-cache.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
 
 ;; NOTE: This is old code that doesn't work anymore.  It needs to be
 ;; adapted to the current version of Rucksack.

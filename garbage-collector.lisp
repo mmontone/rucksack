@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.1 2006-05-16 21:16:34 alemmens Exp $ $Date: 2006-05-16 21:16:34 $
+;; $Id: garbage-collector.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
 
 (in-package :rucksack)
 
