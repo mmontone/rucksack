@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.3 2006-05-18 15:38:31 alemmens Exp $
+;; $Id: garbage-collector.lisp,v 1.4 2006-05-18 22:21:51 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -332,7 +332,12 @@ collector."
                  (block-size (if free-p (- block-start) block-header)))
             ;; Reclaim dead blocks.
             (when (and (not free-p) ; only non-free blocks
-                       (not (block-alive-p object-table block-start block)))
+                       (not (block-alive-p object-table
+                                           ;; read object ID
+                                           (let ((heap-stream (heap-stream heap)))
+                                             (deserialize heap-stream)
+                                             (deserialize heap-stream))
+                                           block)))
               ;; The block is dead (either because the object is dead
               ;; or because the block contains an old version): return
               ;; the block to its free list.
@@ -360,7 +365,7 @@ is in the given block."
   ;; All blocks start the same way: 8 bytes for the block header
   ;; (containing the size or a pointer to the next free block),
   ;; followed by the previous version pointer (a serialized positive
-  ;; integer) or the block size (a serialized negative integer; for
+  ;; integer or nil) or the block size (a serialized negative integer; for
   ;; free blocks).
   (let ((stream (heap-stream heap)))
     (file-position stream position)
