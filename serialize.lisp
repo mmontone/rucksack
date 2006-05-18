@@ -1,4 +1,4 @@
-;; $Id: serialize.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
+;; $Id: serialize.lisp,v 1.3 2006-05-18 12:46:57 alemmens Exp $
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Serialize
@@ -979,7 +979,7 @@ implementation-dependent attributes."
   ;; uses non-serializable objects to represent host or device or directory
   ;; or name or type or version, this will break.
   (serialize-marker +pathname+ stream)
-  (serialize (host-namestring pathname) stream)
+  (serialize (pathname-host pathname) stream)
   (serialize (pathname-device pathname) stream)
   (serialize (pathname-directory pathname) stream)
   (serialize (pathname-name pathname) stream)

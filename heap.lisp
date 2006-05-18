@@ -1,4 +1,4 @@
-;; $Id: heap.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
+;; $Id: heap.lisp,v 1.3 2006-05-18 12:46:57 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -380,6 +380,7 @@ list."
   ;; the block that distinguishes free blocks from occupied blocks.
   (:method (block block-size (heap free-list-heap))
    ;; Default: do nothing
+   (declare (ignore block block-size))
    block))
 
 ;;

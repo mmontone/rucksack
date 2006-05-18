@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.3 2006-05-18 12:46:57 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -188,7 +188,9 @@ refer to the slot names.
   (mp:make-lock :name name)
   #+sbcl
   (sb-thread:make-mutex :name name)
-  #-(or allegro lispworks sbcl)
+  #+openmcl
+  (ccl:make-lock name)
+  #-(or allegro lispworks sbcl openmcl)
   (not-implemented 'make-lock))
 
 
@@ -199,7 +201,9 @@ refer to the slot names.
   `(mp:with-lock (,lock) ,@body)
   #+sbcl
   `(sb-thread:with-mutex (,lock) ,@body)
-  #-(or allegro lispworks sbcl)
+  #+openmcl
+  `(ccl:with-lock-grabbed (,lock) ,@body)
+  #-(or allegro lispworks sbcl openmcl)
   (not-implemented 'with-lock))
 
 

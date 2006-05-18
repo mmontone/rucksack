@@ -1,13 +1,16 @@
-;; $Id: package.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
+;; $Id: package.lisp,v 1.3 2006-05-18 12:46:57 alemmens Exp $
 
-#-(or allegro lispworks sbcl)
+#-(or allegro lispworks sbcl openmcl)
   (error "Unsupported implementation: ~A" (lisp-implementation-type))
 
 (defpackage :rucksack
   (:nicknames :rs)
 
-  (:use :queue :cl
-   #+allegro :mop #+lispworks :clos #+sbcl :sb-mop)
+   (:use :queue :cl
+    #+allegro :mop
+    #+lispworks :clos
+    #+sbcl :sb-mop
+    #+openmcl :openmcl-mop)
 
   (:export
 

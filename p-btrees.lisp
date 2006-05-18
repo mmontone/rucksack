@@ -1,4 +1,4 @@
-;; $Id: p-btrees.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
+;; $Id: p-btrees.lisp,v 1.3 2006-05-18 12:46:57 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -114,6 +114,7 @@ of keys per btree node.")
   ;; serialized. This means that you should only specify symbols that
   ;; name a function.  For program-independent databases you should
   ;; only use symbols from the COMMON-LISP package.
+  (declare (ignore initargs))
   (if (and (symbolp key<) (symbolp key=) (symbolp value=))
     (call-next-method)
     (error "The :key<, :key= and :value= initargs for persistent btrees
