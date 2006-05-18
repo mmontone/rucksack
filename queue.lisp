@@ -1,4 +1,4 @@
-;; $Id: queue.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
+;; $Id: queue.lisp,v 1.3 2006-05-18 22:09:40 alemmens Exp $
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Queues
@@ -78,12 +78,11 @@ an empty-queue-error (when :ERRORP is true)."
     (if (null contents)
         (and errorp
              (error 'empty-queue-error :queue queue))
-      (let ((result (first contents)))
-        (setf contents (rest contents))
+      (prog1
+          (pop contents)
         (when (null contents)
-          (setf end nil))
-        (decf size)
-        result))))
+          (setq end nil))
+        (decf size)))))
 
 
 (defun queue-empty-p (queue)
@@ -96,12 +95,16 @@ an empty-queue-error (when :ERRORP is true)."
   "Returns the first object in the queue that has the given type (and removes
 all objects from the queue before it).  Returns NIL (and clears the entire queue)
 if there is no such object."
-  (with-slots (contents)
+  (with-slots (contents size end)
       queue
     (loop while (and contents 
                      (not (typep (first contents) type)))
-          do (setq contents (rest contents)))
+          do (decf size)
+             (pop contents))
+    (when (null contents)
+      (setq end nil))
     (first contents)))
+
 
 (defun queue-clear (queue)
   "Removes all elements from the queue (and returns the empty queue)."
