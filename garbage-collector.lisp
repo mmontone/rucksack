@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.7 2006-05-20 21:16:58 alemmens Exp $
+;; $Id: garbage-collector.lisp,v 1.8 2006-05-20 21:19:56 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -108,8 +108,6 @@ size.  (The actual size might be rounded up.)")))
            :live-object)))
   ;; In the scanning phase, the object id must be added to the root set to
   ;; guarantee that it will be marked and scanned.
-  ;; DO: This is too simple, because now the object will stay in the root
-  ;; set forever.  We need a separate 
   (when (eql (state heap) :scanning)
     (push object-id (roots heap))))
 
