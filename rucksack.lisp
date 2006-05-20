@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.3 2006-05-18 12:46:57 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.4 2006-05-20 15:35:37 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -273,7 +273,10 @@ index maps slot values to object ids.")))
 
   
 (defmethod add-rucksack-root (object (rucksack standard-rucksack))
-  (push (object-id object) (slot-value rucksack 'roots))
+  (add-rucksack-root-id (object-id object) rucksack))
+
+(defun add-rucksack-root-id (object-id rucksack)
+  (push object-id (slot-value rucksack 'roots))
   (setf (roots-changed-p rucksack) t))
 
 (defmethod map-rucksack-roots (function (rucksack standard-rucksack))

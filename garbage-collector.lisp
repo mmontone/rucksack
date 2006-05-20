@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.5 2006-05-20 10:33:49 alemmens Exp $
+;; $Id: garbage-collector.lisp,v 1.6 2006-05-20 15:35:37 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -90,8 +90,7 @@ size.  (The actual size might be rounded up.)")))
   ;; Write the block size (as a negative number) in the start of the
   ;; block (just behind the header) to indicate that this is a free
   ;; block.  This is necessary for the sweep phase of a mark-and-sweep
-  ;; collector to distinguish it from a block that contains an object
-  ;; (and starts with a non-negative object id).
+  ;; collector to distinguish it from a block that contains an object.
   (file-position (heap-stream heap) (+ block (block-header-size heap)))
   (serialize (- block-size) (heap-stream heap)))
 
@@ -109,7 +108,7 @@ size.  (The actual size might be rounded up.)")))
   ;; In the scanning phase, the object id must be added to the root set to
   ;; guarantee that it will be marked and scanned.
   (when (eql (state heap) :scanning)
-    (push object-id (roots heap))))
+    (add-rucksack-root-id object-id (roots heap))))
 
 ;;
 ;; Hooking into free list methods
