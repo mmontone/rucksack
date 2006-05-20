@@ -1,4 +1,4 @@
-;; $Id: transactions.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
+;; $Id: transactions.lisp,v 1.3 2006-05-20 10:41:47 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -320,14 +320,34 @@ OLD-BLOCK."
                              &allow-other-keys)
                             &body body)
   (remf args :rucksack)
-  `(let ((*transaction* (transaction-start :rucksack ,rucksack ,@args)))
-     (or (with-simple-restart (abort "Abort ~S" *transaction*)
-           (loop 
-            (with-simple-restart (retry "Retry ~S" *transaction*)
-              ,@body
-              (transaction-commit *transaction*)
-              (return t))))
-         (transaction-rollback *transaction*))))
+  (let ((committed (gensym "COMMITTED"))
+        (transaction (gensym "TRANSACTION"))
+        (result (gensym "RESULT")))
+    `(let ((,transaction nil))       
+       (loop named ,transaction do         
+          (with-simple-restart (retry "Retry ~S" ,transaction)
+            (let ((,committed nil)
+                  (,result nil))
+              (unwind-protect
+                   (progn
+                     ;; Use a local variable for the transaction so that nothing
+                     ;; can replace it from underneath us, and only then bind
+                     ;; it to *TRANSACTION*. 
+                     (setf ,transaction (transaction-start :rucksack ,rucksack ,@args))
+                     (let ((*transaction* ,transaction))
+                       (with-simple-restart (abort "Abort ~S" ,transaction)
+                         (setf ,result ,@body)
+                         (transaction-commit ,transaction)
+                         (setf ,committed t)))
+                     ;; Normal exit from the WITH-SIMPLE-RESTART above -- either
+                     ;; everything went well or we aborted -- the ,COMMITTED will tell
+                     ;; us. In either case we jump out of the RETRY loop.
+                     (return-from ,transaction (values ,committed ,result)))
+                (unless ,committed
+                  (transaction-rollback ,transaction)))))
+            ;; Normal exit from the above block -- we selected the RETRY restart.
+            ))))
+ 
 
 
         
