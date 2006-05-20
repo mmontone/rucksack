@@ -1,4 +1,4 @@
-;; $Id: objects.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
+;; $Id: objects.lisp,v 1.3 2006-05-20 15:07:28 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -118,7 +118,7 @@ contents are accessed by special functions like P-CAR instead."))
 (defmethod persistent-data-write (function (data persistent-data) value
                                            &rest args)
   (apply function value (contents data) args)
-  (cache-touch-object (object-id data) (cache data)))
+  (cache-touch-object data (cache data)))
 
 (defun make-persistent-data (class contents
                                    &optional (rucksack (current-rucksack)))
@@ -351,7 +351,7 @@ inherit from this class."))
                 (and old-boundp
                      (slot-value-using-class class object slot-name-or-def)))
                (result (call-next-method)))
-          (cache-touch-object (object-id object) (cache object))
+          (cache-touch-object object (cache object))
           ;; Update indexes.
           (rucksack-maybe-index-changed-slot (rucksack object)
                                              class object slot
@@ -377,7 +377,7 @@ inherit from this class."))
                 (and old-boundp
                      (slot-value-using-class class object slot-name-or-def)))
                (result (call-next-method)))
-          (cache-touch-object (object-id object) (cache object))
+          (cache-touch-object object (cache object))
           (rucksack-maybe-index-changed-slot (rucksack object)
                                              class object slot
                                              old-value nil

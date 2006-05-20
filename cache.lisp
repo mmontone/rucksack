@@ -1,4 +1,4 @@
-;; $Id: cache.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
+;; $Id: cache.lisp,v 1.3 2006-05-20 15:07:28 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -217,7 +217,8 @@ if necessary.  Change the object's status to dirty.  If the object is
 already dirty, nothing happens."
   ;; This function is called by (setf slot-value-using-class),
   ;; slot-makunbound-using-class and p-data-write.
-  (let ((transaction (current-transaction)))
+  (let ((object-id (object-id object))
+        (transaction (current-transaction)))
     ;; Check for transaction conflict.
     (let ((old-transaction
            (find-conflicting-transaction object-id cache transaction)))
@@ -228,16 +229,13 @@ already dirty, nothing happens."
                         :old-transaction old-transaction)))
     ;;
     (unless (transaction-changed-object transaction object-id) ; already dirty
-      (let ((object (gethash object-id (objects cache))))
-        (unless object
-          (internal-rucksack-error "Can't find object with id ~D." object-id))
-        ;; Remove object from the 'clean objects' hash table.
-        ;; It would be nice to remove the object from the 'clean' queue too,
-        ;; but that's too expensive.  We'll let MAKE-ROOM-IN-CACHE take care
-        ;; of that.
-        (remhash object-id (objects cache))
-        ;; Let the transaction keep track of the dirty object.
-        (transaction-touch-object transaction object object-id)))))
+      ;; Remove object from the 'clean objects' hash table.
+      ;; It would be nice to remove the object from the 'clean' queue too,
+      ;; but that's too expensive.  We'll let MAKE-ROOM-IN-CACHE take care
+      ;; of that.
+      (remhash object-id (objects cache))
+      ;; Let the transaction keep track of the dirty object.
+      (transaction-touch-object transaction object object-id))))
 
 
 
