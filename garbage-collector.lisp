@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.4 2006-05-18 22:21:51 alemmens Exp $
+;; $Id: garbage-collector.lisp,v 1.5 2006-05-20 10:33:49 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -355,11 +355,10 @@ collector."
     work-done))
 
 (defmethod block-alive-p ((object-table object-table) object-id block)
-  "Returns true iff the object is alive and the most recent object version
-is in the given block."
-  (and (eql (object-info object-table object-id) :live-object)
-       (= (object-heap-position object-table object-id)
-          block)))
+  "Returns true iff the object in the block is alive."
+  ;; DO: Some versions of this object may not be reachable anymore.
+  ;; Those should be considered dead.
+  (member (object-info object-table object-id) '(:reserved :live-object)))
 
 (defun read-block-start (heap position)
   ;; All blocks start the same way: 8 bytes for the block header

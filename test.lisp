@@ -1,4 +1,4 @@
-;; $Id: test.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
+;; $Id: test.lisp,v 1.3 2006-05-20 10:33:50 alemmens Exp $
 
 (in-package :test-rucksack)
 
@@ -87,22 +87,24 @@
 (defun test-update (&key (new-age 27) (directory *persons-directory*))
   "Test updating all persons by changing their age."
   (with-rucksack (rucksack directory)
-    (map-rucksack-roots (lambda (person)
-                          (setf (age person) new-age))
-                        rucksack)))
+    (with-transaction ()
+      (map-rucksack-roots (lambda (person)
+                            (setf (age person) new-age))
+                          rucksack))))
 
 (defun test-load (&key (directory *persons-directory*))
   "Test loading all persons by computing their average age."
   (with-rucksack (rucksack directory)
-    (let ((nr-persons 0)
-          (total-age 0))
-      (map-rucksack-roots (lambda (person)
-                            (incf nr-persons)
-                            (incf total-age (age person)))
-                          rucksack)
-      ;; Return the average age as a float.
-      ;; (An average age of 1200/75 doesn't seem right.)
-      (coerce (/ total-age nr-persons) 'float))))
+    (with-transaction ()
+      (let ((nr-persons 0)
+            (total-age 0))
+        (map-rucksack-roots (lambda (person)
+                              (incf nr-persons)
+                              (incf total-age (age person)))
+                            rucksack)
+        ;; Return the average age as a float.
+        ;; (An average age of 1200/75 doesn't seem right.)
+        (coerce (/ total-age nr-persons) 'float)))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
