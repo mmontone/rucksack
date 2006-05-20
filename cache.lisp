@@ -1,4 +1,4 @@
-;; $Id: cache.lisp,v 1.3 2006-05-20 15:07:28 alemmens Exp $
+;; $Id: cache.lisp,v 1.4 2006-05-20 20:25:32 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -211,7 +211,7 @@ being saved.  This is used by slot-value-using-class & friends.")))
     id))
 
 
-(defmethod cache-touch-object (object-id (cache standard-cache))
+(defmethod cache-touch-object (object (cache standard-cache))
   "Checks for transaction conflicts and signals a transaction conflict
 if necessary.  Change the object's status to dirty.  If the object is
 already dirty, nothing happens."
