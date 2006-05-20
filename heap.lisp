@@ -1,4 +1,4 @@
-;; $Id: heap.lisp,v 1.3 2006-05-18 12:46:57 alemmens Exp $
+;; $Id: heap.lisp,v 1.4 2006-05-20 21:16:58 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -63,7 +63,7 @@ If nil, the heap is allowed to expand indefinitely.")))
 
 
 (defun open-heap (pathname
-                  &key (class 'heap) (options '())
+                  &key (class 'heap) rucksack (options '())
                   (if-exists :overwrite) (if-does-not-exist :create))
   (let ((stream (open pathname
                       :element-type '(unsigned-byte 8)
@@ -73,6 +73,7 @@ If nil, the heap is allowed to expand indefinitely.")))
     (apply #'make-instance
            class
            :stream stream
+           :rucksack rucksack
            options)))
 
 

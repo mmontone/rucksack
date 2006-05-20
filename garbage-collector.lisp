@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.6 2006-05-20 15:35:37 alemmens Exp $
+;; $Id: garbage-collector.lisp,v 1.7 2006-05-20 21:16:58 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -32,6 +32,7 @@ evacuating (depending on garbage collector type) any child objects."))
   ((object-table :initarg :object-table :reader object-table)
    (buffer :initform (make-instance 'serialization-buffer)
            :reader serialization-buffer)
+   (rucksack :initarg :rucksack :reader rucksack)
    ;; Some state used for incremental garbage collection.
    (roots :initarg :roots :initform '() :accessor roots
           :documentation "A list of object-ids of roots that must be marked.")
@@ -107,8 +108,10 @@ size.  (The actual size might be rounded up.)")))
            :live-object)))
   ;; In the scanning phase, the object id must be added to the root set to
   ;; guarantee that it will be marked and scanned.
+  ;; DO: This is too simple, because now the object will stay in the root
+  ;; set forever.  We need a separate 
   (when (eql (state heap) :scanning)
-    (add-rucksack-root-id object-id (roots heap))))
+    (push object-id (roots heap))))
 
 ;;
 ;; Hooking into free list methods
@@ -212,7 +215,8 @@ collector."
               (setf (nr-object-bytes-marked heap) 0
                     (nr-heap-bytes-scanned heap) 0
                     (nr-heap-bytes-sweeped heap) 0
-                    (nr-object-bytes-sweeped heap) 0)
+                    (nr-object-bytes-sweeped heap) 0
+                    (roots heap) (copy-list (slot-value (rucksack heap) 'roots)))
               (setf (state heap) :marking-object-table))
              (:marking-object-table
               (decf amount (mark-some-objects-in-table heap amount)))

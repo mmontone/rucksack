@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.4 2006-05-20 15:35:37 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.5 2006-05-20 21:16:58 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -255,6 +255,7 @@ index maps slot values to object ids.")))
   (setf (slot-value rucksack 'cache)
         (apply #'open-cache (rucksack-directory rucksack)
                :class cache-class
+               :rucksack rucksack
                cache-args))
   (load-roots rucksack))
 

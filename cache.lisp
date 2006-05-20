@@ -1,4 +1,4 @@
-;; $Id: cache.lisp,v 1.4 2006-05-20 20:25:32 alemmens Exp $
+;; $Id: cache.lisp,v 1.5 2006-05-20 21:16:58 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -74,6 +74,8 @@ cache."))
   ;; keep track of different class versions for objects in the heap.
   ((heap :initarg :heap :reader heap)
    (schema-table :initarg :schema-table :reader schema-table)
+   (rucksack :initarg :rucksack :reader rucksack
+             :documentation "Back pointer to the rucksack.")
    ;; Clean objects
    (objects :initarg :objects
             :reader objects
@@ -103,12 +105,7 @@ will be kept in the cache memory.")
                  :documentation "A number between 0 and 1.  When the
 cache is full, i.e. when there are at least SIZE (non-dirty) objects
 in the queue, it will be shrunk by removing (1 - SHRINK-RATIO) * SIZE
-objects.")
-   ;;
-   (currently-saved-object :initform nil
-                           :accessor currently-saved-object
-                           :documentation "The object that's currently
-being saved.  This is used by slot-value-using-class & friends.")))
+objects.")))
 
 
 (defmethod print-object ((cache standard-cache) stream)
@@ -164,6 +161,7 @@ being saved.  This is used by slot-value-using-class & friends.")))
                             :class heap-class
                             :if-exists if-exists
                             :if-does-not-exist if-does-not-exist
+                            :rucksack (rucksack cache)
                             :options (list* :object-table object-table
                                             heap-options))
             schema-table (open-schema-table (merge-pathnames "schemas" directory)
@@ -438,14 +436,6 @@ T if the object was already comitted, otherwise nil."))
                   (setq younger block
                         block older)))))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defmacro saving-object ((cache object) &body body)
-  ;; This is used by slot-value-using-class & friends to determine
-  ;; if it should try to dereference proxies.
-  (let ((cache-var (gensym "CACHE")))
-    `(let ((,cache-var ,cache))
-       (setf (currently-saved-object ,cache-var) ,object)
-       (unwind-protect (progn ,@body)
-         (setf (currently-saved-object ,cache-var) nil)))))
+
 
