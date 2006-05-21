@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.8 2006-05-20 21:19:56 alemmens Exp $
+;; $Id: garbage-collector.lisp,v 1.9 2006-05-21 21:00:03 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -194,10 +194,9 @@ collector."
 ;; Collect some garbage
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defmethod collect-garbage ((heap mark-and-sweep-heap) roots)
+(defmethod collect-garbage ((heap mark-and-sweep-heap))
   ;; A simple test of COLLECT-SOME-GARBAGE: keep collecting 1024 bytes of
   ;; garbage until the garbage collector is ready.
-  (setf (roots heap) (mapcar #'object-id roots))
   (setf (state heap) :starting)
   (loop until (eql (state heap) :ready)
         do (collect-some-garbage heap 1024)))
@@ -214,7 +213,9 @@ collector."
                     (nr-heap-bytes-scanned heap) 0
                     (nr-heap-bytes-sweeped heap) 0
                     (nr-object-bytes-sweeped heap) 0
-                    (roots heap) (copy-list (slot-value (rucksack heap) 'roots)))
+                    ;; We don't need to copy the roots, because we're not
+                    ;; going to modify the list (just push and pop).
+                    (roots heap) (slot-value (rucksack heap) 'roots))
               (setf (state heap) :marking-object-table))
              (:marking-object-table
               (decf amount (mark-some-objects-in-table heap amount)))
@@ -281,16 +282,21 @@ collector."
 
 (defmethod mark-root ((heap mark-and-sweep-heap) (object-id integer))
   ;; Returns the number of octets scanned.
-  (let* ((object-table (object-table heap))
-         (block (object-heap-position object-table object-id))
-         (buffer (load-block heap block :skip-header t)))
-    (setf (object-info object-table object-id) :live-object)
-    (scan-object object-id buffer heap)
-    ;; Keep track of statistics.
-    (let ((block-size (block-size block heap)))
-      (incf (nr-heap-bytes-scanned heap) block-size)
-      ;; Return the amount of work done.
-      block-size)))
+  (let ((object-table (object-table heap)))
+    (if (eql (object-info object-table object-id) :reserved)
+        ;; Reserved objects aren't written to the heap yet (they just
+        ;; have an object table entry), so we don't need to scan them
+        ;; for child objects
+        0
+      (let* ((block (object-heap-position object-table object-id))
+             (buffer (load-block heap block :skip-header t)))
+        (setf (object-info object-table object-id) :live-object)
+        (scan-object object-id buffer heap)
+        ;; Keep track of statistics.
+        (let ((block-size (block-size block heap)))
+          (incf (nr-heap-bytes-scanned heap) block-size)
+          ;; Return the amount of work done.
+          block-size)))))
 
 
 (defmethod load-block ((heap mark-and-sweep-heap) block
@@ -302,6 +308,7 @@ collector."
   (load-buffer buffer
                (heap-stream heap)
                (block-size block heap)
+               :eof-error-p nil
                :file-position (if skip-header
                                   (+ block (block-header-size heap))
                                 block)))

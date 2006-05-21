@@ -1,4 +1,4 @@
-;; $Id: heap.lisp,v 1.4 2006-05-20 21:16:58 alemmens Exp $
+;; $Id: heap.lisp,v 1.5 2006-05-21 21:00:03 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -503,7 +503,8 @@ list."
       (file-position stream file-position))
     (write-sequence contents stream :end (buffer-count buffer))))
 
-(defmethod load-buffer ((buffer buffer) stream nr-octets &key file-position)
+(defmethod load-buffer ((buffer buffer) stream nr-octets
+                        &key file-position eof-error-p)
   (with-slots (contents)
       buffer
     ;; If the buffer isn't big enough, make a bigger buffer.
@@ -517,7 +518,8 @@ list."
     (when file-position
       (file-position stream file-position))
     (setf (fill-pointer contents) nr-octets)
-    (when (< (read-sequence contents stream :end nr-octets) nr-octets)
+    (when (and (< (read-sequence contents stream :end nr-octets) nr-octets)
+               eof-error-p)
       (error "Unexpected end of file while loading a buffer of ~D octets."
              nr-octets)))
   buffer)

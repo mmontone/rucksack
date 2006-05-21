@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.5 2006-05-20 21:16:58 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.6 2006-05-21 21:00:03 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -280,6 +280,12 @@ index maps slot values to object ids.")))
   (push object-id (slot-value rucksack 'roots))
   (setf (roots-changed-p rucksack) t))
 
+(defmethod delete-rucksack-root (object (rucksack standard-rucksack))
+  (with-slots (roots)
+      rucksack
+    (setf roots (delete (object-id object) roots)
+          (roots-changed-p rucksack) t)))
+
 (defmethod map-rucksack-roots (function (rucksack standard-rucksack))
   (loop for root-id in (slot-value rucksack 'roots)
         do (funcall function
@@ -396,8 +402,7 @@ file is missing."
 
 
 (defun test-garbage-collector (rucksack)
-  (collect-garbage (heap (rucksack-cache rucksack))
-                   (rucksack-roots rucksack)))
+  (collect-garbage (heap (rucksack-cache rucksack))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
