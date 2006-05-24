@@ -1,4 +1,4 @@
-;; $Id: heap.lisp,v 1.5 2006-05-21 21:00:03 alemmens Exp $
+;; $Id: heap.lisp,v 1.6 2006-05-24 20:45:09 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -114,9 +114,10 @@ If nil, the heap is allowed to expand indefinitely.")))
 ;;
 
 (defmethod expand-heap ((heap heap) block-size)
-  ;; Expands the heap and returns an uninitialized block of the
-  ;; specified size. Signals a continuable error if this makes
-  ;; the heap exceed its maximum size.
+  ;; Creates (and initializes) a block of the specified size by expanding
+  ;; the heap.  The block is not hooked into the free list yet.  Returns
+  ;; the new block (but signals a continuable error if expanding the heap
+  ;; would make it exceed its maximum size.
   (let ((new-block (heap-end heap))
         (max-size (max-heap-size heap)))
     (when (and max-size (> (+ new-block block-size) max-size))
@@ -128,7 +129,8 @@ the specified maximum heap size of ~D octets."
                       max-size)))
     ;;
     (incf (heap-end heap) block-size)
-    ;; Return the new block.
+    ;; Initialize and return the new block.
+    (initialize-block new-block block-size heap)
     new-block))
 
 

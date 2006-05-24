@@ -1,4 +1,4 @@
-;; $Id: objects.lisp,v 1.3 2006-05-20 15:07:28 alemmens Exp $
+;; $Id: objects.lisp,v 1.4 2006-05-24 20:45:09 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -490,14 +490,17 @@ block containing the object."
                    (serialize (slot-value object slot-name) buffer)
                  (serialize-marker +unbound-slot+ buffer))))
     ;; Allocate a heap block of the right size.
-    (let ((block (allocate-block heap
-                                 :size (+ (buffer-count buffer)
-                                          (block-header-size heap)))))
-      ;; And save the serialized buffer in the block.
+    (let* ((size (+ (buffer-count buffer)
+                    (block-header-size heap)))
+           (block (allocate-block heap :size size)))
+      ;; Save the serialized buffer in the block.
       (save-buffer buffer (heap-stream heap)
                    :file-position (+ block (block-header-size heap)))
       ;; Let the garbage collector do its thing after an object is
-      ;; written to the heap.
+      ;; written to the heap. (Not earlier, otherwise the GC may
+      ;; see objects that are neither free nor completely saved and
+      ;; it doesn't know how to deal with those.)
+      (collect-some-garbage heap (gc-work-for-size heap size))
       (handle-written-object object-id block heap)
       ;; Return the block.
       block)))

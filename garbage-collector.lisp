@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.9 2006-05-21 21:00:03 alemmens Exp $
+;; $Id: garbage-collector.lisp,v 1.10 2006-05-24 20:45:09 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -87,7 +87,7 @@ size.  (The actual size might be rounded up.)")))
 
 
 (defmethod initialize-block (block block-size (heap mark-and-sweep-heap))
-  ;; This is called by a free list heap while allocating a block.
+  ;; This is called by a free list heap while creating free blocks.
   ;; Write the block size (as a negative number) in the start of the
   ;; block (just behind the header) to indicate that this is a free
   ;; block.  This is necessary for the sweep phase of a mark-and-sweep
@@ -115,25 +115,20 @@ size.  (The actual size might be rounded up.)")))
 ;; Hooking into free list methods
 ;;
 
-(defmethod allocate-block :after ((heap mark-and-sweep-heap)
-                                  &key size &allow-other-keys)
+(defmethod gc-work-for-size ((heap mark-and-sweep-heap) size)
   ;; The garbage collector needs to be ready when there's no more free space
   ;; left in the heap. So when SIZE octets are allocated, the garbage collector
-  ;; needs to collect a proportional amount of octets:
+  ;; needs to collect a proportional amount of bytes:
   ;;
   ;;     Size / Free = Work / WorkLeft
   ;;
   ;; or: Work = (Size / Free) * WorkLeft
   ;;
   (let* ((free (free-space heap))
-         (work-left (work-left heap))
-         (work (if (>= size free)
-                   work-left
-                 ;; Use FLOOR, not CEILING so we don't do any work
-                 ;; when there's ridiculously little to do anyway.
-                 (* (floor size free) work-left))))
-    (when (> work 0)
-      (collect-some-garbage heap work))))
+         (work-left (work-left heap)))
+    (if (>= size free)
+        work-left
+      (floor (* size work-left) free))))
 
 
 (defmethod free-space ((heap mark-and-sweep-heap))
@@ -201,6 +196,11 @@ collector."
   (loop until (eql (state heap) :ready)
         do (collect-some-garbage heap 1024)))
 
+(defmethod finish-garbage-collection ((heap mark-and-sweep-heap))
+  ;; Make sure that the garbage collector is in the :ready state.
+  (loop until (eql (state heap) :ready)
+        do (collect-some-garbage heap (* 512 1024))))
+
 (defmethod collect-some-garbage ((heap mark-and-sweep-heap) amount)
   ;; Collect at least the specified amount of garbage
   ;; (i.e. mark or sweep at least the specified amount of octets).
@@ -251,7 +251,7 @@ collector."
                      (< work-done amount))
           do (progn 
                (when (eql (object-info object-table object-id) :live-object)
-                 ;; Don't touch free blocks.
+                 ;; Don't touch free or reserved blocks.
                  (setf (object-info object-table object-id) :dead-object))
                (incf (nr-object-bytes-marked heap) object-block-size)
                (incf work-done object-block-size)))

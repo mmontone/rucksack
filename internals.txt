@@ -52,7 +52,11 @@ sweep phase of the garbage collector needs this block size).
   ..  : the negative of the block size
   ... : free space
 
+[ALLOCATED BUT NOT YET OCCUPIED BLOCK]
+  0- 8: block size
+   .. : ???
 
+  
 
 
 
