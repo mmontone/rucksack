@@ -1,4 +1,4 @@
-;; $Id: make.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
+;; $Id: make.lisp,v 1.3 2006-05-25 13:01:38 alemmens Exp $
 
 (in-package :cl-user)
 
@@ -23,9 +23,6 @@
                       "index"
                       "rucksack"
                       "transactions"
-                      ;; Tests
-                      #+old "test-cache"
-                      #+old "test-cached-btrees"
                       "test")
         do (tagbody
             :retry

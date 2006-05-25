@@ -1,4 +1,4 @@
-;; $Id: p-btrees.lisp,v 1.3 2006-05-18 12:46:57 alemmens Exp $
+;; $Id: p-btrees.lisp,v 1.4 2006-05-25 13:01:38 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -73,7 +73,7 @@ length, measured in terms of nodes.
 ;;; Classes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defclass btree (persistent-object)
+(defclass btree ()
   ((key<   :initarg :key<   :reader btree-key<   :initform '<)
    (key=   :initarg :key=   :reader btree-key=   :initform 'eql)
    (value= :initarg :value= :reader btree-value= :initform 'p-eql
@@ -100,9 +100,7 @@ of keys per btree node.")
                :initform t
                :documentation "The type of all values.")
    (root :accessor btree-root))
-  #+lispworks
-  ;; We need to specify this for each subclass of persistent-object.
-  (:optimize-slot-access nil))
+  (:metaclass persistent-class))
 
   
 (defmethod initialize-instance :around ((btree btree)
@@ -127,7 +125,7 @@ disk.")))
 ;; with fancy long names.
 ;;
 
-(defclass btree-node (persistent-object)
+(defclass btree-node ()
   ((index :initarg :index
           :initform '()
           :accessor btree-node-index
@@ -140,8 +138,7 @@ child node will be KEY< the child node's key in the parent node.")
                 :accessor btree-node-index-count
                 :documentation "The number of key/value pairs in the index vector.")
    (leaf-p :initarg :leaf-p :initform nil :reader btree-node-leaf-p))
-  #+lispworks
-  (:optimize-slot-access nil))
+  (:metaclass persistent-class))
 
 ;;
 ;; Bindings
