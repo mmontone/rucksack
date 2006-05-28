@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.6 2006-05-21 21:00:03 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.7 2006-05-28 11:22:54 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -549,7 +549,7 @@ file is missing."
 (defmethod rucksack-map-class ((rucksack standard-rucksack) class function
                                &key (id-only nil) (include-subclasses t))
   (let ((visited-p (make-hash-table))
-        (cache (cache rucksack)))
+        (cache (rucksack-cache rucksack)))
     (labels ((map-instances (class)
                (let ((index (rucksack-class-index rucksack class :errorp nil)))
                  (when index
@@ -684,7 +684,7 @@ index for slot ~S of class ~S in ~A."
                               &key equal min max include-min include-max
                               (order :ascending)
                               (id-only nil) (include-subclasses t))
-  (let ((cache (cache rucksack))
+  (let ((cache (rucksack-cache rucksack))
         (visited-p (make-hash-table)))
     (labels ((map-slot (class)
                (let ((index (rucksack-slot-index rucksack class slot
