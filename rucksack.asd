@@ -1,4 +1,4 @@
-;;; $Id: rucksack.asd,v 1.1 2006-05-18 09:08:13 alemmens Exp $
+;;; $Id: rucksack.asd,v 1.2 2006-05-28 11:18:47 alemmens Exp $
 
 (in-package :cl-user)
 
@@ -20,7 +20,5 @@
                (:file "index")
                (:file "rucksack")
                (:file "transactions")
-               #+old (:file "test-cache")
-               #+old (:file "test-cached-btrees")
                (:file "test")))
     
