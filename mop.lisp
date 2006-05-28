@@ -1,4 +1,4 @@
-;; $Id: mop.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
+;; $Id: mop.lisp,v 1.3 2006-05-28 12:07:55 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -169,31 +169,28 @@ transient slots.  Default value is T.")
 (defmethod compute-effective-slot-definition ((class persistent-class)
                                               slot-name
                                               direct-slot-definitions)
+  (let ((effective-slotd (call-next-method))
+        (persistent-slotds
+         (remove-if-not (lambda (slotd)
+                          (typep slotd 'persistent-direct-slot-definition))
+                        direct-slot-definitions)))
 
-  ;; Compute the effective slot definition for slots in a
-  ;; persistent-class.  We use a simple strategy at the moment:
-  ;; just use the most specific direct slot definition and ignore
-  ;; all others (usually there aren't any others anyway).
+    ;; If any direct slot is persistent, then the effective one is too.
+    (setf (slot-value effective-slotd 'persistence)
+          (some #'slot-persistence persistent-slotds))
 
-  (declare (ignore slot-name))
-  (let ((effective-slot-def (call-next-method))
-        (direct-slot-def (first direct-slot-definitions)))
-    
-    ;; NOTE: A persistent-class may also contain slots of another type
-    ;; than persistent-direct-slot-definition. (For instance, when
-    ;; we combine the persistent-class metaclass with another one.)
-    ;; Those other slot definitions should not be touched here.
-    
-    (when (typep direct-slot-def 'persistent-direct-slot-definition)
-      
-      ;; Just copy the values of 'our' slot options from the
-      ;; direct-slot-definition to the effective-slot-definition.
-      (dolist (option '(persistence index))
-        (when (slot-boundp direct-slot-def option)
-          (setf (slot-value effective-slot-def option)
-                (slot-value direct-slot-def option)))))
-
+    ;; If exactly one direct slot is indexed, then the effecive one is
+    ;; too. If more then one is indexed, signal an error.
+    (let ((index-slotds (remove-if-not #'slot-index persistent-slotds)))
+      (cond ((cdr index-slotds)
+             (error "Multiple indexes for slot ~S in ~S:~% ~{~S~^, ~}."
+                    slot-name class
+                    (mapcar #'slot-index index-slotds)))
+            (index-slotds
+             (setf (slot-value effective-slotd 'index)
+                   (slot-index (car index-slotds))))))
+     
     ;; Return the effective slot definition.
-    effective-slot-def))
+    effective-slotd))
 
 
