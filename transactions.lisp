@@ -1,4 +1,4 @@
-;; $Id: transactions.lisp,v 1.4 2006-08-03 11:39:39 alemmens Exp $
+;; $Id: transactions.lisp,v 1.5 2006-08-03 11:52:46 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -337,13 +337,13 @@ OLD-BLOCK."
                      (setf ,transaction (transaction-start :rucksack ,rucksack ,@args))
                      (let ((*transaction* ,transaction))
                        (with-simple-restart (abort "Abort ~S" ,transaction)
-                         (setf ,result ,@body)
+                         (setf ,result (progn ,@body))
                          (transaction-commit ,transaction)
                          (setf ,committed t)))
                      ;; Normal exit from the WITH-SIMPLE-RESTART above -- either
                      ;; everything went well or we aborted -- the ,COMMITTED will tell
                      ;; us. In either case we jump out of the RETRY loop.
-                     (return-from ,transaction (values ,committed ,result)))
+                     (return-from ,transaction (values ,result ,committed)))
                 (unless ,committed
                   (transaction-rollback ,transaction)))))
             ;; Normal exit from the above block -- we selected the RETRY restart.
