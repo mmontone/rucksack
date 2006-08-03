@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.12 2006-08-03 11:05:45 alemmens Exp $
+;; $Id: garbage-collector.lisp,v 1.13 2006-08-03 11:31:17 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -56,7 +56,7 @@ evacuating (depending on garbage collector type) any child objects."))
                  :documentation "The maximum acceptable value for heap-end
 during the current garbage collection.")
    (grow-size :initarg :grow-size
-              :initform 2.0
+              :initform nil
               :accessor grow-size
               :documentation "Specifies a minimum amount to grow the
 heap when it needs to grow. If 'grow size' is an integer, the expected
@@ -73,10 +73,11 @@ size.  (The actual size might be rounded up.)")))
                                        &key size &allow-other-keys)
   ;; Give max-heap-end its initial value (depending on the :size initarg).
   (let ((proposed-size (or size *initial-heap-size*)))
-    (setf (max-heap-end heap)
-          (if (> proposed-size (heap-size heap))
-              (+ (heap-start heap) proposed-size)
-            (heap-end heap))))
+    (setf (max-heap-end heap) (if (> proposed-size (heap-size heap))
+                                  (+ (heap-start heap) proposed-size)
+                                (heap-end heap))
+          (grow-size heap) (or (grow-size heap)
+                               (max-heap-end heap))))
   ;; GC should begin in the :ready state.  It will switch to :starting
   ;; state when the heap is expanded.
   (setf (state heap) :ready))
