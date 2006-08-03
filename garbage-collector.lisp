@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.11 2006-08-03 10:59:52 alemmens Exp $
+;; $Id: garbage-collector.lisp,v 1.12 2006-08-03 11:05:45 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -230,7 +230,7 @@ collector."
               (if (integerp (grow-size heap))
                   (incf (max-heap-end heap) (grow-size heap))
                 (setf (max-heap-end heap)
-                      (* (grow-size heap) (max-heap-end heap))))
+                      (round (* (grow-size heap) (max-heap-end heap)))))
               ;;
               (setf (state heap) :ready)))))
 
