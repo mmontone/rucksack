@@ -1,4 +1,4 @@
-;; $Id: serialize.lisp,v 1.3 2006-05-18 12:46:57 alemmens Exp $
+;; $Id: serialize.lisp,v 1.4 2006-08-03 10:59:52 alemmens Exp $
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Serialize
@@ -954,8 +954,7 @@ implementation-dependent attributes."
       array)))
 
 (defmethod scan-contents ((marker (eql +array+)) stream gc)
-  ;; Scan type
-  (scan stream gc)
+  (scan stream gc) ; scan type
   (let ((dimensions (deserialize-list stream)))
     (when (= 1 (length dimensions))
       (let ((has-fill-pointer-p (deserialize stream)))

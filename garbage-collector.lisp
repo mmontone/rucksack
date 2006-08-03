@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.10 2006-05-24 20:45:09 alemmens Exp $
+;; $Id: garbage-collector.lisp,v 1.11 2006-08-03 10:59:52 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -283,10 +283,11 @@ collector."
 (defmethod mark-root ((heap mark-and-sweep-heap) (object-id integer))
   ;; Returns the number of octets scanned.
   (let ((object-table (object-table heap)))
-    (if (eql (object-info object-table object-id) :reserved)
+    (if (member (object-info object-table object-id) '(:reserved :live-object))
         ;; Reserved objects aren't written to the heap yet (they just
         ;; have an object table entry), so we don't need to scan them
-        ;; for child objects
+        ;; for child objects.  And live objects were already marked earlier,
+        ;; so don't need to be scanned again now.
         0
       (let* ((block (object-heap-position object-table object-id))
              (buffer (load-block heap block :skip-header t)))

@@ -1,4 +1,4 @@
-;; $Id: cache.lisp,v 1.5 2006-05-20 21:16:58 alemmens Exp $
+;; $Id: cache.lisp,v 1.6 2006-08-03 10:59:52 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -202,7 +202,8 @@ objects.")))
 ;;
 
 (defmethod cache-create-object (object (cache standard-cache))
-  ;; This is called by an after method on initialize-instance.
+  ;; This is called by a before method on SHARED-INITIALIZE and
+  ;; by MAKE-PERSISTENT-DATA.
   (let ((id (new-object-id (object-table (heap cache)))))
     ;; Add to dirty objects.
     (transaction-touch-object (current-transaction) object id)

@@ -1,4 +1,4 @@
-;; $Id: heap.lisp,v 1.6 2006-05-24 20:45:09 alemmens Exp $
+;; $Id: heap.lisp,v 1.7 2006-08-03 10:59:52 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -220,8 +220,8 @@ with sizes at least as big as the specified size."
         ;; Keep copy in memory
         (aref (slot-value heap 'starts) size-class) pointer))
 
-(defmethod free-list-full-p (size-class (heap free-list-heap))
-  ;; A free list is full when the start points to itself.
+(defmethod free-list-empty-p (size-class (heap free-list-heap))
+  ;; A free list is empty when the start points to itself.
   (let ((start (free-list-start heap size-class)))
     (= start (free-list-pointer size-class))))
 
@@ -283,8 +283,8 @@ the block's header."))
   ;; I'm not sure that is worth the extra complexity (or the extra time).
   (let* ((size-class (size-class size heap))
          (block (free-list-start heap size-class)))
-    ;; Expand free list when it's full.
-    (when (free-list-full-p size-class heap)
+    ;; Expand free list when it's empty.
+    (when (free-list-empty-p size-class heap)
       (if expand
           (setq block (expand-free-list size-class heap))
         (return-from allocate-block nil)))
@@ -304,7 +304,7 @@ the block's header."))
   ;; Push the block on the front of its free list.
   (let* ((size (block-size block heap))
          (size-class (size-class size heap)))
-    (if (free-list-full-p size-class heap)
+    (if (free-list-empty-p size-class heap)
         ;; Let free list start point to the block and vice versa.
         (setf (block-header block heap) (free-list-pointer size-class)
               (free-list-start heap size-class) block)
@@ -351,9 +351,7 @@ the block's header."))
           do (let ((block (allocate-block heap :size min-size :expand nil)))
                (when block
                  (return (values block
-                                 (size-class-block-size size-class heap))))))
-    ;; Return nil if we can't find anything.
-    nil))
+                                 (size-class-block-size size-class heap))))))))
 
 
 (defmethod carve-up-block-for-free-list (size-class block size
@@ -393,9 +391,9 @@ list."
 (defmethod heap-info ((heap free-list-heap))
   ;; Returns the total number of free octets in the heap.
   ;; As a second value it returns a list with, for each free list
-  ;; that is not full, a plist with info about that free list.
+  ;; that is not empty, a plist with info about that free list.
   (let* ((info (loop for size-class below (nr-free-lists heap)
-                     unless (free-list-full-p size-class heap)
+                     unless (free-list-empty-p size-class heap)
                      collect (free-list-info size-class heap)))
          (total (loop for plist in info
                       sum (getf plist :nr-free-octets))))
