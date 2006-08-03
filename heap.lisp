@@ -1,4 +1,4 @@
-;; $Id: heap.lisp,v 1.7 2006-08-03 10:59:52 alemmens Exp $
+;; $Id: heap.lisp,v 1.8 2006-08-03 11:39:39 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -107,7 +107,8 @@ If nil, the heap is allowed to expand indefinitely.")))
 (defun (setf pointer-value) (value pointer heap)
   (file-position (heap-stream heap) pointer)
   (write-unsigned-bytes value (cell-buffer heap) (heap-stream heap)
-                        +pointer-size+))
+                        +pointer-size+)
+  value)
 
 ;;
 ;; Expanding the heap

@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.13 2006-08-03 11:31:17 alemmens Exp $
+;; $Id: garbage-collector.lisp,v 1.14 2006-08-03 11:39:39 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -385,7 +385,8 @@ collector."
 
 (defun (setf object-alive-p) (value object-table object-id)
   (setf (object-info object-table object-id) 
-        (if value :live-object :dead-object)))
+        (if value :live-object :dead-object))
+  value)
 
 (defun object-alive-p (object-table object-id)
   (eql (object-info object-table object-id) :live-object))

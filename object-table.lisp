@@ -1,4 +1,4 @@
-;; $Id: object-table.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
+;; $Id: object-table.lisp,v 1.3 2006-08-03 11:39:39 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -86,7 +86,8 @@ the 'real' heap."))
                    (+ (block-header-size object-table)
                       +nr-object-info-octets+
                       (object-id-to-block id object-table)))
-    (serialize position stream)))
+    (serialize position stream))
+  position)
 
 (defun object-heap-position (object-table id)
   (let ((stream (heap-stream object-table)))
@@ -116,7 +117,8 @@ the 'real' heap."))
                     (:dead-object +dead-object+)
                     (:live-object +live-object+)
                     (:reserved +reserved-object+))))
-      (serialize-marker marker stream))))
+      (serialize-marker marker stream)))
+  info)
 
 
 ;;

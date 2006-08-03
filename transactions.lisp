@@ -1,4 +1,4 @@
-;; $Id: transactions.lisp,v 1.3 2006-05-20 10:41:47 alemmens Exp $
+;; $Id: transactions.lisp,v 1.4 2006-08-03 11:39:39 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -292,7 +292,8 @@ version in the version list."
 OLD-BLOCK."
   (let ((stream (heap-stream heap)))
     (file-position stream (+ young-block (block-header-size heap)))
-    (serialize-previous-version-pointer old-block stream)))
+    (serialize-previous-version-pointer old-block stream))
+  old-block)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Rolling back
