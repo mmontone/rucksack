@@ -1,4 +1,4 @@
-;; $Id: transactions.lisp,v 1.5 2006-08-03 11:52:46 alemmens Exp $
+;; $Id: transactions.lisp,v 1.6 2006-08-03 18:37:50 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -133,7 +133,7 @@ Otherwise it returns nil."))
                                 (rucksack standard-rucksack)
                                 &key &allow-other-keys)
   ;; Create new transaction.
-  (let* ((id (incf (highest-transaction-id cache)))
+  (let* ((id (make-transaction-id cache))
          (transaction (make-instance 'standard-transaction :id id)))
     ;; Add to open transactions.
     (open-transaction cache transaction)

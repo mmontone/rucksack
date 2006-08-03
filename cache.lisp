@@ -1,4 +1,4 @@
-;; $Id: cache.lisp,v 1.6 2006-08-03 10:59:52 alemmens Exp $
+;; $Id: cache.lisp,v 1.7 2006-08-03 18:37:50 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -62,6 +62,11 @@ transactions."))
 cache."))
 
 
+(defgeneric make-transaction-id (cache)
+  (:documentation "Returns a new transaction ID.  The result is an
+integer greater than all previous IDs."))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; The cache
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -87,9 +92,10 @@ means the version belonging to the youngest committed transaction.)")
           :documentation "A queue of the ids of all non-dirty objects
 that are currently in the cache memory.  Whenever an object is
 retrieved (i.e. read), it's added to the queue.")
-   (highest-transaction-id :initarg :highest-transaction-id
-                           :initform 0
-                           :accessor highest-transaction-id)
+   (last-timestamp :initform (get-universal-time)
+                   :accessor last-timestamp)
+   (transaction-id-helper :initform -1
+                          :accessor transaction-id-helper)
    (transactions :initform (make-hash-table)
                  :reader transactions
                  :documentation "A mapping from transaction ids to
@@ -114,6 +120,18 @@ objects.")))
             (cache-size cache)
             (pathname (heap-stream (heap cache)))
             (cache-count cache))))
+
+ 
+(defmethod make-transaction-id ((cache standard-cache))
+  ;; This would allow for up to 100 transactions per millisecond
+  ;; The result is a bignum but it at least fits in 8 octets and
+  ;; can thus be serialized with SERIALIZE-BYTE-64.
+  (let ((timestamp (get-universal-time)))
+    (when (> timestamp (last-timestamp cache))
+      (setf (last-timestamp cache) timestamp
+            (transaction-id-helper cache) -1))
+    (+ (* timestamp 100000)
+       (mod (incf (transaction-id-helper cache)) 1000000))))
 
 ;;
 ;; Open/close/initialize
