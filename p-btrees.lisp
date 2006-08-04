@@ -1,4 +1,4 @@
-;; $Id: p-btrees.lisp,v 1.4 2006-05-25 13:01:38 alemmens Exp $
+;; $Id: p-btrees.lisp,v 1.5 2006-08-04 10:59:10 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -200,17 +200,31 @@ the btree has unique keys and no value is found, the result depends on
 ERRORP option: if ERRORP is true, a btree-search-error is signalled;
 otherwise, DEFAULT-VALUE is returned."))
 
-
+ 
 (defmethod btree-search (btree key &key (errorp t) (default-value nil))
-  (if (slot-boundp btree 'root)
-      (node-search btree (slot-value btree 'root) key errorp default-value)
-    (not-found btree key errorp default-value)))
+  (restart-case 
+      (if (slot-boundp btree 'root)
+          (node-search btree (slot-value btree 'root) key errorp default-value)
+        (not-found btree key errorp default-value))
+    (use-value (value)
+      :report (lambda (stream)
+                (format stream "Specifiy a value to use this time for key ~S." key))
+      :interactive (lambda ()
+                     (format t "Enter a value for key ~S: " key)
+                     (multiple-value-list (eval (read))))
+      value)
+    (store-value (value)
+      :report (lambda (stream)
+                (format stream "Specify a value to set key ~S to." key))
+      :interactive (lambda ()
+                     (format t "Enter a value for key ~S: " key)
+                     (multiple-value-list (eval (read))))
+      (btree-insert btree key value))))
 
 
 (defun not-found (btree key errorp default-value)
   (if (btree-unique-keys-p btree)
       (if errorp
-          ;; DO: Provide restarts here (USE-VALUE, STORE-VALUE, ...).
           (error 'btree-search-error :btree btree :key key)
         default-value)
     '()))
