@@ -1,4 +1,4 @@
-;; $Id: serialize.lisp,v 1.4 2006-08-03 10:59:52 alemmens Exp $
+;; $Id: serialize.lisp,v 1.5 2006-08-04 10:26:23 alemmens Exp $
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Serialize
@@ -210,6 +210,14 @@ defaults to T.")
   (:method ((stream stream) &optional (eof-error-p t))
    (read-byte stream eof-error-p nil)))
 
+(defgeneric scan-byte (serializer &optional gc)
+  (:documentation "Skips an unsigned byte from the serializer.")
+  (:method ((serializer serializer) &optional gc)
+   (declare (ignore gc))
+   (read-byte (serializer-stream serializer) t nil))
+  (:method ((stream stream) &optional gc)
+   (declare (ignore gc))
+   (read-byte stream t nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; SERIALIZE/DESERIALIZE/SCAN
@@ -223,9 +231,6 @@ stream in a serializer."))
 
 (defmethod scan-contents (marker serializer gc)
   ;; Default: just deserialize the contents but don't evacuate anything.
-  ;; EFFICIENCY: This is rather inefficient because it will reconstruct objects
-  ;; that don't really need to be reconstructed.  Improve this by writing
-  ;; special methods for those objects (numbers, strings, etc.)
   (declare (ignore gc))
   (deserialize-contents marker serializer))
 
@@ -321,6 +326,10 @@ elements of the list."
 ;;; Integers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;
+;; Serializing multiple bytes
+;;
+
 (defun serialize-byte-16 (integer stream)
   (serialize-byte (ldb (byte 8 0) integer) stream)
   (serialize-byte (ldb (byte 8 8) integer) stream))
@@ -349,6 +358,10 @@ elements of the list."
     (serialize-byte-32 most-significant stream)))
 
 
+;;
+;; Deserializing multiple bytes
+;;
+
 (defun deserialize-byte-16 (stream)
   (+ (deserialize-byte stream)
      (* (deserialize-byte stream) 256)))
@@ -372,6 +385,39 @@ elements of the list."
   (+ (deserialize-byte-32 stream)
      (* (deserialize-byte-32 stream) #x100000000)))
 
+;;
+;; Scanning multiple bytes
+;;
+
+(defun scan-byte-16 (stream &optional gc)
+  (declare (ignore gc))
+  (scan-byte stream)
+  (scan-byte stream))
+
+(defun scan-byte-24 (stream &optional gc)
+  (declare (ignore gc))
+  (dotimes (i 3)
+    (scan-byte stream)))
+
+(defun scan-byte-32 (stream &optional gc)
+  (declare (ignore gc))
+  (scan-byte-16 stream)
+  (scan-byte-16 stream))
+
+(defun scan-byte-48 (stream &optional gc)
+  (declare (ignore gc))
+  (scan-byte-24 stream)
+  (scan-byte-24 stream))
+
+(defun scan-byte-64 (stream &optional gc)
+  (declare (ignore gc))
+  (scan-byte-32 stream)
+  (scan-byte-32 stream))
+
+
+;;
+;; Serializing integers
+;;
 
 (defmethod serialize ((obj integer) stream)
   ;; Serialize integers with least-significant bytes first.
@@ -413,6 +459,74 @@ elements of the list."
        (serialize nr-octets stream)
        (loop for position from (- nr-bits 8) downto 0 by 8
              do (serialize-byte (ldb (byte 8 position) unsigned) stream))))))
+
+
+;;
+;; Scanning integers
+;;
+
+(defmethod scan-contents ((marker (eql +positive-byte-8+)) stream gc)
+  (declare (ignore gc))
+  (scan-byte stream))
+
+(defmethod scan-contents ((marker (eql +negative-byte-8+)) stream gc)
+  (declare (ignore gc))
+  (scan-byte stream))
+
+(defmethod scan-contents ((marker (eql +positive-byte-16+)) stream gc)
+  (declare (ignore gc))
+  (scan-byte-16 stream))
+
+(defmethod scan-contents ((marker (eql +negative-byte-16+)) stream gc)
+  (declare (ignore gc))
+  (scan-byte-16 stream))
+
+(defmethod scan-contents ((marker (eql +positive-byte-24+)) stream gc)
+  (declare (ignore gc))
+  (scan-byte-24 stream))
+
+(defmethod scan-contents ((marker (eql +negative-byte-24+)) stream gc)
+  (declare (ignore gc))
+  (scan-byte-24 stream))
+
+(defmethod scan-contents ((marker (eql +positive-byte-32+)) stream gc)
+  (declare (ignore gc))
+  (scan-byte-32 stream))
+
+(defmethod scan-contents ((marker (eql +negative-byte-32+)) stream gc)
+  (declare (ignore gc))
+  (scan-byte-32 stream))
+
+(defmethod scan-contents ((marker (eql +positive-byte-48+)) stream gc)
+  (declare (ignore gc))
+  (scan-byte-48 stream))
+
+(defmethod scan-contents ((marker (eql +negative-byte-48+)) stream gc)
+  (declare (ignore gc))
+  (scan-byte-48 stream))
+
+(defmethod scan-contents ((marker (eql +positive-byte-64+)) stream gc)
+  (declare (ignore gc))
+  (scan-byte-64 stream))
+
+(defmethod scan-contents ((marker (eql +negative-byte-64+)) stream gc)
+  (declare (ignore gc))
+  (scan-byte-64 stream))
+
+(defmethod scan-contents ((marker (eql +positive-integer+)) stream gc)
+  (declare (ignore gc))
+  (let ((nr-bytes (deserialize stream)))
+    (assert (integerp nr-bytes))
+    (dotimes (i nr-bytes)
+      (scan-byte stream))))
+
+(defmethod scan-contents ((marker (eql +negative-integer+)) stream gc)
+  (scan-contents +positive-integer+ stream gc))
+
+
+;;
+;; Deserializing integers
+;;
 
 (defun nr-octets (n)
   (ceiling (integer-length n) 8))
@@ -493,6 +607,10 @@ elements of the list."
 (defmethod deserialize-contents ((marker (eql +rational+)) stream)
   (/ (deserialize stream) (deserialize stream)))
 
+(defmethod scan-contents ((marker (eql +rational+)) stream gc)
+  (scan stream gc)
+  (scan stream gc))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Floats
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -515,6 +633,11 @@ elements of the list."
          (exponent (deserialize stream))
          (sign (deserialize stream)))
     (* sign (scale-float (float significand 1.0L0) exponent))))
+
+(defmethod scan-contents ((marker (eql +float+)) stream gc)
+  ;; significand, exponent, sign
+  (dotimes (i 3)
+    (scan stream gc)))
 
 
 #|
@@ -564,6 +687,10 @@ something like the following (from Pascal Bourguignon on comp.lang.lisp).
 
 (defmethod deserialize-contents ((marker (eql +complex+)) stream)
   (complex (deserialize stream) (deserialize stream)))
+
+(defmethod scan-contents ((marker (eql +complex+)) stream gc)
+  (scan stream gc)
+  (scan stream gc))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Conses
@@ -658,6 +785,10 @@ length; for circular lists, the length is NIL."
 ;;; Strings and characters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;
+;; Serializing characters
+;;
+
 (defmethod serialize ((char character) stream)
   (unless (= (char-code char) (char-int char))
     (cerror "Serialize it anyway (without the attributes)."
@@ -680,6 +811,10 @@ implementation-dependent attributes."
           (t (serialize-marker +character+ stream)
              (serialize (char-code char) stream)))))
 
+;;
+;; Deserializing characters
+;;
+
 (defmethod deserialize-contents ((marker (eql +character+)) stream)
   (code-char (deserialize stream)))
 
@@ -695,6 +830,33 @@ implementation-dependent attributes."
 (defmethod deserialize-contents ((marker (eql +character-32+)) stream)
   (code-char (deserialize-byte-32 stream)))
 
+;;
+;; Scanning characters
+;;
+
+(defmethod scan-contents ((marker (eql +character+)) stream gc)
+  (scan stream gc))
+
+(defmethod scan-contents ((marker (eql +character-8+)) stream gc)
+  (declare (ignore gc))
+  (scan-byte stream))
+
+(defmethod scan-contents ((marker (eql +character-16+)) stream gc)
+  (declare (ignore gc))
+  (scan-byte-16 stream))
+
+(defmethod scan-contents ((marker (eql +character-24+)) stream gc)
+  (declare (ignore gc))
+  (scan-byte-24 stream))
+
+(defmethod scan-contents ((marker (eql +character-32+)) stream gc)
+  (declare (ignore gc))
+  (scan-byte-32 stream))
+
+
+;;
+;; Serializing strings
+;;
 
 (defun max-character-code (string)
   "Returns the highest character code in string."
@@ -749,6 +911,54 @@ implementation-dependent attributes."
             for code = (char-code char)
             do (funcall writer code stream)))))
 
+
+;;
+;; Scanning strings
+;;
+
+(defmethod scan-contents ((marker (eql +simple-string+)) stream gc)
+  (scan-string t #'scan stream gc))
+
+(defmethod scan-contents ((marker (eql +simple-string-8+)) stream gc)
+  (scan-string t #'scan-byte stream gc))
+
+(defmethod scan-contents ((marker (eql +simple-string-16+)) stream gc)
+  (scan-string t #'scan-byte-16 stream gc))
+
+(defmethod scan-contents ((marker (eql +simple-string-24+)) stream gc)
+  (scan-string t #'scan-byte-24 stream gc))
+
+(defmethod scan-contents ((marker (eql +simple-string-32+)) stream gc)
+  (scan-string t #'scan-byte-32 stream gc))
+
+(defmethod scan-contents ((marker (eql +string+)) stream gc)
+  (scan-string nil #'scan stream gc))
+
+(defmethod scan-contents ((marker (eql +string-8+)) stream gc)
+  (scan-string nil #'scan-byte stream gc))
+
+(defmethod scan-contents ((marker (eql +string-16+)) stream gc)
+  (scan-string nil #'scan-byte-16 stream gc))
+
+(defmethod scan-contents ((marker (eql +string-24+)) stream gc)
+  (scan-string nil #'scan-byte-24 stream gc))
+
+(defmethod scan-contents ((marker (eql +string-32+)) stream gc)
+  (scan-string nil #'scan-byte-32 stream gc))
+
+(defun scan-string (simple-p character-code-scanner stream gc)
+  (scan-byte stream) ; skip type marker
+  (unless simple-p
+    ;; fill pointer and adjustable-p
+    (scan stream gc)
+    (scan stream gc))
+  (loop repeat (deserialize stream) ; length
+        do (funcall character-code-scanner stream gc)))
+
+
+;;
+;; Deserializing strings
+;;
 
 (defmethod deserialize-contents ((marker (eql +simple-string+)) stream)
   (deserialize-string t #'deserialize stream))
@@ -831,8 +1041,18 @@ implementation-dependent attributes."
 (defmethod deserialize-contents ((marker (eql +keyword+)) stream)
   (intern (deserialize stream) (find-package :keyword)))
 
+(defmethod scan-contents ((marker (eql +keyword+)) stream gc)
+  ;; just the symbol name
+  (scan stream gc))
+
+
 (defmethod deserialize-contents ((marker (eql +uninterned-symbol+)) stream)
   (make-symbol (deserialize stream)))
+
+(defmethod scan-contents ((marker (eql +uninterned-symbol+)) stream gc)
+  ;; just the symbol name
+  (scan stream gc))
+
 
 (defmethod deserialize-contents ((marker (eql +symbol+)) stream)
   ;; Q: Maybe we should always create the package if it doesn't exist
@@ -846,6 +1066,11 @@ implementation-dependent attributes."
                                symbol-name)
                        (make-package package-name))))
       (intern symbol-name package))))
+
+(defmethod scan-contents ((marker (eql +symbol+)) stream gc)
+  ;; package name, then symbol name
+  (scan stream gc)
+  (scan stream gc))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Objects
@@ -999,6 +1224,10 @@ implementation-dependent attributes."
                    :type type
                    :version version)))
 
+(defmethod scan-contents ((marker (eql +pathname+)) stream gc)
+  ;; skip host, device, directory, name, type, version
+  (dotimes (i 6)
+    (scan stream gc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Hash tables

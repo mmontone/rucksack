@@ -1,4 +1,4 @@
-;; $Id: heap.lisp,v 1.8 2006-08-03 11:39:39 alemmens Exp $
+;; $Id: heap.lisp,v 1.9 2006-08-04 10:26:23 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -493,6 +493,9 @@ list."
            (error "Unexpected end of serialization buffer at ~D."
                   scan-pointer)))))
 
+(defmethod scan-byte ((stream serialization-buffer) &optional gc)
+  (declare (ignore gc))
+  (deserialize-byte stream t))
 
 ;;
 ;; Loading/saving buffers
