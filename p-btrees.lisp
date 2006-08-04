@@ -1,4 +1,4 @@
-;; $Id: p-btrees.lisp,v 1.5 2006-08-04 10:59:10 alemmens Exp $
+;; $Id: p-btrees.lisp,v 1.6 2006-08-04 11:06:04 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -57,14 +57,21 @@ length, measured in terms of nodes.
   ((btree :initarg :btree :reader btree-error-btree)))
 
 (define-condition btree-search-error (btree-error)
-  ((key :initarg :key :reader btree-error-key)))
+  ((key :initarg :key :reader btree-error-key))
+  (:report (lambda (condition stream)
+             (format stream "An entry for the key ~S could not be found."
+                     (btree-error-key condition)))))
+
 
 (define-condition btree-insertion-error (btree-error)
   ((key :initarg :key :reader btree-error-key)
    (value :initarg :value :reader btree-error-value)))
 
 (define-condition btree-key-already-present-error (btree-insertion-error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (format stream "There's already another value for the key ~S."
+                     (btree-error-key condition)))))
 
 (define-condition btree-type-error (btree-error type-error)
   ())
