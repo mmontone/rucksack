@@ -1,4 +1,4 @@
-;; $Id: test.lisp,v 1.4 2006-05-25 13:01:38 alemmens Exp $
+;; $Id: test.lisp,v 1.5 2006-08-04 22:04:43 alemmens Exp $
 
 (in-package :test-rucksack)
 
@@ -153,29 +153,102 @@
 ;; Test btrees as just another persistent data structure.
 ;;
 
-(defun test-btree-insert (&key (n 20000) (node-size 100))
-  ;; Create a rucksack with btree that maps random integers to the
-  ;; equivalent strings in Roman notation.
-  (with-rucksack (rucksack *test-suite* :if-exists :supersede)
-    (with-transaction ()
-      (let ((btree (make-instance 'btree :value= 'string-equal
-                                  :max-node-size node-size)))
-        (loop for i from 1 to n
-              for key = (random n) do
-              (when (zerop (mod i 1000))
-                (format t "~D " i))
-              (btree-insert btree key (format nil "~R" key)))
-        (add-rucksack-root btree rucksack)))))
+(defun shuffle (array)
+  (loop with n = (array-dimension array 0)
+        repeat n
+        for i = (random n)
+        for j = (random n)
+        when (/= i j)
+        do (rotatef (aref array i) (aref array j))))
 
-(defun test-btree-dummy-insert (&key (n 20000))
-  ;; This function can be used for timing: subtract the time taken
-  ;; by this function from the time taken by TEST-BTREE-INSERT to
-  ;; get an estimate of the time needed to manipulate the btrees.
-  (loop for i from 1 to n
-        for key = (random n)
-        when (zerop (mod i 1000)) do (format t "~D " i)
-        collect (cons key (format nil "~R" key)))
-  t)
+(defun check-size (btree expected)
+  (format t "~&Counting~%")
+  (let ((count 0))
+    (map-btree btree
+               (lambda (key value)
+                 (declare (ignore key value))
+                 (incf count)))
+    (unless (= count expected)
+      (error "Wrong btree size - expected ~A, got ~A."
+             expected count))))
+
+(defun check-order (btree)
+  (format t "~&Checking order~%")
+  (rs::check-btree btree))
+
+(defun check-contents (btree)
+  (format t "~&Checking contents~%")
+  (map-btree btree
+             (lambda (key value)
+               (unless (string= value (format nil "~R" key))
+                 (error "Value mismatch: Expected ~S, got ~S."
+                        (format nil "~R" key) value)))))
+
+(defmacro with-transaction* ((&rest args) &body body)
+  `(with-transaction ,args
+     (prog1 (progn ,@body)
+       (format t "~&Committing..."))))
+
+(defun test-btree (&key (n 20000) (node-size 100) (delete (floor n 10)) check-contents)
+  ;; Create a rucksack with a btree of size N that maps random
+  ;; integers to the equivalent strings as a cardinal English number.
+  ;; Use node size NODE-SIZE for the btree.
+  ;; If DELETE is not NIL, delete and reinsert that number of elements
+  ;; as well.
+  (let ((array (make-array n :initial-contents (loop for i below n collect i))))
+    (shuffle array)
+    (with-rucksack (rucksack *test-suite* :if-exists :supersede)
+      (with-transaction* ()
+        (format t "~&Inserting~%")
+        (let ((btree (make-instance 'btree :value= 'string-equal
+                                    :max-node-size node-size)))
+          (loop for key across array
+                for i from 1
+                when (zerop (mod i 1000))
+                do (format t "~D " i)
+                do (btree-insert btree key (format nil "~R" key)))
+          (add-rucksack-root btree rucksack))))
+    (with-rucksack (rucksack *test-suite*)
+      (with-transaction ()
+        (let ((btree (first (rucksack-roots rucksack))))
+          (check-order btree)
+          (check-size btree n)
+          (when check-contents
+            (check-contents btree))))
+      (when delete
+        (shuffle array)
+        (setq array (subseq array 0 delete))
+        (shuffle array)
+        (with-transaction* ()
+          (format t "~&Deleting~%")
+          (let ((btree (first (rucksack-roots rucksack))))
+            (dotimes (i delete)
+              (when (zerop (mod (1+ i) 1000))
+                (format t "~D " (1+ i)))
+              (btree-delete btree (aref array i)))
+            (check-order btree)
+            (check-contents btree)))
+        (with-transaction* ()
+          (let ((btree (first (rucksack-roots rucksack))))
+            (check-order btree)
+            (check-size btree (- n delete))
+            (when check-contents
+              (check-contents btree))
+            (format t "~&Reinserting~%")
+            (shuffle array)
+            (dotimes (i delete)
+              (when (zerop (mod (1+ i) 1000))
+                (format t "~D " (1+ i)))
+              (let ((key (aref array i)))
+                (btree-insert btree key (format nil "~R" key))))))
+        (with-transaction ()
+          (let ((btree (first (rucksack-roots rucksack))))
+            (check-order btree)
+            (check-size btree n)
+            (when check-contents
+              (check-contents btree)))))))
+  :ok)
+
 
 
 (defun test-btree-map (&key (display t))
@@ -187,3 +260,34 @@
                    (lambda (key value)
                      (when display
                        (format t "~&~D -> ~A~%" key value))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Garbage collector
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun check-gc (n)
+  (with-rucksack (rucksack *test-suite* :if-exists :supersede)
+    (with-transaction ()
+      ;; after this, INNER can be reached directly from the root
+      (let* ((inner (p-cons "Waldorf" "Statler"))
+             (root (p-cons 42 inner)))
+        (add-rucksack-root root rucksack)))
+    (with-transaction ()
+      (let* ((root (first (rucksack-roots rucksack)))
+             (inner (p-cdr root))
+             (array (p-make-array n)))
+        ;; after this, INNER can't be reached from the root anymore
+        (setf (p-cdr root) 43)
+        ;; now let the GC do some work
+        (dotimes (i n)
+          (let ((string (format nil "~R" i)))
+            (setf (p-aref array i) (p-cons string string))))
+        ;; hook INNER back to the root again before we finish the
+        ;; transaction
+        (setf (p-car root) array
+              (p-cdr root) (p-cons 'bar (p-cons 'foo inner)))))
+    (with-transaction ()
+      (let* ((root (first (rucksack-roots rucksack)))
+             (inner (p-cdr (p-cdr (p-cdr root)))))
+        ;; we expect the list ("Waldorf" "Statler") here
+        (list (p-car inner) (p-cdr inner))))))

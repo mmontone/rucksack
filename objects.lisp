@@ -1,4 +1,4 @@
-;; $Id: objects.lisp,v 1.4 2006-05-24 20:45:09 alemmens Exp $
+;; $Id: objects.lisp,v 1.5 2006-08-04 22:04:43 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -265,9 +265,9 @@ contents are accessed by special functions like P-CAR instead."))
            :end1 end1
            :start2 start2
            :end2 end2)
-  ;; DO: WE MUST TOUCH THE OBJECT HERE!!
+  ;; Touch the vector because it has changed.
+  (cache-touch-object vector-1 (cache vector-1))
   vector-1)
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Full fledged persistent objects

@@ -1,4 +1,4 @@
-;; $Id: package.lisp,v 1.3 2006-05-18 12:46:57 alemmens Exp $
+;; $Id: package.lisp,v 1.4 2006-08-04 22:04:43 alemmens Exp $
 
 #-(or allegro lispworks sbcl openmcl)
   (error "Unsupported implementation: ~A" (lisp-implementation-type))
@@ -78,12 +78,13 @@
 
    ;; Btrees
    #:btree
-   #:btree-key< #:btree-key= #:btree-value=
+   #:btree-key< #:btree-key<= #:btree-key= #:btree-key>= #:btree-key>
+   #:btree-value=
    #:btree-max-node-size #:btree-unique-keys-p
    #:btree-key-type #:btree-value-type
    #:btree-node-class #:btree-node
    ;; Functions
-   #:btree-search #:btree-insert #:map-btree
+   #:btree-search #:btree-insert #:btree-delete #:map-btree
    ;; Conditions
    #:btree-error #:btree-search-error #:btree-insertion-error
    #:btree-key-already-present-error #:btree-type-error
