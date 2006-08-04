@@ -1,4 +1,4 @@
-;; $Id: cache.lisp,v 1.7 2006-08-03 18:37:50 alemmens Exp $
+;; $Id: cache.lisp,v 1.8 2006-08-04 10:37:59 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -139,12 +139,29 @@ objects.")))
 
 (defvar *cache* nil)
 
+(defun sans (plist &rest keys)
+  "Returns PLIST with keyword arguments from KEYS removed."
+  ;; stolen from Usenet posting <3247672165664225@naggum.no> by Erik
+  ;; Naggum
+  (let ((sans ()))
+    (loop
+      (let ((tail (nth-value 2 (get-properties plist keys))))
+        ;; this is how it ends
+        (unless tail
+          (return (nreconc sans plist)))
+        ;; copy all the unmatched keys
+        (loop until (eq plist tail) do
+              (push (pop plist) sans)
+              (push (pop plist) sans))
+        ;; skip the matched key
+        (setq plist (cddr plist))))))
+
 (defun open-cache (directory &rest args
                              &key (class 'standard-cache)
                              &allow-other-keys)
-  (remf args ':class)
   (setq *cache*
-        (apply #'make-instance class :directory directory args)))
+        (apply #'make-instance class :directory directory
+               (sans args :class))))
 
 
 (defmethod close-cache ((cache standard-cache) &key (commit t))

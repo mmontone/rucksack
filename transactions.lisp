@@ -1,4 +1,4 @@
-;; $Id: transactions.lisp,v 1.6 2006-08-03 18:37:50 alemmens Exp $
+;; $Id: transactions.lisp,v 1.7 2006-08-04 10:37:59 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -315,12 +315,11 @@ OLD-BLOCK."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; WITH-TRANSACTION
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+ 
 (defmacro with-transaction ((&rest args
                              &key (rucksack '(current-rucksack))
                              &allow-other-keys)
                             &body body)
-  (remf args :rucksack)
   (let ((committed (gensym "COMMITTED"))
         (transaction (gensym "TRANSACTION"))
         (result (gensym "RESULT")))
@@ -334,7 +333,8 @@ OLD-BLOCK."
                      ;; Use a local variable for the transaction so that nothing
                      ;; can replace it from underneath us, and only then bind
                      ;; it to *TRANSACTION*. 
-                     (setf ,transaction (transaction-start :rucksack ,rucksack ,@args))
+                     (setf ,transaction (transaction-start :rucksack ,rucksack
+                                                           ,@(sans args :rucksack)))
                      (let ((*transaction* ,transaction))
                        (with-simple-restart (abort "Abort ~S" ,transaction)
                          (setf ,result (progn ,@body))
