@@ -1,4 +1,4 @@
-;; $Id: test.lisp,v 1.5 2006-08-04 22:04:43 alemmens Exp $
+;; $Id: test.lisp,v 1.6 2006-08-08 13:35:18 alemmens Exp $
 
 (in-package :test-rucksack)
 
@@ -58,7 +58,8 @@
   (p-test (p-make-array 2 :initial-contents '(a b))
 	  (equal '(a b)
 	       (list (p-aref it 0) (p-aref it 1))))
-  
+
+
   ;;
   ;; Persistent-objects
   ;;
@@ -89,6 +90,37 @@
 
 (eval-when (:load-toplevel)
   (test-basics))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Test objects
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun test-objects ()
+  ;; P-DELETE-IF
+  (p-test (p-list 1 2 3 4 5)
+          (equal '(1 3 5)
+                 (unwrap-persistent-list (p-delete-if #'evenp it))))
+  (p-test (p-list 1 2 3 4 5)
+          (equal '(2 4)
+                 (unwrap-persistent-list (p-delete-if #'oddp it))))
+  (p-test (p-list 1 2 4 6)
+          (equal '(1)
+                 (unwrap-persistent-list (p-delete-if #'evenp it ))))
+  (p-test (p-list 1 2 3 4 5)
+          (equal '()
+                 (unwrap-persistent-list (p-delete-if (constantly t) it ))))
+  (p-test (p-list 1 2 3 4 5)
+          (equal '(3 4 5)
+                 (unwrap-persistent-list (p-delete-if (constantly t) it :count 2))))
+  (p-test (p-list 1 2 3 4 5)
+          (equal '(1 2 3 4 5)
+                 (unwrap-persistent-list (p-delete-if (constantly t) it :count 0))))
+  ;; DO: We need a lot more tests here for other functions like
+  ;; P-MEMBER-IF, P-FIND, P-REPLACE, etcetera.
+  :ok)
+  
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -153,6 +185,10 @@
 ;; Test btrees as just another persistent data structure.
 ;;
 
+(defparameter *format-strings* 
+  ;; Different ways of printing integers.
+  '("~R" "~:R" "~@R" "~D"))
+
 (defun shuffle (array)
   (loop with n = (array-dimension array 0)
         repeat n
@@ -161,19 +197,16 @@
         when (/= i j)
         do (rotatef (aref array i) (aref array j))))
 
+
 (defun check-size (btree expected)
   (format t "~&Counting~%")
-  (let ((count 0))
-    (map-btree btree
-               (lambda (key value)
-                 (declare (ignore key value))
-                 (incf count)))
-    (unless (= count expected)
+  (let ((count (btree-nr-values btree)))
+    (unless (=  count expected)
       (error "Wrong btree size - expected ~A, got ~A."
              expected count))))
 
 (defun check-order (btree)
-  (format t "~&Checking order~%")
+  (format t "~&Checking order and balance~%")
   (rs::check-btree btree))
 
 (defun check-contents (btree)
@@ -189,7 +222,9 @@
      (prog1 (progn ,@body)
        (format t "~&Committing..."))))
 
-(defun test-btree (&key (n 20000) (node-size 100) (delete (floor n 10)) check-contents)
+(defun test-btree (&key (n 20000) (node-size 100) (delete (floor n 10))
+                        (unique-keys t)
+                        check-contents)
   ;; Create a rucksack with a btree of size N that maps random
   ;; integers to the equivalent strings as a cardinal English number.
   ;; Use node size NODE-SIZE for the btree.
@@ -206,7 +241,11 @@
                 for i from 1
                 when (zerop (mod i 1000))
                 do (format t "~D " i)
-                do (btree-insert btree key (format nil "~R" key)))
+                do (btree-insert btree key
+                                 (format nil (first *format-strings*) key))
+                do (unless unique-keys
+                     (loop for format-string in (rest *format-strings*)
+                           do (btree-insert btree key (format nil format-string key)))))
           (add-rucksack-root btree rucksack))))
     (with-rucksack (rucksack *test-suite*)
       (with-transaction ()
@@ -225,7 +264,7 @@
             (dotimes (i delete)
               (when (zerop (mod (1+ i) 1000))
                 (format t "~D " (1+ i)))
-              (btree-delete btree (aref array i)))
+              (btree-delete-key btree (aref array i)))
             (check-order btree)
             (check-contents btree)))
         (with-transaction* ()
@@ -249,9 +288,107 @@
               (check-contents btree)))))))
   :ok)
 
+;;
+;; Btrees with non-unique keys
+
+(defun check-non-unique-contents (btree)
+  (format t "~&Checking contents~%")
+  (map-btree btree
+             (lambda (key value)
+               (let ((strings (loop for format-string in *format-strings*
+                                    collect (format nil format-string key))))
+                 (unless (member value strings :test #'string-equal)
+                   (error "Value mismatch: Expected one of ~S for ~S, got ~S."
+                          strings key value))))))
 
 
-(defun test-btree-map (&key (display t))
+(defun test-non-unique-btree (&key (n 20000) (node-size 100) (delete (floor n 8))
+                                   check-contents)
+  ;; Create a rucksack with a btree of size N (N must be a multiple of 4) that
+  ;; maps random integers to four different equivalent strings (in Roman and
+  ;; English notation).
+  ;; Use node size NODE-SIZE for the btree.
+  ;; If DELETE is not NIL, it must be a multiple of 4; delete that number of
+  ;; elements as well.
+  (let* ((nr-formats (length *format-strings*))
+         (array-size (floor n nr-formats))
+         (array (make-array array-size
+                            :initial-contents (loop for i from 1 to array-size collect i))))
+    (assert (zerop (mod n nr-formats)))
+    (assert (zerop (mod delete nr-formats)))
+    (shuffle array)
+    (with-rucksack (rucksack *test-suite* :if-exists :supersede)
+      (with-transaction* ()
+        (format t "~&Inserting~%")
+        (let ((btree (make-instance 'btree :value= 'string-equal
+                                    :max-node-size node-size
+                                    :unique-keys-p nil)))
+          (loop for key across array
+                for i from 1
+                when (zerop (mod i 200))
+                do (format t "~D " i)
+                do (loop for format-string in *format-strings*
+                         do (btree-insert btree key (format nil format-string key))))
+          (add-rucksack-root btree rucksack))))
+    (with-rucksack (rucksack *test-suite*)
+      (with-transaction ()
+        (let ((btree (first (rucksack-roots rucksack))))
+          (check-order btree)
+          (check-size btree n)
+          (when check-contents
+            (check-non-unique-contents btree))))
+      (when delete
+        (shuffle array)
+        (setq array (subseq array 0 (floor delete nr-formats)))
+        (shuffle array)
+        (with-transaction* ()
+          (format t "~&Deleting~%")
+          (let ((btree (first (rucksack-roots rucksack))))
+            (loop for i below (floor delete nr-formats)
+                  do (loop for j below nr-formats
+                           do (when (zerop (mod (+ j (* nr-formats i)) 10))
+                                (format t "~D " (+ j (* nr-formats i))))
+                           do (let* ((key (aref array i))
+                                     (from-end (oddp key))
+                                     (index (if from-end
+                                                j
+                                              (- nr-formats (1+ j))))
+                                     (format-string (elt *format-strings* index))
+                                     (value (format nil format-string key)))
+                                (btree-delete btree key value
+                                              :if-does-not-exist :error))))
+            (check-order btree)
+            (check-size btree (- n delete))
+            (check-non-unique-contents btree)))
+        (with-transaction* ()
+          (let ((btree (first (rucksack-roots rucksack))))
+            (check-order btree)
+            (check-size btree (- n delete))
+            (when check-contents
+              (check-contents btree))
+            (format t "~&Reinserting~%")
+            (shuffle array)
+            (dotimes (i (floor delete nr-formats))
+              (when (zerop (mod (1+ i) 10))
+                (format t "~D " (1+ i)))
+              (let ((key (aref array i)))
+                (loop for format-string in *format-strings*
+                      do (btree-insert btree key (format nil format-string key)))))))
+        (with-transaction ()
+          (let ((btree (first (rucksack-roots rucksack))))
+            (check-order btree)
+            (check-size btree n)
+            (when check-contents
+              (check-contents btree)))))))
+  :ok)
+
+(defun btree-stress-test (&key (n 1000))
+  (loop for i below n
+        do (print i)
+        do (test-non-unique-btree :n 1600 :node-size 12 :delete 1500)))
+
+(defun test-btree-map (&key (display t) min max include-min include-max
+                            (order :ascending))
   ;; Print out the contents of the btree.
   (with-rucksack (rucksack *test-suite*)
     (with-transaction ()
@@ -259,7 +396,12 @@
         (map-btree btree
                    (lambda (key value)
                      (when display
-                       (format t "~&~D -> ~A~%" key value))))))))
+                       (format t "~&~D -> ~A~%" key value)))
+                   :min min
+                   :include-min include-min
+                   :max max
+                   :include-max include-max
+                   :order order)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Garbage collector

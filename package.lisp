@@ -1,4 +1,4 @@
-;; $Id: package.lisp,v 1.4 2006-08-04 22:04:43 alemmens Exp $
+;; $Id: package.lisp,v 1.5 2006-08-08 13:35:18 alemmens Exp $
 
 #-(or allegro lispworks sbcl openmcl)
   (error "Unsupported implementation: ~A" (lisp-implementation-type))
@@ -32,8 +32,11 @@
    #:p-cons #:p-array
    #:p-eql
    #:p-car #:p-cdr #:p-list
+   #:unwrap-persistent-list
+   #:p-mapcar #:p-mapc #:p-maplist #:p-mapl
+   #:p-member-if 
    #:p-make-array #:p-aref #:p-array-dimensions
-   #:p-length #:p-find #:p-replace #:p-position
+   #:p-length #:p-find #:p-replace #:p-delete-if #:p-position
 
    ;; Heaps
    #:heap #:free-list-heap #:mark-and-sweep-heap #:simple-free-list-heap
@@ -83,8 +86,10 @@
    #:btree-max-node-size #:btree-unique-keys-p
    #:btree-key-type #:btree-value-type
    #:btree-node-class #:btree-node
+   #:btree-nr-keys #:btree-nr-values
    ;; Functions
-   #:btree-search #:btree-insert #:btree-delete #:map-btree
+   #:btree-search #:btree-insert #:btree-delete #:btree-delete-key
+   #:map-btree #:map-btree-keys
    ;; Conditions
    #:btree-error #:btree-search-error #:btree-insertion-error
    #:btree-key-already-present-error #:btree-type-error

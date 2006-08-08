@@ -1,4 +1,4 @@
-;; $Id: transactions.lisp,v 1.7 2006-08-04 10:37:59 alemmens Exp $
+;; $Id: transactions.lisp,v 1.8 2006-08-08 13:35:18 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -70,19 +70,21 @@ that doesn't exist on disk yet.")))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defgeneric transaction-changed-object (transaction object-id)
-  (:documentation "If the given transaction has modified the object
-with the given object id, this function returns the modified object.
-Otherwise it returns nil."))
+  (:documentation
+   "If the given transaction has modified the object with the given
+object id, this function returns the modified object.  Otherwise it
+returns nil."))
 
 (defgeneric transaction-older-p (a b)
-  (:documentation "Returns true iff transaction A is older than
-transaction B."))
+  (:documentation
+   "Returns true iff transaction A is older than transaction B."))
 
 (defgeneric find-conflicting-transaction (object-id cache transaction)
-  (:documentation "Tries to find an open transaction that has modified
-the object with the given object-id and is older than the given
-transaction.  Returns this conflicting transaction, if there is one.
-Otherwise it returns nil."))
+  (:documentation
+   "Tries to find an open transaction that has modified the object
+with the given object-id and is older than the given transaction.
+Returns this conflicting transaction, if there is one.  Otherwise it
+returns nil."))
 
 (defmethod transaction-nr-dirty-objects ((transaction standard-transaction))
   (hash-table-count (dirty-objects transaction)))

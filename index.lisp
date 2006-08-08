@@ -1,4 +1,4 @@
-;; $Id: index.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
+;; $Id: index.lisp,v 1.3 2006-08-08 13:35:18 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -62,7 +62,7 @@ IF-DOES-NOT-EXIST can be either :IGNORE (default) or :ERROR."))
 
 ;; An index spec is a symbol or a list starting with a symbol
 ;; and followed by a plist of keywords and values.
-;; Examples: BTREE, (BTREE :KEY< < :KEY= = :VALUE= EQL)
+;; Examples: BTREE, (BTREE :KEY< <  :VALUE= EQL)
 
 (defun make-index (index-spec)
   (if (symbolp index-spec)

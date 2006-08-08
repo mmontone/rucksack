@@ -1,4 +1,4 @@
-;; $Id: objects.lisp,v 1.5 2006-08-04 22:04:43 alemmens Exp $
+;; $Id: objects.lisp,v 1.6 2006-08-08 13:35:18 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -161,8 +161,12 @@ contents are accessed by special functions like P-CAR instead."))
 ;; DO: Other array functions
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Conses
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;;
-;; Cons
+;; Basics
 ;;
 
 (defclass persistent-cons (persistent-data)
@@ -195,11 +199,77 @@ contents are accessed by special functions like P-CAR instead."))
     (p-cons (car objects)
             (apply #'p-list (cdr objects)))))
 
+(defun unwrap-persistent-list (list)
+  "Converts a persistent list to a 'normal' Lisp list."
+  (loop until (p-endp list)
+        collect (p-car list)
+        do (setq list (p-cdr list))))
 
 ;;
+;; Other functions from chapter 14 of the spec.
+;;
+
+(defmethod p-endp ((object (eql nil)))
+  t)
+
+(defmethod p-endp ((object persistent-cons))
+  nil)
+
+(defmethod p-endp ((object t))
+  (error 'type-error
+         :datum object
+         :expected-type '(or null persistent-cons)))
+
+(defmethod p-cddr ((cons persistent-cons))
+  (p-cdr (p-cdr cons)))
+
+(defun p-mapcar (function list)
+  ;; DO: Accept more than one list argument.
+  (let ((result '()))
+    (loop while list do
+          (setq result (p-cons (funcall function (p-car list))
+                               result)
+                list (p-cdr list)))
+    result))
+
+(defun p-mapc (function list)
+  ;; DO: Accept more than one list argument.
+  (let ((tail list))
+    (loop while tail do
+          (funcall function (p-car tail))
+          (setq tail (p-cdr tail)))
+    list))
+
+(defun p-maplist (function list)
+  ;; DO: Accept more than one list argument.
+  (let ((result '()))
+    (loop while list do
+          (setq result (p-cons (funcall function list) result)
+                list (p-cdr list)))
+    result))
+
+(defun p-mapl (function list)
+  ;; DO: Accept more than one list argument.
+  (let ((tail list))
+    (loop while tail do
+          (funcall function tail)
+          (setq tail (p-cdr tail)))
+    list))
+  
+(defun p-member-if (predicate list &key key)
+  (unless key
+    (setq key #'identity))
+  (p-mapl (lambda (tail)
+            (when (funcall predicate (funcall key (p-car tail)))
+              (return-from p-member-if tail)))
+          list)
+  nil)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Persistent sequence functions
 ;; (Just a start...)
-;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun check-p-vector (persistent-array function-name)
   (unless (= 1 (length (p-array-dimensions persistent-array)))
@@ -210,6 +280,15 @@ contents are accessed by special functions like P-CAR instead."))
 (defmethod p-length ((vector persistent-array))
   (check-p-vector vector 'p-length)
   (first (p-array-dimensions vector)))
+
+(defmethod p-length ((list persistent-cons))
+  ;; DO: Check for circular lists.
+  (let ((result 0))
+    (p-mapc (lambda (pair)
+              (declare (ignore pair))
+              (incf result))
+            list)
+    result))
 
 (defmethod p-find (value (vector persistent-array)
                          &key (key #'identity) (test #'p-eql)
@@ -226,12 +305,11 @@ contents are accessed by special functions like P-CAR instead."))
                          &key (key #'identity) (test #'p-eql)
                          (start 0) (end nil))
   ;; Move list to start position.
-  (setq list
-        (loop repeat start
-              do (setq list (p-cdr list))))
+  (loop repeat start
+        do (setq list (p-cdr list)))
   ;; The real work.
   (loop for i from start do
-        (if (or (endp list) (and end (= i end)))
+        (if (or (p-endp list) (and end (= i end)))
             (return-from p-find nil)
           (let ((elt (funcall key (p-car list))))
             (if (funcall test value elt)
@@ -268,6 +346,43 @@ contents are accessed by special functions like P-CAR instead."))
   ;; Touch the vector because it has changed.
   (cache-touch-object vector-1 (cache vector-1))
   vector-1)
+
+
+(defmethod p-delete-if (test (list persistent-cons)
+                        &key (from-end nil) (start 0) end count key)
+  ;; DO: Implement FROM-END.
+  ;; DO: Write tests.
+  (declare (ignore from-end))
+  (unless key
+    (setq key #'identity))
+  ;; Move list to start position.
+  (let ((tail list)
+        (prev nil))
+    (loop repeat start
+          do (setq prev tail
+                   tail (p-cdr tail)))
+    ;; The real work.
+    (let ((nr-deleted 0))
+      (loop for i from start do
+            (if (or (p-endp tail)
+                    (and end (= i end))
+                    (and count (>= nr-deleted count)))
+                (return-from p-delete-if list)
+              (if (funcall test (funcall key (p-car tail)))
+                  ;; Delete the element.
+                  (progn
+                    (if prev
+                        (setf (p-cdr prev) (p-cdr tail))
+                      (setq list (p-cdr tail)))
+                    ;; Keep count.
+                    (incf nr-deleted))
+                ;; Don't delete anything.
+                (setq prev tail)))
+            ;; Keep moving.
+            (setq tail (p-cdr tail)))))
+  ;; Return the (possibly modified) list.
+  list)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Full fledged persistent objects

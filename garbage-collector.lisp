@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.14 2006-08-03 11:39:39 alemmens Exp $
+;; $Id: garbage-collector.lisp,v 1.15 2006-08-08 13:35:18 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -58,12 +58,13 @@ during the current garbage collection.")
    (grow-size :initarg :grow-size
               :initform nil
               :accessor grow-size
-              :documentation "Specifies a minimum amount to grow the
-heap when it needs to grow. If 'grow size' is an integer, the expected
-growth rate is additive and the integer is the number of octets to
-add; if it is a float, the expected growth rate for the heap is
-multiplicative and the float is the ratio of the new size to the old
-size.  (The actual size might be rounded up.)")))
+              :documentation
+ "Specifies a minimum amount to grow the heap when it needs to grow.
+If 'grow size' is an integer, the expected growth rate is additive and
+the integer is the number of octets to add; if it is a float, the
+expected growth rate for the heap is multiplicative and the float is
+the ratio of the new size to the old size.  (The actual size might be
+rounded up.)")))
 
 
 (defparameter *initial-heap-size* (* 1024 1024)

@@ -1,6 +1,10 @@
-;; $Id: p-btrees.lisp,v 1.7 2006-08-04 22:04:43 alemmens Exp $
+;; $Id: p-btrees.lisp,v 1.8 2006-08-08 13:35:18 alemmens Exp $
 
 (in-package :rucksack)
+
+;; DO: We probably need a lock per btree.  Each btree operation should
+;; be wrapped in a WITH-LOCK to make sure that nobody else changes the btree
+;; halfway during a btree operation.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Btrees: API
@@ -14,12 +18,14 @@
    #:btree-max-node-size #:btree-unique-keys-p
    #:btree-key-type #:btree-value-type
    #:btree-node-class
+   #:btree-nr-keys #:btree-nr-values
 
    ;; Nodes
    #:btree-node
 
    ;; Functions
-   #:btree-search #:btree-insert #:btree-delete #:map-btree
+   #:btree-search #:btree-insert #:btree-delete #:btree-delete-key
+   #:map-btree #:map-btree-keys
 
    ;; Conditions
    #:btree-error #:btree-search-error #:btree-insertion-error
@@ -27,9 +33,99 @@
    #:btree-error-btree #:btree-error-key #:btree-error-value
 |#
 
+(defgeneric btree-nr-keys (btree)
+  (:documentation "Returns the number of keys in a btree."))
+
+(defgeneric btree-nr-values (btree)
+  (:documentation "Returns the number of values in a btree."))
 
 
-#+nil(declaim (optimize (debug 3) (speed 0) (space 0)))
+(defgeneric btree-search (btree key &key errorp default-value)
+  (:documentation
+   "Returns the value (or persistent list of values, for btrees that
+don't have unique keys) associated with KEY.  If the btree has
+non-unique keys and no value is found, the empty list is returned.  If
+the btree has unique keys and no value is found, the result depends on
+the ERRORP option: if ERRORP is true, a btree-search-error is
+signalled; otherwise, DEFAULT-VALUE is returned."))
+
+(defgeneric btree-insert (btree key value &key if-exists)
+  (:documentation
+   "Adds an association from KEY to VALUE to a btree.
+
+IF-EXISTS can be either :OVERWRITE (default) or :ERROR.
+
+If the btree has unique keys (see BTREE-UNIQUE-KEYS-P) and KEY is
+already associated with another (according to BTREE-VALUE=) value, the
+result depends on the IF-EXISTS option: if IF-EXISTS is :OVERWRITE,
+the old value is overwriten; if IF-EXISTS is :ERROR, a
+BTREE-KEY-ALREADY-PRESENT-ERROR is signaled.
+
+For btrees with non-unique keys, the IF-EXISTS option is ignored and
+VALUE is just added to the list of values associated with KEY (unless
+VALUE is already associated with KEY; in that case nothing
+happens)."))
+
+
+(defgeneric btree-delete (btree key value &key if-does-not-exist)
+  (:documentation
+   "Removes an association from KEY to VALUE from a btree.
+IF-DOES-NOT-EXIST can be either :IGNORE (default) or :ERROR.
+If there is no association from KEY to VALUE and IF-DOES-NOT-EXIST
+is :ERROR, a BTREE-DELETION-ERROR is signaled."))
+
+
+(defgeneric btree-delete-key (btree key &key if-does-not-exist)
+  (:documentation
+   "Removes KEY and all associated values from a btree.
+IF-DOES-NOT-EXIST can be either :IGNORE (default) or :ERROR.
+
+For a btree with unique-keys that contains a value for KEY, this
+operation is identical to
+
+  (btree-delete btree key (btree-search btree key))
+
+For a btree with non-unique keys, it's identical to
+
+  (dolist (value (unwrap-persistent-list (btree-search btree key)))
+    (btree-delete btree key value))"))
+
+
+(defgeneric map-btree (btree function
+                             &key min max include-min include-max order)
+  (:documentation
+   "Calls FUNCTION for all key/value associations in the btree where
+key is in the specified interval (this means that FUNCTION can be
+called with the same key more than once for btrees with non-unique
+keys). FUNCTION must be a binary function; the first argument is the
+btree key, the second argument is an associated value.
+
+MIN, MAX, INCLUDE-MIN and INCLUDE-MAX specify the interval.  The
+interval is left-open if MIN is nil, right-open if MAX is nil.  The
+interval is inclusive on the left if INCLUDE-MIN is true (and
+exclusive on the left otherwise).  The interval is inclusive on the
+right if INCLUDE-MAX is true (and exclusive on the right otherwise).
+
+ORDER is either :ASCENDING (default) or :DESCENDING."))
+
+
+(defgeneric map-btree-keys (btree function
+                                  &key min max include-min include-max order)
+  (:documentation
+   "Calls FUNCTION for all keys in the btree where key is in the
+specified interval. FUNCTION must be a binary function; the first
+argument is the btree key, the second argument is the btree value (or
+persistent list of values, for btrees with non-unique keys).  FUNCTION
+will be called exactly once for each key in the btree.
+
+MIN, MAX, INCLUDE-MIN and INCLUDE-MAX specify the interval.  The
+interval is left-open if MIN is nil, right-open if MAX is nil.  The
+interval is inclusive on the left if INCLUDE-MIN is true (and
+exclusive on the left otherwise).  The interval is inclusive on the
+right if INCLUDE-MAX is true (and exclusive on the right otherwise).
+
+ORDER is either :ASCENDING (default) or :DESCENDING."))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; B-trees
@@ -77,6 +173,15 @@ length, measured in terms of nodes.
 (define-condition btree-type-error (btree-error type-error)
   ())
 
+(define-condition btree-deletion-error (btree-error)
+  ((key :initarg :key :reader btree-error-key)
+   (value :initarg :value :reader btree-error-value))
+  (:report (lambda (condition stream)
+             (format stream "Can't delete the association from ~S to ~S
+because it doesn't exist."
+                     (btree-error-key condition)
+                     (btree-error-value condition)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Classes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -92,12 +197,13 @@ length, measured in terms of nodes.
    (max-node-size :initarg :max-node-size
                   :reader btree-max-node-size
                   :initform 100
-                  :documentation "An integer specifying the preferred maximum number
-of keys per btree node.")
+                  :documentation "An integer specifying the preferred
+maximum number of keys per btree node.")
    (unique-keys-p :initarg :unique-keys-p
                   :reader btree-unique-keys-p
                   :initform t
-                  :documentation "If false, one key can correspond to more than one value.")
+                  :documentation
+                  "If false, one key can correspond to more than one value.")
    (key-type :initarg :key-type
              :reader btree-key-type
              :initform t
@@ -139,7 +245,7 @@ disk.")))
 
 (defmethod btree-key>= ((btree btree))
   (lambda (key1 key2)
-    (funcall (btree-key< btree) key2 key1)))
+    (not (funcall (btree-key< btree) key1 key2))))
 
 (defmethod btree-key<= ((btree btree))
   (let ((key< (btree-key< btree)))
@@ -173,6 +279,32 @@ child node will be KEY<= the child node's key in the parent node.")
                 :documentation "The number of key/value pairs in the index vector.")
    (leaf-p :initarg :leaf-p :initform nil :reader btree-node-leaf-p))
   (:metaclass persistent-class))
+
+;;
+;; Info functions
+;;
+
+(defmethod btree-nr-keys ((btree btree))
+  (if (slot-boundp btree 'root)
+      (btree-node-nr-keys (btree-root btree))
+    0))
+
+(defmethod btree-node-nr-keys ((node btree-node))
+  (if (btree-node-leaf-p node)
+      (btree-node-index-count node)
+    (loop for i below (btree-node-index-count node)
+          sum (btree-node-nr-keys (binding-value (node-binding node i))))))
+
+
+(defmethod btree-nr-values ((btree btree))
+  (if (btree-unique-keys-p btree)
+      (btree-nr-keys btree)
+    (let ((result 0))
+      (map-btree-keys btree
+                      (lambda (key p-values)
+                        (declare (ignore key))
+                        (incf result (p-length p-values))))
+      result)))
 
 ;;
 ;; Bindings
@@ -220,7 +352,7 @@ child node will be KEY<= the child node's key in the parent node.")
 
 (defmethod print-object ((node btree-node) stream)
   (print-unreadable-object (node stream :type t :identity t)
-    (format stream "with ~D pairs" (btree-node-index-count node))))
+    (format stream "with ~D bindings" (btree-node-index-count node))))
 
 ;;
 ;; Debugging
@@ -229,30 +361,56 @@ child node will be KEY<= the child node's key in the parent node.")
 (defun display-node (node)
   (pprint (node-as-cons node)))
 
-(defun node-as-cons (node)
+(defun node-as-cons (node &optional (unique-keys t))
   (loop with index = (btree-node-index node)
         with leaf-p = (btree-node-leaf-p node)
         for i below (btree-node-index-count node)
         for binding = (p-aref index i)
         collect (list (binding-key binding)
                       (if leaf-p
-                        (binding-value binding)
+                          (if unique-keys
+                              (binding-value binding)
+                            (unwrap-persistent-list (binding-value binding)))
                         (node-as-cons (binding-value binding))))))
 
+(defun btree-as-cons (btree)
+  (and (slot-value btree 'root)
+       (node-as-cons (btree-root btree) (btree-unique-keys-p btree))))
+
+
+;;
+;; Depth and balance
+;;
+
+(defmethod node-max-depth ((node btree-node))
+  (if (btree-node-leaf-p node)
+      0
+    (loop for i below (btree-node-index-count node)
+          for binding = (node-binding node i)
+          maximize (1+ (node-max-depth (binding-value binding))))))
+
+(defmethod node-min-depth ((node btree-node))
+  (if (btree-node-leaf-p node)
+      0
+    (loop for i below (btree-node-index-count node)
+          for binding = (node-binding node i)
+          minimize (1+ (node-min-depth (binding-value binding))))))
+
+(defmethod btree-depths ((btree btree))
+  (if (slot-value btree 'root)
+      (values (node-min-depth (btree-root btree))
+              (node-max-depth (btree-root btree)))
+    (values 0 0)))
+
+(defmethod btree-balanced-p ((btree btree))
+  (multiple-value-bind (min max)
+      (btree-depths btree)
+    (<= (- max min) 1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defgeneric btree-search (btree key &key errorp default-value)
-  (:documentation "Returns the value (or list of values, for btrees
-that don't have unique keys) corresponding to KEY.  If the btree has
-non-unique keys and no value is found, the empty list is returned.  If
-the btree has unique keys and no value is found, the result depends on
-ERRORP option: if ERRORP is true, a btree-search-error is signalled;
-otherwise, DEFAULT-VALUE is returned."))
-
- 
 (defmethod btree-search (btree key &key (errorp t) (default-value nil))
   (restart-case 
       (if (slot-boundp btree 'root)
@@ -260,7 +418,7 @@ otherwise, DEFAULT-VALUE is returned."))
         (not-found btree key errorp default-value))
     (use-value (value)
       :report (lambda (stream)
-                (format stream "Specifiy a value to use this time for key ~S." key))
+                (format stream "Specify a value to use this time for key ~S." key))
       :interactive (lambda ()
                      (format t "Enter a value for key ~S: " key)
                      (multiple-value-list (eval (read))))
@@ -285,28 +443,19 @@ otherwise, DEFAULT-VALUE is returned."))
 ;; Node-search
 ;;
 
-(defun find-binding-in-node (key node btree)
-  (let ((index-count (btree-node-index-count node)))
-    (and (plusp index-count)
-         (loop with array = (btree-node-index node)
-               with btree-key< = (btree-key< btree)
-               for i from 0 below index-count
-               for candidate = (p-aref array i)
-               for candidate-key = (binding-key candidate)
-               while (funcall btree-key< candidate-key key)
-               finally (when (funcall (btree-key= btree) key candidate-key)
-                         (return candidate))))))
-  
 (defgeneric node-search (btree node key errorp default-value)
   (:method ((btree btree) (node btree-node) key errorp default-value)
+   (let ((binding (node-search-binding btree node key)))
+     (if binding
+         (binding-value binding)
+       (not-found btree key errorp default-value)))))
+  
+(defgeneric node-search-binding (btree node key)
+  (:method ((btree btree) (node btree-node) key)
    (if (btree-node-leaf-p node)
-       (let ((binding (find-binding-in-node key node btree)))
-         (if binding
-             (binding-value binding)
-           (not-found btree key errorp default-value)))
+       (find-binding-in-node key node btree)
      (let ((subnode (find-subnode btree node key)))
-       (node-search btree subnode key errorp default-value)))))
-
+       (node-search-binding btree subnode key)))))
 
 (defun find-subnode (btree node key)
   "Returns the subnode that contains more information for the given key."
@@ -323,12 +472,21 @@ otherwise, DEFAULT-VALUE is returned."))
         do (return-from find-subnode (binding-value binding)))
   (error "This shouldn't happen."))
 
+(defun find-binding-in-node (key node btree)
+  (let ((index-count (btree-node-index-count node)))
+    (and (plusp index-count)
+         (loop with array = (btree-node-index node)
+               with btree-key< = (btree-key< btree)
+               for i from 0 below index-count
+               for candidate = (p-aref array i)
+               for candidate-key = (binding-key candidate)
+               while (funcall btree-key< candidate-key key)
+               finally (when (funcall (btree-key= btree) key candidate-key)
+                         (return candidate))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Insert
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defgeneric btree-insert (btree key value &key if-exists))
 
 (defmethod btree-insert ((btree btree) key value &key (if-exists :overwrite))
   ;; Check that key and value are of the right type.
@@ -361,14 +519,17 @@ otherwise, DEFAULT-VALUE is returned."))
 (defun check-btree (btree)
   ;; Check that it is completely sorted.
   (let (prev-key)
-    (map-btree btree
-               (lambda (key value)
-                 (declare (ignore value))
-                 (when prev-key
-                   (unless (funcall (btree-key< btree) prev-key key)
-                     (display-node (btree-root btree))
-                     (error "Btree inconsistency between ~D and ~D" prev-key key)))
-                 (setq prev-key key)))))
+    (map-btree-keys btree
+                    (lambda (key value)
+                      (declare (ignore value))
+                      (when prev-key
+                        (unless (funcall (btree-key< btree) prev-key key)
+                          (pprint (btree-as-cons btree))
+                          (error "Btree inconsistency between ~D and ~D" prev-key key)))
+                      (setq prev-key key))))
+  ;; Check that it is balanced
+  (unless (btree-balanced-p btree)
+    (error "Btree ~S is not balanced." btree)))
                    
 
 (defun make-root (btree left-key left-subnode right-key right-subnode)
@@ -385,11 +546,13 @@ otherwise, DEFAULT-VALUE is returned."))
 
 (defgeneric btree-node-insert (btree node parent-stack key value if-exists))
 
-(defmethod btree-node-insert ((btree btree) (node btree-node) parent-stack key value if-exists)
+(defmethod btree-node-insert ((btree btree) (node btree-node)
+                              parent-stack key value if-exists)
   (cond ((btree-node-leaf-p node)
          (leaf-insert btree node parent-stack key value if-exists))
         (t (let ((subnode (find-subnode btree node key)))
-             (btree-node-insert btree subnode (cons node parent-stack) key value if-exists)))))
+             (btree-node-insert btree subnode (cons node parent-stack)
+                                key value if-exists)))))
 
 (defun smallest-key (node)
   (if (btree-node-leaf-p node)
@@ -397,9 +560,10 @@ otherwise, DEFAULT-VALUE is returned."))
     (smallest-key (binding-value (node-binding node 0)))))
 
 (defun biggest-key (node)
-  (if (btree-node-leaf-p node)
-      (binding-key (node-binding node (1- (btree-node-index-count node))))
-    (biggest-key (binding-value (node-binding node (1- (btree-node-index-count node)))))))
+  (let ((end (1- (btree-node-index-count node))))
+    (if (btree-node-leaf-p node)
+        (binding-key (node-binding node end))
+      (biggest-key (binding-value (node-binding node end))))))
 
 
 (defun split-btree-node (btree node parent-stack key)
@@ -434,19 +598,29 @@ otherwise, DEFAULT-VALUE is returned."))
                     (parent-binding (node-binding parent node-pos))
                     (old-key (binding-key parent-binding)))
                (when (node-full-p btree parent)
-                 (setq parent (split-btree-node btree parent (rest parent-stack) old-key)
-                       node-pos (node-position node parent)))
+                 (multiple-value-bind (parent1 parent2)
+                     (split-btree-node btree parent (rest parent-stack) old-key)
+                   (setq node-pos (node-position node parent1)
+                         parent parent1)
+                   (when (null node-pos)
+                     (setq node-pos (node-position node parent2)
+                           parent parent2))
+                   (assert (not (null node-pos)))
+                   (setq parent-binding (node-binding parent node-pos)
+                         old-key (binding-key parent-binding))))
                ;; Replace the original subnode by the left-child and
                ;; add a new-binding with new-key & right-child.
                (setf (binding-key parent-binding) left-key
                      (binding-value parent-binding) left)
                ;; Insert a new binding for the right node.
                (insert-new-binding parent (1+ node-pos) old-key right))))
-      ;; Return the node that's relevant for KEY
+      ;; Return the node that's relevant for KEY.
+      ;; (And return the other node as a second value; it may be
+      ;; needed when recursively splitting parent nodes.)
       (if (or (eq key 'key-irrelevant)
               (funcall (btree-key< btree) left-key key))
-          right
-        left))))
+          (values right left)
+        (values left right)))))
 
 
 (defun node-position (node parent)
@@ -504,7 +678,7 @@ otherwise, DEFAULT-VALUE is returned."))
                         :btree btree
                         :key key
                         :value value))))
-          ;; For non-unique keys, we ignore the :if-exists options and
+          ;; For non-unique keys, we ignore the :IF-EXISTS option and
           ;; just add value to the list of values (unless value is already
           ;; there).
           (unless (p-find value (binding-value binding) :test (btree-value= btree))
@@ -530,50 +704,99 @@ otherwise, DEFAULT-VALUE is returned."))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Delete
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defmethod btree-delete ((btree btree) key value
+                         &key (if-does-not-exist :ignore))
+  (flet ((forget-it ()
+           ;; Signal an error or return quietly.
+           (ecase if-does-not-exist
+             (:ignore (return-from btree-delete))
+             (:error (error 'btree-deletion-error
+                            :btree btree
+                            :key key
+                            :value value)))))
+    (let ((binding (node-search-binding btree (btree-root btree) key)))
+      (cond ((not binding)
+             ;; The binding doesn't exist: forget it.
+             (forget-it))
+            ((btree-unique-keys-p btree)
+             (if (funcall (btree-value= btree) value (binding-value binding))
+                 ;; The binding exists and it has the right value: let
+                 ;; BTREE-DELETE-KEY do the real work.
+                 (btree-delete-key btree key)
+               ;; The binding exists but it has the wrong value: forget it.
+               (forget-it)))
+            (t
+             ;; For non-unique keys, we ignore the :IF-EXISTS option and
+             ;; just delete the value from the list of values (unless it's
+             ;; not there).
+             (flet ((check (x) (funcall (btree-value= btree) x value)))
+               (let ((values (binding-value binding)))
+                 ;; EFFICIENCY: We walk the list twice now, which is not
+                 ;; necessary.  Write a special purpose function for this
+                 ;; instead of just using P-FIND and P-DELETE.
+                 (if (p-find value values :test (btree-value= btree))
+                     (if (null (p-cdr values))
+                         ;; This is the last value in the list: remove the
+                         ;; key.
+                         (btree-delete-key btree key)
+                       ;; There's more than one value in the list: delete the
+                       ;; value that must be deleted and keep the other values.
+                       (setf (binding-value binding)
+                             (p-delete-if #'check (binding-value binding)
+                                          :count 1)))
+                   ;; The value is not in the list: forget it.
+                   (forget-it)))))))))
+
+
+
  
-(defgeneric btree-delete (btree key &key if-does-not-exist))
- 
-(defmethod btree-delete ((btree btree) key &key (if-does-not-exist :ignore))
+(defmethod btree-delete-key ((btree btree) key &key (if-does-not-exist :ignore))
   (if (slot-boundp btree 'root)
-    (btree-node-delete btree (btree-root btree) (list nil) key if-does-not-exist)
+      (btree-node-delete-key btree (btree-root btree) (list nil) key if-does-not-exist)
     (ecase if-does-not-exist
       (:ignore)
       (:error (error 'btree-search-error :btree btree :key key)))))
 
-(defgeneric btree-node-delete (btree node parent-stack key if-does-not-exist))
+(defgeneric btree-node-delete-key (btree node parent-stack key if-does-not-exist))
 
-(defmethod btree-node-delete ((btree btree) (node btree-node) parent-stack key if-does-not-exist)
-  (cond ((btree-node-leaf-p node)
-         (leaf-delete btree node parent-stack key if-does-not-exist))
-        (t (let ((subnode (find-subnode btree node key)))
-             (btree-node-delete btree subnode (cons node parent-stack) key if-does-not-exist)))))
+(defmethod btree-node-delete-key ((btree btree) (node btree-node)
+                                  parent-stack key if-does-not-exist)
+  (if (btree-node-leaf-p node)
+      (leaf-delete-key btree node parent-stack key if-does-not-exist)
+    (let ((subnode (find-subnode btree node key)))
+      (btree-node-delete-key btree subnode (cons node parent-stack)
+                             key if-does-not-exist))))
  
-(defun leaf-delete (btree leaf parent-stack key if-does-not-exist)
+(defun leaf-delete-key (btree leaf parent-stack key if-does-not-exist)
   (let ((binding (find-binding-in-node key leaf btree)))
     (unless binding
       (ecase if-does-not-exist
-        (:ignore (return-from leaf-delete))
+        (:ignore (return-from leaf-delete-key))
         (:error (error 'btree-search-error :btree btree :key key))))
     (remove-key leaf key)
     (unless (node-full-enough-p btree leaf)
       (enlarge-node btree leaf parent-stack))))
 
 (defun enlarge-node (btree node parent-stack)
+  ;; NODE is not full enough (less than half full), so we redistribute
+  ;; elements over NODE and one of its siblings.  (Unless both sibling
+  ;; are only half full; in that case we merge some nodes.)
   (let ((parent (first parent-stack)))
     ;; Don't enlarge root node.
     (unless parent
       (return-from enlarge-node))
     (let ((node-pos (node-position node parent))
           left-sibling)
-      (when (plusp node-pos)
+      (when (plusp node-pos) ; there is a left sibling
         (setq left-sibling (binding-value (node-binding parent (1- node-pos))))
         (unless (node-has-min-size-p btree left-sibling)
-          (distribute-nodes left-sibling node parent)
+          (distribute-elements left-sibling node parent)
           (return-from enlarge-node)))
-      (when (< (1+ node-pos) (btree-node-index-count parent))
+      (when (< (1+ node-pos) (btree-node-index-count parent)) ; there is a right sibling
         (let ((right-sibling (binding-value (node-binding parent (1+ node-pos)))))
           (unless (node-has-min-size-p btree right-sibling)
-            (distribute-nodes node right-sibling parent)
+            (distribute-elements node right-sibling parent)
             (return-from enlarge-node))
           (join-nodes btree node right-sibling parent-stack)
           (return-from enlarge-node)))
@@ -582,10 +805,16 @@ otherwise, DEFAULT-VALUE is returned."))
         (return-from enlarge-node))))
   (error "This should not happen."))
 
-(defun distribute-nodes (left-node right-node parent)
+ 
+;; The idea is that DISTRIBUTE-ELEMENTS will only be called if the union of
+;; the two nodes has enough elements for two "legal" nodes.  JOIN-NODES,
+;; OTOH, makes one node out of two, deletes one key in the parent, and
+;; finally checks the parent to see if it has to be enlarged as well.
+
+(defun distribute-elements (left-node right-node parent)
   ;; One of LEFT-NODE and RIGHT-NODE doesn't have enough elements, but
   ;; the union of both has enough elements for two nodes, so we
-  ;; distribute the elements between the two nodes.
+  ;; redistribute the elements between the two nodes.
   (let* ((left-index (btree-node-index left-node))
          (left-length (btree-node-index-count left-node))
          (right-index (btree-node-index right-node))
@@ -641,7 +870,14 @@ otherwise, DEFAULT-VALUE is returned."))
     ;; Check if we have to enlarge the parent as well because we
     ;; removed one key.
     (unless (node-full-enough-p btree parent)
-      (enlarge-node btree parent (rest parent-stack)))))
+      (enlarge-node btree parent (rest parent-stack)))
+    ;; If the parent node is the root node and it has only 1 child,
+    ;; make that child the root.
+    (when (and (p-eql parent (btree-root btree))
+               (= 1 (btree-node-index-count parent)))
+      (setf (btree-root btree)
+            (binding-value (node-binding parent 0))))))
+
 
 (defun shorten (node new-length)
   ;; Set length of NODE to NEW-LENGTH, set bindings behind NEW-LENGTH
@@ -671,41 +907,114 @@ otherwise, DEFAULT-VALUE is returned."))
       (floor (btree-max-node-size btree) 2)))
 
 (defun node-has-min-size-p (btree node)
-  (= (btree-node-index-count node)
-     (floor (btree-max-node-size btree) 2)))
+  (<= (btree-node-index-count node)
+      (floor (btree-max-node-size btree) 2)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Iterating
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defgeneric map-btree (btree function
-                             &key min max include-min include-max order)
-  (:documentation "Calls FUNCTION for all key/value pairs in the btree where key
-is in the specified interval. FUNCTION must be a binary function; the first
-argument is the btree key, the second argument is the btree value (or list of
-values, for btrees with non-unique keys).
-
-MIN, MAX, INCLUDE-MIN and INCLUDE-MAX specify the interval.  The interval is
-left-open if MIN is nil, right-open if MAX is nil.  The interval is inclusive
-on the left if INCLUDE-MIN is true (and exclusive on the left otherwise).
-The interval is inclusive on the right if INCLUDE-MAX is true (and exclusive
-on the right otherwise).
-
-ORDER is either :ASCENDING (default) or :DESCENDING."))
-
 (defmethod map-btree ((btree btree) function
                       &key min max include-min include-max (order :ascending))
-  (when (slot-boundp btree 'root)
-    (map-btree-node btree (slot-value btree 'root) function
-                    min max include-min include-max order)))
+  (let ((fn (if (btree-unique-keys-p btree)
+                function
+              (lambda (key p-values)
+                ;; Call FUNCTION once for each value associated with KEY.
+                (p-mapc (lambda (value) (funcall function key value))
+                        p-values)))))
+    (map-btree-keys btree fn
+                    :min min
+                    :max max
+                    :include-min include-min
+                    :include-max include-max
+                    :order order)))
 
-(defgeneric map-btree-node (btree node function min max include-min include-max order)
-  ;; DO: This only works when MIN, MAX, INCLUDE-MIN and INCLUDE-MAX are all nil.
-  ;; Implement the general case. Also implement the descending order.
-  (:method ((btree btree) (node btree-node) function min max include-min include-max order)
-   (loop for i below (btree-node-index-count node)
-         do (let ((binding (node-binding node i)))
-              (if (btree-node-leaf-p node)
-                  (funcall function (binding-key binding) (binding-value binding))
-                (map-btree-node btree (binding-value binding)
-                                function min max include-min include-max order))))))
+
+(defmethod map-btree-keys ((btree btree) function
+                           &key min max include-min include-max (order :ascending))
+  (when (slot-boundp btree 'root)
+    (map-btree-keys-for-node btree (slot-value btree 'root) function
+                             min max include-min include-max order)))
+
+(defgeneric map-btree-keys-for-node (btree node function
+                                     min max include-min include-max
+                                     order)
+  (:method ((btree btree) (node btree-node) function
+            min max include-min include-max
+            order)
+     (if (btree-node-leaf-p node)
+         ;; Leaf node.
+         (let ((too-small-p
+                (if min
+                    (if include-min
+                        (lambda (key) (funcall (btree-key< btree) key min))
+                      (lambda (key) (funcall (btree-key<= btree) key min)))
+                  (constantly nil)))
+               (too-big-p
+                (if max
+                    (if include-max
+                        (lambda (key) (funcall (btree-key> btree) key max))
+                      (lambda (key) (funcall (btree-key>= btree) key max)))
+                  (constantly nil))))
+           (ecase order
+             (:ascending
+              (loop for i below (btree-node-index-count node)
+                    for binding = (node-binding node i)
+                    for key = (binding-key binding)
+                    ;; If the current key is too big, all remaining keys
+                    ;; will also be too big.
+                    while (not (funcall too-big-p key))
+                    do (unless (funcall too-small-p key)
+                         (funcall function key (binding-value binding)))))
+             (:descending
+              (loop for i from (1- (btree-node-index-count node)) downto 0
+                    for binding = (node-binding node i)
+                    for key = (binding-key binding)
+                    ;; If the current key is too small, all remaining keys
+                    ;; will also be too small.
+                    while (not (funcall too-small-p key))
+                    do (unless (funcall too-big-p key)
+                         (funcall function key (binding-value binding)))))))
+       ;; Intermediate node.
+       (ecase order
+         (:ascending
+          (loop for i below (btree-node-index-count node)
+                for binding = (node-binding node i)
+                for key = (binding-key binding)
+                ;; All child keys will be less than or equal to the current key
+                ;; and greater than the key to the left (if there is one).
+                ;; So if MAX is less than the left neighbour key, we're done.
+                until (and max
+                           (plusp i)
+                           (funcall (btree-key< btree)
+                                    max
+                                    (binding-key (node-binding node (1- i)))))
+                ;; And if MIN is greater than the current key, we can skip this
+                ;; child.
+                unless (and min
+                            (not (eql key 'key-irrelevant))
+                            (funcall (btree-key> btree) min key))
+                do (map-btree-keys-for-node btree (binding-value binding)
+                                            function min max include-min include-max
+                                            order)))
+         (:descending
+          (loop for i from (1- (btree-node-index-count node)) downto 0
+                for binding = (node-binding node i)
+                for key = (binding-key binding)
+                ;; All child keys will be less than or equal to the current key
+                ;; and greater than the key to the left (if there is one).
+                ;; So if MIN is greater than the current key, we're done.
+                until (and min
+                           (not (eql key 'key-irrelevant))
+                           (funcall (btree-key> btree) min key))
+                ;; And if MAX is less than the left neighbour key, we can skip
+                ;; this child.
+                unless (and max
+                            (plusp i)
+                            (funcall (btree-key< btree)
+                                     max
+                                     (binding-key (node-binding node (1- i)))))
+                do (map-btree-keys-for-node btree (binding-value binding)
+                                            function min max include-min include-max
+                                            order)))))))
+
