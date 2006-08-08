@@ -1,4 +1,4 @@
-;; $Id: test.lisp,v 1.6 2006-08-08 13:35:18 alemmens Exp $
+;; $Id: test.lisp,v 1.7 2006-08-08 15:48:24 alemmens Exp $
 
 (in-package :test-rucksack)
 
@@ -223,7 +223,6 @@
        (format t "~&Committing..."))))
 
 (defun test-btree (&key (n 20000) (node-size 100) (delete (floor n 10))
-                        (unique-keys t)
                         check-contents)
   ;; Create a rucksack with a btree of size N that maps random
   ;; integers to the equivalent strings as a cardinal English number.

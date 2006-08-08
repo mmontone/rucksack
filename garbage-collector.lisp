@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.15 2006-08-08 13:35:18 alemmens Exp $
+;; $Id: garbage-collector.lisp,v 1.16 2006-08-08 15:48:24 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -45,6 +45,9 @@ evacuating (depending on garbage collector type) any child objects."))
                         :finishing
                         :ready)
           :accessor state)
+   (doing-work :initform nil :accessor gc-doing-work
+               :documentation
+               "A flag to prevent recursive calls to COLLECT-SOME-GARBAGE.")
    ;; Some counters that keep track of the amount of work done by
    ;; the garbage collector.
    (nr-object-bytes-marked :initform 0 :accessor nr-object-bytes-marked)
@@ -207,35 +210,40 @@ collector."
   ;; Collect at least the specified amount of garbage
   ;; (i.e. mark or sweep at least the specified amount of octets).
   ;; DO: We probably need a heap lock here?
-  (loop until (or (eql (state heap) :ready) (<= amount 0))
-        do (ecase (state heap)
-             (:starting
-              ;; We were not collecting garbage; start doing that now.
-              (setf (nr-object-bytes-marked heap) 0
-                    (nr-heap-bytes-scanned heap) 0
-                    (nr-heap-bytes-sweeped heap) 0
-                    (nr-object-bytes-sweeped heap) 0
-                    ;; We don't need to copy the roots, because we're not
-                    ;; going to modify the list (just push and pop).
-                    (roots heap) (slot-value (rucksack heap) 'roots))
-              (setf (state heap) :marking-object-table))
-             (:marking-object-table
-              (decf amount (mark-some-objects-in-table heap amount)))
-             (:scanning
-              (decf amount (mark-some-roots heap amount)))
-             (:sweeping-heap
-              (decf amount (sweep-some-heap-blocks heap amount)))
-             (:sweeping-object-table
-              (decf amount (sweep-some-object-blocks heap amount)))
-             (:finishing
-              ;;  Grow the heap by the specified GROW-SIZE.
-              (if (integerp (grow-size heap))
-                  (incf (max-heap-end heap) (grow-size heap))
-                (setf (max-heap-end heap)
-                      (round (* (grow-size heap) (max-heap-end heap)))))
-              ;;
-              (setf (state heap) :ready)))))
-
+  (unless (gc-doing-work heap) ; Don't do recursive GCs.
+    (unwind-protect
+        (progn
+          (setf (gc-doing-work heap) t)
+          (loop until (or (eql (state heap) :ready) (<= amount 0))
+                do (ecase (state heap)
+                     (:starting
+                      ;; We were not collecting garbage; start doing that now.
+                      (setf (nr-object-bytes-marked heap) 0
+                            (nr-heap-bytes-scanned heap) 0
+                            (nr-heap-bytes-sweeped heap) 0
+                            (nr-object-bytes-sweeped heap) 0
+                            ;; We don't need to copy the roots, because we're not
+                            ;; going to modify the list (just push and pop).
+                            (roots heap) (slot-value (rucksack heap) 'roots))
+                      (setf (state heap) :marking-object-table))
+                     (:marking-object-table
+                      (decf amount (mark-some-objects-in-table heap amount)))
+                     (:scanning
+                      (decf amount (mark-some-roots heap amount)))
+                     (:sweeping-heap
+                      (decf amount (sweep-some-heap-blocks heap amount)))
+                     (:sweeping-object-table
+                      (decf amount (sweep-some-object-blocks heap amount)))
+                     (:finishing
+                      ;;  Grow the heap by the specified GROW-SIZE.
+                      (if (integerp (grow-size heap))
+                          (incf (max-heap-end heap) (grow-size heap))
+                        (setf (max-heap-end heap)
+                              (round (* (grow-size heap) (max-heap-end heap)))))
+                      ;;
+                      (setf (state heap) :ready)))))
+      (setf (gc-doing-work heap) nil))))
+  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Marking the object table
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
