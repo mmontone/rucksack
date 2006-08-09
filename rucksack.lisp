@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.7 2006-05-28 11:22:54 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.8 2006-08-09 13:23:18 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -206,6 +206,17 @@ refer to the slot names.
   #-(or allegro lispworks sbcl openmcl)
   (not-implemented 'with-lock))
 
+(defun process-lock (lock)
+  #+lispworks
+  (mp:process-lock lock)
+  #-lispworks
+  (not-implemented 'process-lock))
+
+(defun process-unlock (lock)
+  #+lispworks
+  (mp:process-unlock lock)
+  #-lispworks
+  (not-implemented 'process-unlock))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Rucksacks
@@ -299,7 +310,6 @@ index maps slot values to object ids.")))
     ;; We don't need to nreverse the list, because the order isn't specified.
     result))
 
-
 ;;
 ;; Opening
 ;;
@@ -310,7 +320,7 @@ index maps slot values to object ids.")))
 (defun open-rucksack (directory-designator 
                       &rest args
                       &key 
-                      (class 'standard-rucksack)
+                      (class 'serial-transaction-rucksack)
                       (if-exists :overwrite) (if-does-not-exist :create)
                       (cache-class 'standard-cache) (cache-args '())
                       &allow-other-keys)

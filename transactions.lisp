@@ -1,4 +1,4 @@
-;; $Id: transactions.lisp,v 1.8 2006-08-08 13:35:18 alemmens Exp $
+;; $Id: transactions.lisp,v 1.9 2006-08-09 13:23:18 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -142,6 +142,32 @@ returns nil."))
     ;; And return the new transaction.
     transaction))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Rucksacks with serial transactions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defclass serial-transaction-rucksack (standard-rucksack)
+  ((transaction-lock :initform (make-lock :name "Rucksack transaction lock")
+                     :reader rucksack-transaction-lock))
+  (:documentation
+   "A serial transaction rucksack allows only one active transaction
+at a time."))
+
+(defmethod transaction-start-1 :before ((cache standard-cache)
+                                        (rucksack serial-transaction-rucksack)
+                                        &key &allow-other-keys)
+  (process-lock (rucksack-transaction-lock rucksack)))
+
+(defmethod transaction-commit-1 :after ((transaction standard-transaction)
+                                        (cache standard-cache)
+                                        (rucksack serial-transaction-rucksack))
+  (process-unlock (rucksack-transaction-lock rucksack)))
+
+(defmethod transaction-rollback-1 :after ((transaction standard-transaction)
+                                          (cache standard-cache)
+                                          (rucksack serial-transaction-rucksack))
+  (process-unlock (rucksack-transaction-lock rucksack)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Committing a transaction
@@ -160,30 +186,40 @@ returns nil."))
   ;; 2. Commit all dirty objects.
   ;; Q: What if this is interleaved with other commits?
   (let ((queue (dirty-queue transaction))
-        (table (dirty-objects transaction)))
-    (loop until (queue-empty-p queue)
-          do (let* ((id (queue-remove queue))
-                    (object (gethash id table)))
-               (when object
-                 ;; If it's not in the dirty-objects table anymore, the
-                 ;; object was already saved during this transaction-commit.
-                 ;; That's possible, because the queue can contain duplicates.
-                 (save-dirty-object object cache transaction id)
-                 ;; Remove from hash-table too.
-                 (remhash id table))))
+        (table (dirty-objects transaction))
+        (heap (heap cache))
+        nr-allocated-octets)
+    (with-allocation-counter (heap)
+      (loop until (queue-empty-p queue)
+            do (let* ((id (queue-remove queue))
+                      (object (gethash id table)))
+                 (when object
+                   ;; If it's not in the dirty-objects table anymore, the
+                   ;; object was already saved during this transaction-commit.
+                   ;; That's possible, because the queue can contain duplicates.
+                   (save-dirty-object object cache transaction id)
+                   ;; Remove from hash-table too.
+                   (remhash id table))))
+      (setq nr-allocated-octets (nr-allocated-octets heap)))
     ;; Check for consistency between hash table and queue.
     (unless (zerop (hash-table-count table))
       (internal-rucksack-error
  "Mismatch between dirty hash-table and queue while committing ~S:
 ~D objects left in hash-table."
 			       transaction
- 			       (hash-table-count table))))
-  ;; 3. Remove transaction from the cache's open transactions.
-  (close-transaction cache transaction)
-  ;; 4. Delete the commit file to indicate that everything went fine
-  ;; and we don't need to recover from this commit.
-  (delete-commit-file transaction cache))
+ 			       (hash-table-count table)))
+    ;; 3. Remove transaction from the cache's open transactions.
+    (close-transaction cache transaction)
+    ;; 4. Delete the commit file to indicate that everything went fine
+    ;; and we don't need to recover from this commit.
+    (delete-commit-file transaction cache)
+    ;; 5. Let the garbage collector do an amount of work proportional
+    ;; to the number of octets that were allocated during the commit.
+    (collect-some-garbage heap
+                          (gc-work-for-size heap nr-allocated-octets))))
 
+
+                                        
 ;;
 ;; Commit file
 ;;

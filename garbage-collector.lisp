@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.16 2006-08-08 15:48:24 alemmens Exp $
+;; $Id: garbage-collector.lisp,v 1.17 2006-08-09 13:23:18 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -46,6 +46,8 @@ evacuating (depending on garbage collector type) any child objects."))
                         :ready)
           :accessor state)
    (doing-work :initform nil :accessor gc-doing-work
+               ;; NOTE: This flag is probably not necessary anymore and
+               ;; should probably be removed.
                :documentation
                "A flag to prevent recursive calls to COLLECT-SOME-GARBAGE.")
    ;; Some counters that keep track of the amount of work done by
@@ -129,11 +131,13 @@ rounded up.)")))
   ;;
   ;; or: Work = (Size / Free) * WorkLeft
   ;;
-  (let* ((free (free-space heap))
-         (work-left (work-left heap)))
-    (if (>= size free)
-        work-left
-      (floor (* size work-left) free))))
+  (if (zerop size)
+      0
+    (let* ((free (free-space heap))
+           (work-left (work-left heap)))
+      (if (>= size free)
+          work-left
+        (floor (* size work-left) free)))))
 
 
 (defmethod free-space ((heap mark-and-sweep-heap))

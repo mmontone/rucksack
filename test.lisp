@@ -1,4 +1,4 @@
-;; $Id: test.lisp,v 1.7 2006-08-08 15:48:24 alemmens Exp $
+;; $Id: test.lisp,v 1.8 2006-08-09 13:23:18 alemmens Exp $
 
 (in-package :test-rucksack)
 
@@ -187,7 +187,7 @@
 
 (defparameter *format-strings* 
   ;; Different ways of printing integers.
-  '("~R" "~:R" "~@R" "~D"))
+  '("~R" "~:R" "... ~R" "~D"))
 
 (defun shuffle (array)
   (loop with n = (array-dimension array 0)
@@ -241,10 +241,7 @@
                 when (zerop (mod i 1000))
                 do (format t "~D " i)
                 do (btree-insert btree key
-                                 (format nil (first *format-strings*) key))
-                do (unless unique-keys
-                     (loop for format-string in (rest *format-strings*)
-                           do (btree-insert btree key (format nil format-string key)))))
+                                 (format nil (first *format-strings*) key)))
           (add-rucksack-root btree rucksack))))
     (with-rucksack (rucksack *test-suite*)
       (with-transaction ()
@@ -301,7 +298,7 @@
                           strings key value))))))
 
 
-(defun test-non-unique-btree (&key (n 20000) (node-size 100) (delete (floor n 8))
+(defun test-non-unique-btree (&key (n 20000) (node-size 100) (delete (floor n 10))
                                    check-contents)
   ;; Create a rucksack with a btree of size N (N must be a multiple of 4) that
   ;; maps random integers to four different equivalent strings (in Roman and
@@ -407,6 +404,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun check-gc (n)
+  ;; This used to fail for large values of N (e.g. 10,000).
   (with-rucksack (rucksack *test-suite* :if-exists :supersede)
     (with-transaction ()
       ;; after this, INNER can be reached directly from the root

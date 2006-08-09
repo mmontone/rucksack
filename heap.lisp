@@ -1,4 +1,4 @@
-;; $Id: heap.lisp,v 1.9 2006-08-04 10:26:23 alemmens Exp $
+;; $Id: heap.lisp,v 1.10 2006-08-09 13:23:18 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -24,6 +24,16 @@
 (defgeneric (setf heap-end) (value heap)
   (:documentation "Modifies the end of the heap."))
 
+(defgeneric allocate-block (heap &key size expand)
+  (:documentation "Allocates a block of the requested size and returns
+the heap position of that block.  If the free list is full and EXPAND
+is true, the system will try to expand the free list; otherwise it
+returns nil.
+  As a second value, ALLOCATE-BLOCK returns the number of octets that
+were allocated.
+Note: both the requested size and the returned heap position include
+the block's header."))
+
 ;; DO: Many more generic functions.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -47,7 +57,13 @@ heap cell.")
    (max-size :initarg :max-size
              :initform nil :accessor max-heap-size
              :documentation "The maximum size (in octets) for the heap.
-If nil, the heap is allowed to expand indefinitely.")))
+If nil, the heap is allowed to expand indefinitely.")
+   (nr-allocated-octets :initform 0
+                        :accessor nr-allocated-octets
+                        :documentation "The number of octets that have been
+allocated by ALLOCATE-BLOCK since the last time that RESET-ALLOCATION-COUNTER
+was called.")))
+                        
 
 
 ;;
@@ -134,6 +150,29 @@ the specified maximum heap size of ~D octets."
     (initialize-block new-block block-size heap)
     new-block))
 
+;;
+;; Keeping track of allocations
+;;
+
+(defmethod allocate-block :around ((heap heap) &key &allow-other-keys)
+  (multiple-value-bind (block nr-octets)
+      (call-next-method)
+    (incf (nr-allocated-octets heap) nr-octets)
+    (values block nr-octets)))
+
+(defmethod reset-allocation-counter ((heap heap))
+  ;; Resets the allocation counter (and returns the old value of the counter).
+  (let ((old-value (nr-allocated-octets heap)))
+    (setf (nr-allocated-octets heap) 0)
+    old-value))
+
+(defmacro with-allocation-counter ((heap) &body body)
+  (let ((heap-var (gensym "HEAP"))
+        (old-counter (gensym "COUNTER")))
+    `(let* ((,heap-var ,heap)
+            (,old-counter (reset-allocation-counter ,heap-var)))
+       (unwind-protect (progn ,@body)
+         (setf (nr-allocated-octets ,heap-var) ,old-counter)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Free list heap
@@ -266,14 +305,6 @@ specified position.  This includes the size of the block header."))
 ;; Allocating and deallocating blocks
 ;;
 
-(defgeneric allocate-block (heap &key size expand)
-  (:documentation "Allocates a block of the requested size and returns
-the heap position of that block.  If the free list is full and EXPAND
-is true, the system will try to expand the free list; otherwise it
-returns nil.
-Note: both the requested size and the returned heap position include
-the block's header."))
-
 (defmethod allocate-block ((heap free-list-heap) 
                            &key (size (min-block-size heap)) (expand t))
   ;; We don't bother to do something with the unused part of the block.
@@ -288,7 +319,8 @@ the block's header."))
     (when (free-list-empty-p size-class heap)
       (if expand
           (setq block (expand-free-list size-class heap))
-        (return-from allocate-block nil)))
+        (return-from allocate-block
+          (values nil 0))))
     ;; Unhook the block from the free list
     ;; (the block header of an unused block contains a pointer to the
     ;; next unused block).
@@ -298,7 +330,7 @@ the block's header."))
     ;; into header.
     (setf (block-size block heap) (size-class-block-size size-class heap))
     ;; Return the block.
-    block))
+    (values block size)))
 
 
 (defmethod deallocate-block (block (heap free-list-heap))
