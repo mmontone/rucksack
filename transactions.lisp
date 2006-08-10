@@ -1,4 +1,4 @@
-;; $Id: transactions.lisp,v 1.9 2006-08-09 13:23:18 alemmens Exp $
+;; $Id: transactions.lisp,v 1.10 2006-08-10 12:36:17 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -216,8 +216,20 @@ at a time."))
     ;; 5. Let the garbage collector do an amount of work proportional
     ;; to the number of octets that were allocated during the commit.
     (collect-some-garbage heap
-                          (gc-work-for-size heap nr-allocated-octets))))
+                          (gc-work-for-size heap nr-allocated-octets))
+    ;; 6. Make sure that all changes are actually on disk before
+    ;; we continue.
+    (finish-all-output rucksack)))
 
+(defmethod finish-all-output ((rucksack standard-rucksack))
+  (let ((cache (rucksack-cache rucksack)))
+    (finish-heap-output (heap cache))
+    (finish-heap-output (object-table (heap cache)))
+    ;; NOTE: I'm not totally sure that saving the roots and schema table
+    ;; for each transaction commit is necessary, but it probably is.  So
+    ;; let's play safe for now.
+    (save-roots-if-necessary rucksack)
+    (save-schema-table-if-necessary (schema-table cache))))
 
                                         
 ;;

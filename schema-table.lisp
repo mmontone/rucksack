@@ -1,4 +1,4 @@
-;; $Id: schema-table.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
+;; $Id: schema-table.lisp,v 1.3 2006-08-10 12:36:17 alemmens Exp $
 
 (in-package :rucksack)          
 
@@ -86,6 +86,9 @@ at the next commit.")))
   (setf (dirty-p table) nil) 
   (save-objects (list table) (schema-table-pathname table)))
 
+(defmethod save-schema-table-if-necessary ((table schema-table))
+  (when (dirty-p table)
+    (save-schema-table table)))
 
 (defun open-schema-table (pathname &key if-exists if-does-not-exist)
   ;; Load existing schemas from the file.

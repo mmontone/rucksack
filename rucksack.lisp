@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.8 2006-08-09 13:23:18 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.9 2006-08-10 12:36:17 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -283,6 +283,9 @@ index maps slot values to object ids.")))
                 (rucksack-roots-pathname rucksack))
   (setf (roots-changed-p rucksack) nil))
 
+(defun save-roots-if-necessary (rucksack)
+  (when (roots-changed-p rucksack)
+    (save-roots rucksack)))
   
 (defmethod add-rucksack-root (object (rucksack standard-rucksack))
   (add-rucksack-root-id (object-id object) rucksack))
@@ -438,7 +441,7 @@ file is missing."
            (rucksack-add-class-index rucksack class :errorp t))
           (t
            ;; We don't need to change anything
-           'no-change))))
+           :no-change))))
 
 (defmethod rucksack-update-slot-indexes ((rucksack standard-rucksack)
                                          (class persistent-class))
@@ -447,7 +450,7 @@ file is missing."
           (current-index (rucksack-slot-index rucksack class slot)))
       (cond ((index-spec-equal index-needed current-index)
              ;; We keep the same index: no change needed.
-             'no-change)
+             :no-change)
             ((and current-index (null index-needed))
              ;; The index is not wanted anymore: remove it.
              (rucksack-remove-slot-index rucksack class slot :errorp t))
@@ -519,7 +522,8 @@ file is missing."
 (defmethod rucksack-make-class-index 
            ((rucksack standard-rucksack) class
             &key
-            (index-spec '(btree :key< < :key= = :value= eql)))
+            (index-spec '(btree :key< < :key= = :value= eql :unique-keys-p t)))
+  ;; A class index maps object ids to objects.
   (declare (ignore class))
   (make-index index-spec))
 

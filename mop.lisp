@@ -1,4 +1,4 @@
-;; $Id: mop.lisp,v 1.3 2006-05-28 12:07:55 alemmens Exp $
+;; $Id: mop.lisp,v 1.4 2006-08-10 12:36:16 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -25,7 +25,19 @@
 transient slots.  Default value is T.")
    (index :initarg :index
           :initform nil
-          :reader slot-index)))
+          :reader slot-index
+          :documentation "An index spec for indexed slots, NIL for
+non-indexed slots.  Default value is NIL.")
+   (unique :initarg :unique
+           :initform nil
+           :reader slot-unique
+           :documentation "Only relevant for indexed slots.  Can be
+either NIL (slot values are not unique), T (slot values are unique,
+and an error will be signaled for attempts to add a duplicate slot
+value) or :NO-ERROR (slot values are unique, but no error will be
+signaled for attempts to add a duplicate slot value).  :NO-ERROR
+should only be used when speed is critical.
+  The default value is NIL.")))
 
 (defclass persistent-direct-slot-definition
     (persistent-slot-mixin standard-direct-slot-definition)
@@ -49,7 +61,7 @@ transient slots.  Default value is T.")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Processing class and slot options for objects of metaclass
-;; PERSISTENT-CLASS.
+;;; PERSISTENT-CLASS.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #+lispworks
@@ -58,7 +70,7 @@ transient slots.  Default value is T.")
                                        value
                                        already-processed-options
                                        slot)
-  (if (member option '(:index :persistence))
+  (if (member option '(:index :persistence :unique))
       (list* option value already-processed-options)
     (call-next-method)))
 
@@ -66,7 +78,7 @@ transient slots.  Default value is T.")
 (defmethod clos:process-a-class-option ((class persistent-class)
                                         option-name
                                         value)
-  (if (member value '(:index))
+  (if (member value '(:index :unique))
       (list option-name value)
     (call-next-method)))
 
@@ -169,28 +181,28 @@ transient slots.  Default value is T.")
 (defmethod compute-effective-slot-definition ((class persistent-class)
                                               slot-name
                                               direct-slot-definitions)
-  (let ((effective-slotd (call-next-method))
-        (persistent-slotds
-         (remove-if-not (lambda (slotd)
-                          (typep slotd 'persistent-direct-slot-definition))
+  (let ((effective-slotdef (call-next-method))
+        (persistent-slotdefs
+         (remove-if-not (lambda (slotdef)
+                          (typep slotdef 'persistent-direct-slot-definition))
                         direct-slot-definitions)))
 
     ;; If any direct slot is persistent, then the effective one is too.
-    (setf (slot-value effective-slotd 'persistence)
-          (some #'slot-persistence persistent-slotds))
+    (setf (slot-value effective-slotdef 'persistence)
+          (some #'slot-persistence persistent-slotdefs))
 
-    ;; If exactly one direct slot is indexed, then the effecive one is
+    ;; If exactly one direct slot is indexed, then the effective one is
     ;; too. If more then one is indexed, signal an error.
-    (let ((index-slotds (remove-if-not #'slot-index persistent-slotds)))
-      (cond ((cdr index-slotds)
+    (let ((index-slotdefs (remove-if-not #'slot-index persistent-slotdefs)))
+      (cond ((cdr index-slotdefs)
              (error "Multiple indexes for slot ~S in ~S:~% ~{~S~^, ~}."
                     slot-name class
-                    (mapcar #'slot-index index-slotds)))
-            (index-slotds
-             (setf (slot-value effective-slotd 'index)
-                   (slot-index (car index-slotds))))))
+                    (mapcar #'slot-index index-slotdefs)))
+            (index-slotdefs
+             (setf (slot-value effective-slotdef 'index)
+                   (slot-index (car index-slotdefs))))))
      
     ;; Return the effective slot definition.
-    effective-slotd))
+    effective-slotdef))
 
 

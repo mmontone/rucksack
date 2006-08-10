@@ -1,4 +1,4 @@
-;; $Id: objects.lisp,v 1.7 2006-08-09 13:23:18 alemmens Exp $
+;; $Id: objects.lisp,v 1.8 2006-08-10 12:36:16 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -88,10 +88,11 @@ to data in the cache.  They are never saved on disk."))
    (transaction-id :reader transaction-id)
    (rucksack :initarg :rucksack :initform (current-rucksack) :reader rucksack)
    (contents :initarg :contents :accessor contents))
-  (:documentation "PERSISTENT-DATA classes do not have
-PERSISTENT-CLASS as metaclass because we don't want to specialize
-SLOT-VALUE-USING-CLASS & friends for persistent-data instances.  Their
-contents are accessed by special functions like P-CAR instead."))
+  (:documentation
+ "PERSISTENT-DATA classes do not have PERSISTENT-CLASS as metaclass
+because we don't want to specialize SLOT-VALUE-USING-CLASS & friends
+for persistent-data instances.  Their contents are accessed by special
+functions like P-CAR instead."))
 
 (defmethod print-object ((object persistent-data) stream)
   (print-unreadable-object (object stream :type t :identity nil)

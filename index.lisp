@@ -1,4 +1,4 @@
-;; $Id: index.lisp,v 1.3 2006-08-08 13:35:18 alemmens Exp $
+;; $Id: index.lisp,v 1.4 2006-08-10 12:36:16 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -62,7 +62,7 @@ IF-DOES-NOT-EXIST can be either :IGNORE (default) or :ERROR."))
 
 ;; An index spec is a symbol or a list starting with a symbol
 ;; and followed by a plist of keywords and values.
-;; Examples: BTREE, (BTREE :KEY< <  :VALUE= EQL)
+;; Examples: BTREE, (BTREE :KEY< <  :VALUE= P-EQL)
 
 (defun make-index (index-spec)
   (if (symbolp index-spec)
@@ -82,3 +82,28 @@ IF-DOES-NOT-EXIST can be either :IGNORE (default) or :ERROR."))
              (plist-subset-p (rest index-spec-1) (rest index-spec-2))
              (plist-subset-p (rest index-spec-2) (rest index-spec-1))))))
 
+
+;;
+;; Predefined index specs for slots of persistent classes.
+;;
+
+(defparameter *number-index*
+  '(btree :key< < :value= p-eql))
+
+(defparameter *string-index*
+  '(btree :key< string< :value p-eql))
+
+(defparameter *symbol-index*
+  '(btree :key< string< :value p-eql))
+
+(defparameter *case-insensitive-string-index*
+  '(btree :key< string-lessp :value p-eql))
+
+(defparameter *trimmed-string-index*
+  ;; Like *STRING-INDEX*, but with whitespace trimmed left and right.
+  '(btree :key< string<
+          :key-key trim-whitespace
+          :value p-eql))
+  
+(defun trim-whitespace (string)
+  (string-trim '(#\space #\tab #\return #\newline) string))

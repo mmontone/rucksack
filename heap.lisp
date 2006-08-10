@@ -1,4 +1,4 @@
-;; $Id: heap.lisp,v 1.10 2006-08-09 13:23:18 alemmens Exp $
+;; $Id: heap.lisp,v 1.11 2006-08-10 12:36:16 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -96,6 +96,8 @@ was called.")))
 (defmethod close-heap ((heap heap))
   (close (heap-stream heap)))
 
+(defmethod finish-heap-output ((heap heap))
+  (finish-output (heap-stream heap)))
 
 ;;
 ;; Heap start/end

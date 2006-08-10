@@ -1,4 +1,4 @@
-;; $Id: test.lisp,v 1.8 2006-08-09 13:23:18 alemmens Exp $
+;; $Id: test.lisp,v 1.9 2006-08-10 12:36:17 alemmens Exp $
 
 (in-package :test-rucksack)
 
@@ -430,3 +430,32 @@
              (inner (p-cdr (p-cdr (p-cdr root)))))
         ;; we expect the list ("Waldorf" "Statler") here
         (list (p-car inner) (p-cdr inner))))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Indexing, class redefinitions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+#|
+(with-rucksack (rucksack *test-suite* :if-exists :supersede)
+  ;; For classes that may change during program development, you should
+  ;; wrap all class definitions in a WITH-RUCKSACK to make sure that
+  ;; the corresponding schema definitions and indexes are updated correctly.
+  ;; (This is only necessary if you already have a rucksack that contains
+  ;; instances of the class that's being redefined, of course.)
+
+  ;; Define a class person
+  (defclass person ()
+    ((id :initform (gensym "PERSON-")
+         :reader person-id
+         :
+(name :initform (elt *names* (random (length *names*)))
+           :accessor name)
+     (age :initform (random 100) :accessor age))
+    (:metaclass persistent-class))
+
+  ;; Fill the rucksack with some persons.
+  (with-transaction ()
+    (loop repeat 1000
+          do (make-instance 'person))
+|#

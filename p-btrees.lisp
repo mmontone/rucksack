@@ -1,4 +1,4 @@
-;; $Id: p-btrees.lisp,v 1.8 2006-08-08 13:35:18 alemmens Exp $
+;; $Id: p-btrees.lisp,v 1.9 2006-08-10 12:36:16 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -187,9 +187,18 @@ because it doesn't exist."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defclass btree ()
-  ((key<   :initarg :key<   :reader btree-key<   :initform '<)
-   (value= :initarg :value= :reader btree-value= :initform 'p-eql
+  ((key<   :initarg :key< :initform '<)
+   (value= :initarg :value= :initform 'p-eql
            :documentation "This is only used for btrees with non-unique keys.")
+   (key-key :initarg :key-key :reader btree-key-key :initform 'identity
+            :documentation "A unary function that is applied to a
+btree key before comparing it to another key with a key comparison
+predicate like BTREE-KEY<.")
+   (value-key :initarg :value-key :reader btree-value-key :initform 'identity
+              :documentation "A unary function that is applied to a
+btree value before comparing it to another value with the BTREE-VALUE=
+predicate.")
+
    ;;
    (node-class :initarg :node-class
                :reader btree-node-class
@@ -218,48 +227,75 @@ maximum number of keys per btree node.")
 
 (defmethod initialize-instance :around ((btree btree)
                                         &rest initargs
-                                        &key key< value=
+                                        &key key< key-key value= value-key
                                         &allow-other-keys)
   ;; It must be possible to save these btrees in the cache, but
   ;; that will not work for function objects because they can't be
   ;; serialized. This means that you should only specify symbols that
   ;; name a function.  For program-independent databases you should
-  ;; only use symbols from the COMMON-LISP package.
+  ;; only use symbols from the COMMON-LISP or RUCKSACK packages.
   (declare (ignore initargs))
-  (if (and (symbolp key<) (symbolp value=))
+  (if (and (symbolp key<) (symbolp value=)
+           (symbolp key-key) (symbolp value-key))
     (call-next-method)
-    (error "The :key< and :value= initargs for persistent btrees
-must be symbols naming a function, otherwise they can't be saved on
-disk.")))
+    (error "The :key<, :key-key, :value= and :value-key initargs for
+persistent btrees must be symbols naming a function, otherwise they
+can't be saved on disk.")))
 
 ;;
 ;; Comparison functions that can be deduced from KEY< (because the
 ;; btree keys have a total order).
 ;;
 
-(defmethod btree-key= ((btree btree))
-  (let ((key< (btree-key< btree)))
+(defmethod btree-key< ((btree btree))
+  (let ((key< (slot-value btree 'key<))
+        (key-key (btree-key-key btree)))
     (lambda (key1 key2)
-      (and (not (funcall key< key1 key2))
-           (not (funcall key< key2 key1))))))
+      (funcall key<
+               (funcall key-key key1)
+               (funcall key-key key2)))))
+
+(defmethod btree-key= ((btree btree))
+  (let ((key< (slot-value btree 'key<))
+        (key-key (btree-key-key btree)))
+    (lambda (key1 key2)
+      (let ((key1 (funcall key-key key1))
+            (key2 (funcall key-key key2)))
+        (and (not (funcall key< key1 key2))
+             (not (funcall key< key2 key1)))))))
 
 (defmethod btree-key>= ((btree btree))
   (lambda (key1 key2)
     (not (funcall (btree-key< btree) key1 key2))))
 
 (defmethod btree-key<= ((btree btree))
-  (let ((key< (btree-key< btree)))
+  (let ((key< (slot-value btree 'key<))
+        (key-key (btree-key-key btree)))
     (lambda (key1 key2)
-      (or (funcall key< key1 key2)
-          (not (funcall key< key2 key1))))))
+      (let ((key1 (funcall key-key key1))
+            (key2 (funcall key-key key2)))
+        (or (funcall key< key1 key2)
+            (not (funcall key< key2 key1)))))))
 
 (defmethod btree-key> ((btree btree))
-  (let ((key< (btree-key< btree)))
+  (let ((key< (slot-value btree 'key<))
+        (key-key (btree-key-key btree)))
     (lambda (key1 key2)
-      (and (not (funcall key< key1 key2))
-           (funcall key< key2 key1)))))
+      (let ((key1 (funcall key-key key1))
+            (key2 (funcall key-key key2)))
+        (and (not (funcall key< key1 key2))
+             (funcall key< key2 key1))))))
 
 
+(defmethod btree-value= ((btree btree))
+  (let ((value= (slot-value btree 'value=))
+        (value-key (btree-value-key btree)))
+    (lambda (value1 value2)
+      (let ((value1 (funcall value-key value1))
+            (value2 (funcall value-key value2)))
+        (funcall value= value1 value2)))))
+
+  
 ;;
 ;; The next two classes are for internal use only, so we don't bother
 ;; with fancy long names.

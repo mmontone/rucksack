@@ -1,4 +1,4 @@
-;; $Id: cache.lisp,v 1.8 2006-08-04 10:37:59 alemmens Exp $
+;; $Id: cache.lisp,v 1.9 2006-08-10 12:36:16 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -378,8 +378,15 @@ memory."
   (remhash (transaction-id transaction) (transactions cache)))
 
 (defmethod map-transactions ((cache standard-cache) function)
-  (loop for transaction being the hash-value of (transactions cache)
-        do (funcall function transaction)))
+  ;; FUNCTION may be a function that closes the transaction (removing
+  ;; it from the hash table), so we create a fresh list with transactions
+  ;; before doing the actual iteration.
+  (let ((transactions '()))
+    (loop for transaction being the hash-value of (transactions cache)
+          do (push transaction transactions))
+    ;; Now we can iterate safely.
+    (mapc function transactions)))
+
 
 ;;
 ;; Commit/rollback
@@ -397,7 +404,9 @@ memory."
 
 
 (defmethod cache-commit ((cache standard-cache))
+  ;; Commit all transactions.
   (map-transactions cache #'transaction-commit)
+  ;; Save the schema table.
   (save-schema-table (schema-table cache)))
 
 ;;
