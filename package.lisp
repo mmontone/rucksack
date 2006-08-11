@@ -1,4 +1,4 @@
-;; $Id: package.lisp,v 1.6 2006-08-10 12:36:17 alemmens Exp $
+;; $Id: package.lisp,v 1.7 2006-08-11 12:44:21 alemmens Exp $
 
 #-(or allegro lispworks sbcl openmcl)
   (error "Unsupported implementation: ~A" (lisp-implementation-type))
@@ -78,8 +78,7 @@
 
    ;; Indexes
    #:map-index #:index-insert #:index-delete #:make-index
-   #:*string-index* #:*number-index* #:*symbol-index*
-   #:*trimmed-string-index* #:*case-insensitive-string-index*
+   #:define-index-spec #:find-index-spec
 
    ;; Btrees
    #:btree

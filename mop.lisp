@@ -1,4 +1,4 @@
-;; $Id: mop.lisp,v 1.4 2006-08-10 12:36:16 alemmens Exp $
+;; $Id: mop.lisp,v 1.5 2006-08-11 12:44:21 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -15,7 +15,7 @@
                      :accessor class-persistent-slots)
    (index :initarg :index :initform nil :accessor class-index
           :documentation "Can be either NIL (for no class index) or T
-(for the standard class index).  Default value is NIL.")))
+(for the standard class index).  Default value is T.")))
 
 (defclass persistent-slot-mixin ()
   ((persistence :initarg :persistence
@@ -26,8 +26,8 @@ transient slots.  Default value is T.")
    (index :initarg :index
           :initform nil
           :reader slot-index
-          :documentation "An index spec for indexed slots, NIL for
-non-indexed slots.  Default value is NIL.")
+          :documentation "An index spec designator for indexed slots,
+NIL for non-indexed slots.  Default value is NIL.")
    (unique :initarg :unique
            :initform nil
            :reader slot-unique
@@ -105,25 +105,31 @@ should only be used when speed is critical.
                        ;; slot-value-using-class.
                        #+lispworks :optimize-slot-access #+lispworks nil 
                        args)))
-    (ensure-class-schema class)
+    (ensure-class-schema class '())
     result))
 
 (defmethod reinitialize-instance :around ((class persistent-class)
                                           &rest args
                                           &key direct-superclasses
                                           &allow-other-keys)
-  ;; This is a copy of the code for initialize-instance at the moment.
-  (let ((result (apply #'call-next-method
-                       class
-                       :direct-superclasses (maybe-add-persistent-object-class
-                                             class
-                                             direct-superclasses)
-                       ;; Tell Lispworks that it shouldn't bypass
-                       ;; slot-value-using-class.
-                       #+lispworks :optimize-slot-access #+lispworks nil
-                       args)))
-    (ensure-class-schema class)
-    result))
+  (let* ((old-slot-defs (class-direct-slots class))
+         ;; Create a simple alist with slot name as key and
+         ;; a list with slot-index and slot-unique as value.
+         (old-slot-indexes (loop for slot-def in old-slot-defs
+                                 collect (list (slot-definition-name slot-def)
+                                               (slot-index slot-def)
+                                               (slot-unique slot-def)))))
+    (let ((result (apply #'call-next-method
+                         class
+                         :direct-superclasses (maybe-add-persistent-object-class
+                                               class
+                                               direct-superclasses)
+                         ;; Tell Lispworks that it shouldn't bypass
+                         ;; slot-value-using-class.
+                         #+lispworks :optimize-slot-access #+lispworks nil
+                         args)))
+      (ensure-class-schema class old-slot-indexes)
+      result)))
 
 
 (defun maybe-add-persistent-object-class (class direct-superclasses)
@@ -140,7 +146,7 @@ should only be used when speed is critical.
         direct-superclasses
       (cons root-class direct-superclasses))))
 
-(defun ensure-class-schema (class)
+(defun ensure-class-schema (class old-slot-indexes)
   ;; Update class and slot indexes.
   (when (some #'slot-persistence (class-direct-slots class))
     ;; NOTE: We get the current-rucksack only if there are some
@@ -151,7 +157,7 @@ should only be used when speed is critical.
     (let ((rucksack (current-rucksack)))
       (when rucksack
         (rucksack-update-class-index rucksack class)
-        (rucksack-update-slot-indexes rucksack class))))
+        (rucksack-update-slot-indexes rucksack class old-slot-indexes))))
   ;; DO: Update schema in schema table, when necessary.
   'DO-THIS)
 

@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.9 2006-08-10 12:36:17 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.10 2006-08-11 12:44:21 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -62,17 +62,19 @@ rucksack."))
 (defgeneric rucksack-update-class-index (rucksack class)
   (:documentation 
    "Compares the current class index for CLASS to the class index
-that's specified in the :INDEX class options of CLASS.  An obsolete
+that's specified in the :INDEX class option of CLASS.  An obsolete
 class index (i.e. a class index that's specified anymore in the class
 option) is removed, new class indexes are added."))
 
-(defgeneric rucksack-update-slot-indexes (rucksack class)
+(defgeneric rucksack-update-slot-indexes (rucksack class old-slot-indexes)
   (:documentation 
    "Compares the current slot indexes for CLASS to the slot indexes
 that are specified in the slot options for the direct slots of CLASS.
 Obsolete slot indexes (i.e. slot indexes that are not specified
 anymore in the slot options) are removed, new slot indexes are
-added."))
+added.
+  OLD-SLOT-INDEXES is a list with the name, index and unique-p info
+of each slot."))
 
 (defgeneric rucksack-add-class-index (rucksack class-designator &key errorp))
 
@@ -95,15 +97,15 @@ rucksack's default class index spec will be used."))
 
 
 (defgeneric rucksack-add-slot-index (rucksack class-designator slot index-spec
-                                              &key errorp)
+                                     unique-p &key errorp)
   (:documentation
   "Creates a new slot index for the slot designated by
 CLASS-DESIGNATOR and SLOT.  The type of index is specified by
 INDEX-SPEC.  Returns the new index.  Signals an error if ERRORP is T
-and there is already an index for the designated slot."))
+and there already is an index for the designated slot."))
 
 (defgeneric rucksack-remove-slot-index (rucksack class-designator slot
-                                                 &key errorp))
+                                        &key errorp))
 
 
 
@@ -153,11 +155,13 @@ do more filtering before actually loading objects from disk.
                               &key equal min max include-min include-max order
                               id-only include-subclasses)
   (:documentation
- "  FUNCTION is a unary function that gets called for all instances of
+ " FUNCTION is a unary function that gets called for all instances of
 the specified class that have a slot value matching the EQUAL, MIN,
-MAX INCLUDE-MIN and INCLUDE-MAX arguments.  ORDER can be either
-:ASCENDING (default) or :DESCENDING; currently, the specified order
-will be respected for instances of one class but not across subclasses.
+MAX INCLUDE-MIN and INCLUDE-MAX arguments (see the documentation of
+MAP-INDEX for a description of these arguments).
+  ORDER can be either :ASCENDING (default) or :DESCENDING; currently,
+the specified order will be respected for instances of one class but
+not across subclasses.
   If ID-ONLY is T (default is NIL), the function will be called with
 object ids instead of 'real' objects.  This can be handy if you want to
 do more filtering before actually loading objects from disk.
@@ -273,13 +277,23 @@ index maps slot values to object ids.")))
 
 (defun load-roots (rucksack)
   ;; Read roots (i.e. object ids) from the roots file (if there is one).
+  ;; Also load the class and slot index tables.
   (let ((roots-file (rucksack-roots-pathname rucksack)))
     (when (probe-file roots-file)
-      (setf (slot-value rucksack 'roots)
-            (load-objects roots-file)))))
+      (destructuring-bind (root-list class-index slot-index)
+          (load-objects roots-file)
+        (with-slots (roots class-index-table slot-index-tables)
+            rucksack
+          (setf roots root-list
+                class-index-table (maybe-dereference-proxy class-index)
+                slot-index-tables (maybe-dereference-proxy slot-index))))))
+  rucksack)
+
 
 (defun save-roots (rucksack)
-  (save-objects (slot-value rucksack 'roots)
+  (save-objects (list (slot-value rucksack 'roots)
+                      (class-index-table rucksack)
+                      (slot-index-tables rucksack))
                 (rucksack-roots-pathname rucksack))
   (setf (roots-changed-p rucksack) nil))
 
@@ -443,37 +457,61 @@ file is missing."
            ;; We don't need to change anything
            :no-change))))
 
+
 (defmethod rucksack-update-slot-indexes ((rucksack standard-rucksack)
-                                         (class persistent-class))
+                                         (class persistent-class)
+                                         old-slot-indexes)
   (dolist (slot (class-direct-slots class))
-    (let ((index-needed (and (slot-persistence slot) (slot-index slot)))
-          (current-index (rucksack-slot-index rucksack class slot)))
-      (cond ((index-spec-equal index-needed current-index)
-             ;; We keep the same index: no change needed.
-             :no-change)
-            ((and current-index (null index-needed))
-             ;; The index is not wanted anymore: remove it.
-             (rucksack-remove-slot-index rucksack class slot :errorp t))
-            ((and (null current-index) index-needed)
-             ;; We didn't have an index but we need one now: add one.
-             (rucksack-add-slot-index rucksack class slot index-needed
-                                      :errorp t))
-            ((and current-index index-needed)
-             ;; We have an index but need a different one now.  This requires
-             ;; some care because we need to re-index all objects from the old
-             ;; index.
-             (let ((new-index (rucksack-add-slot-index rucksack class slot
-                                                       index-needed
-                                                       :errorp nil)))
-               ;; Re-index all objects for the new index.
-               (map-index current-index
-                          (lambda (slot-value object-id)
-                            (index-insert new-index slot-value object-id)))
-               ;; We don't need to remove the old index explicitly, because
-               ;; RUCKSACK-ADD-SLOT-INDEX already did that for us.
-               ))))))
+    (let* ((index-spec (and (slot-persistence slot)
+                            (or (find-index-spec (slot-index slot) :errorp nil)
+                                (slot-index slot))))
+           (unique-p (slot-unique slot)))
+      (multiple-value-bind (current-index-spec current-unique-p)
+          (find-old-index-spec (slot-definition-name slot) old-slot-indexes)
+        (cond ((and (index-spec-equal index-spec current-index-spec)
+                    (eql unique-p current-unique-p))
+               ;; We keep the same index: no change needed.
+               :no-change)
+              ((and current-index-spec (null index-spec))
+               ;; The index is not wanted anymore: remove it.
+               (rucksack-remove-slot-index rucksack class slot :errorp t))
+              ((and (null current-index-spec) index-spec)
+               ;; We didn't have an index but we need one now: add one.
+               (rucksack-add-slot-index rucksack class slot index-spec unique-p
+                                        :errorp t))
+              ((and current-index-spec index-spec)
+               ;; We have an index but need a different one now.  This requires
+               ;; some care because we need to re-index all objects from the old
+               ;; index.
+               (let ((current-index (rucksack-slot-index rucksack class slot))
+                     (new-index (rucksack-add-slot-index rucksack class slot
+                                                         index-spec
+                                                         unique-p
+                                                         :errorp nil)))
+                 ;; Re-index all objects for the new index.
+                 ;; DO: This re-indexing can cause an error (e.g. if the old
+                 ;; index has non-unique keys, the new index has unique keys
+                 ;; and some keys occur more than once).  We need to handle
+                 ;; that error here and offer some decent restarts (e.g.
+                 ;; remove the index entirely, or go back to the old index).
+                 (map-index current-index
+                            (lambda (slot-value object-id)
+                              (index-insert new-index slot-value object-id)))
+                 ;; We don't need to remove the old index explicitly, because
+                 ;; RUCKSACK-ADD-SLOT-INDEX already did that for us.
+                 )))))))
+  
+(defun find-old-index-spec (slot-name old-slot-indexes)
+  (let ((slot-info (cdr (assoc slot-name old-slot-indexes))))
+    (and slot-info
+         (destructuring-bind (index-spec-designator unique-p)
+             slot-info
+           (values (or (find-index-spec index-spec-designator :errorp nil)
+                       index-spec-designator)
+                   unique-p)))))
 
 
+             
 ;;
 ;; Some simple dispatchers.
 ;;
@@ -516,16 +554,18 @@ file is missing."
     (simple-rucksack-error "Class index for ~S already exists in ~A."
                            class
                            rucksack))
-  (setf (gethash class (class-index-table rucksack))
-        (rucksack-make-class-index rucksack class)))
+  (let ((index (rucksack-make-class-index rucksack class)))
+    (setf (gethash class (class-index-table rucksack)) index)
+    (add-rucksack-root index rucksack)
+    index))
 
 (defmethod rucksack-make-class-index 
            ((rucksack standard-rucksack) class
             &key
-            (index-spec '(btree :key< < :key= = :value= eql :unique-keys-p t)))
+            (index-spec '(btree :key< < :value= p-eql)))
   ;; A class index maps object ids to objects.
   (declare (ignore class))
-  (make-index index-spec))
+  (make-index index-spec t))
 
 (defmethod rucksack-remove-class-index ((rucksack standard-rucksack) class
                                         &key (errorp nil))
@@ -536,7 +576,9 @@ file is missing."
     (simple-rucksack-error "Class index for ~S doesn't exist in ~A."
                            class
                            rucksack))
-  (remhash class (class-index-table rucksack)))
+  (let ((index (gethash class (class-index-table rucksack))))
+    (remhash class (class-index-table rucksack))
+    (delete-rucksack-root index rucksack)))
 
 
 (defmethod rucksack-map-class-indexes (rucksack function)
@@ -589,7 +631,7 @@ file is missing."
 ;;
 
 (defmethod rucksack-add-slot-index ((rucksack standard-rucksack)
-                                    class slot index-spec
+                                    class slot index-spec unique-p
                                     &key (errorp nil))
   (unless (symbolp class)
     (setq class (class-name class)))
@@ -602,14 +644,18 @@ file is missing."
                                (let ((table (make-hash-table)))
                                  (setf (gethash class slot-index-tables) table)
                                  table)))
-         (new-slot-index (make-index index-spec)))
+         (new-slot-index (make-index index-spec unique-p))
+         (old-slot-index (gethash slot slot-index-table)))
     ;; Add a new slot index table if necessary.
-    (when (and errorp (gethash slot slot-index-table))
+    (when (and errorp old-slot-index)
       (simple-rucksack-error "Slot index for slot ~S of class ~S
 already exists in ~A."
                              slot
                              class
                              rucksack))
+    (add-rucksack-root new-slot-index rucksack)
+    (when old-slot-index
+      (delete-rucksack-root old-slot-index rucksack))
     (setf (gethash slot slot-index-table) new-slot-index)))
 
 (defmethod rucksack-remove-slot-index (rucksack class slot &key (errorp nil))
@@ -628,7 +674,9 @@ index for slot ~S of class ~S in ~A."
           (if errorp
               (let ((index (gethash slot slot-index-table)))
                 (if index
-                    (remhash slot slot-index-table)
+                    (progn
+                      (remhash slot slot-index-table)
+                      (delete-rucksack-root index rucksack))
                   (oops)))
             (remhash slot slot-index-table))
         (and errorp (oops))))))
@@ -684,14 +732,15 @@ index for slot ~S of class ~S in ~A."
  	       (and slot-index-table
                     (gethash slot slot-index-table)))))
       (or (find-index class)
-          (loop for superclass in (class-precedence-list (find-class class))
+          (loop for superclass in (class-precedence-list 
+                                   (find-class class))
                 thereis (find-index (class-name superclass)))
           (and errorp
-               (simple-rucksack-error "Can't find slot index for slot
-~S of class ~S in ~A."
-                                      slot
-                                      class
-                                      rucksack))))))
+               (simple-rucksack-error
+                "Can't find slot index for slot ~S of class ~S in ~A."
+                slot
+                class
+                rucksack))))))
 
 
 (defmethod rucksack-map-slot ((rucksack standard-rucksack) class slot function

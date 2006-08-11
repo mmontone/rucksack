@@ -1,4 +1,4 @@
-;; $Header: /project/rucksack/cvsroot/rucksack/Attic/glossary.txt,v 1.2 2006-05-16 22:01:27 alemmens Exp $
+;; $Header: /project/rucksack/cvsroot/rucksack/Attic/glossary.txt,v 1.3 2006-08-11 12:44:21 alemmens Exp $
 
 * block
 
@@ -22,6 +22,22 @@ Either a class name (i.e. a symbol) or a class.  See the CLHS glossary.
 
 The object version that's compatible with a transaction T is the most
 recent version that's not younger than T.
+
+* index spec
+
+A non-keyword symbol (the name of an indexing class) or a list
+starting with a symbol (the name of an indexing class) followed by a
+plist of keywords and values (initargs for the indexing class).
+
+Examples: BTREE, (BTREE :KEY< <  :VALUE= P-EQL).
+
+
+* index spec designator
+
+Either an index spec or the name (i.e. a keyword) of an index spec
+that has been defined with DEFINE-INDEX-SPEC.
+
+Example: :STRING-INDEX.
 
 
 * object version list

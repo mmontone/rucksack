@@ -1,4 +1,4 @@
-;; $Id: index.lisp,v 1.4 2006-08-10 12:36:16 alemmens Exp $
+;; $Id: index.lisp,v 1.5 2006-08-11 12:44:21 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -26,16 +26,19 @@ right if INCLUDE-MAX is true (and exclusive on the right otherwise).
 ORDER is either :ASCENDING (default) or :DESCENDING."))
 
 (defgeneric index-insert (index key value &key if-exists)
-  (:documentation "Insert a key/value pair into an index.  IF-EXISTS
-can be either :OVERWRITE (default) or :ERROR."))
+  (:documentation
+ "Insert a key/value pair into an index.  IF-EXISTS can be either
+:OVERWRITE (default) or :ERROR."))
 
 (defgeneric index-delete (index key value &key if-does-not-exist)
-  (:documentation "Remove a key/value pair from an index.
-IF-DOES-NOT-EXIST can be either :IGNORE (default) or :ERROR."))
+  (:documentation
+ "Remove a key/value pair from an index.  IF-DOES-NOT-EXIST can be
+either :IGNORE (default) or :ERROR."))
 
-;; make-index (index-spec) [Function]
+;; make-index (index-spec unique-keys-p) [Function]
 
 ;; index-spec-equal (index-spec-1 index-spec-2) [Function]
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Indexing
@@ -64,10 +67,15 @@ IF-DOES-NOT-EXIST can be either :IGNORE (default) or :ERROR."))
 ;; and followed by a plist of keywords and values.
 ;; Examples: BTREE, (BTREE :KEY< <  :VALUE= P-EQL)
 
-(defun make-index (index-spec)
+
+(defun make-index (index-spec unique-keys-p)
+  ;; NOTE: All index classes must accept the :UNIQUE-KEYS-P initarg.
   (if (symbolp index-spec)
-      (make-instance index-spec)
-    (apply #'make-instance (first index-spec) (rest index-spec))))
+      (make-instance index-spec :unique-keys-p unique-keys-p)
+    (apply #'make-instance
+           (first index-spec)
+           :unique-keys-p unique-keys-p
+           (rest index-spec))))
 
 (defun index-spec-equal (index-spec-1 index-spec-2)
   "Returns T iff two index specs are equal."
@@ -83,27 +91,60 @@ IF-DOES-NOT-EXIST can be either :IGNORE (default) or :ERROR."))
              (plist-subset-p (rest index-spec-2) (rest index-spec-1))))))
 
 
-;;
-;; Predefined index specs for slots of persistent classes.
-;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Defining index specs
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defparameter *number-index*
-  '(btree :key< < :value= p-eql))
+(eval-when (:compile-toplevel :load-toplevel :execute)
 
-(defparameter *string-index*
-  '(btree :key< string< :value p-eql))
+  ;;
+  ;; Defining index specs
+  ;;
 
-(defparameter *symbol-index*
-  '(btree :key< string< :value p-eql))
+  (defparameter *index-specs*
+    (make-hash-table))
 
-(defparameter *case-insensitive-string-index*
-  '(btree :key< string-lessp :value p-eql))
-
-(defparameter *trimmed-string-index*
-  ;; Like *STRING-INDEX*, but with whitespace trimmed left and right.
-  '(btree :key< string<
-          :key-key trim-whitespace
-          :value p-eql))
+  (defun define-index-spec (name spec &key (if-exists :overwrite))
+    "NAME must be a keyword.  SPEC must be an index spec.  IF-EXISTS must be
+either :OVERWRITE (default) or :ERROR."
+    (assert (member if-exists '(:overwrite :error)))
+    (when (eql if-exists :error)
+      (let ((existing-spec (gethash name *index-specs*)))
+        (when (and existing-spec
+                   (not (index-spec-equal existing-spec spec)))
+          (error "Index spec ~S is already defined.  Its definition is: ~S."
+                 name existing-spec))))
+    (setf (gethash name *index-specs*) spec))
   
+  (defun find-index-spec (name &key (errorp t))
+    (or (gethash name *index-specs*)
+        (and errorp
+             (error "Can't find index spec called ~S." name)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Predefined index specs
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun trim-whitespace (string)
-  (string-trim '(#\space #\tab #\return #\newline) string))
+    (string-trim '(#\space #\tab #\return #\newline) string))
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+
+  (define-index-spec :number-index
+                     '(btree :key< < :value= p-eql))
+
+  (define-index-spec :string-index
+                     '(btree :key< string< :value p-eql))
+
+  (define-index-spec :symbol-index
+                     '(btree :key< string< :value p-eql))
+
+  (define-index-spec :case-insensitive-string-index
+                     '(btree :key< string-lessp :value p-eql))
+
+  (define-index-spec :trimmed-string-index
+                     ;; Like :STRING-INDEX, but with whitespace trimmed left
+                     ;; and right.
+                     '(btree :key< string<
+                             :key-key trim-whitespace
+                             :value p-eql)))
