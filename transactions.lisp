@@ -1,4 +1,4 @@
-;; $Id: transactions.lisp,v 1.10 2006-08-10 12:36:17 alemmens Exp $
+;; $Id: transactions.lisp,v 1.11 2006-08-24 15:21:25 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -58,8 +58,6 @@ that doesn't exist on disk yet.")))
             (transaction-id transaction)
             (hash-table-count (dirty-objects transaction)))))
 
-(defparameter *transaction* nil
-  "The currently active transaction.")
 
 (defun current-transaction ()
   *transaction*)
@@ -181,45 +179,48 @@ at a time."))
                                  (cache standard-cache)
                                  (rucksack standard-rucksack))
   ;; Save all dirty objects to disk.
-  ;; 1. Create the commit file
-  (create-commit-file transaction cache)
-  ;; 2. Commit all dirty objects.
-  ;; Q: What if this is interleaved with other commits?
-  (let ((queue (dirty-queue transaction))
-        (table (dirty-objects transaction))
-        (heap (heap cache))
-        nr-allocated-octets)
-    (with-allocation-counter (heap)
-      (loop until (queue-empty-p queue)
-            do (let* ((id (queue-remove queue))
-                      (object (gethash id table)))
-                 (when object
-                   ;; If it's not in the dirty-objects table anymore, the
-                   ;; object was already saved during this transaction-commit.
-                   ;; That's possible, because the queue can contain duplicates.
-                   (save-dirty-object object cache transaction id)
-                   ;; Remove from hash-table too.
-                   (remhash id table))))
-      (setq nr-allocated-octets (nr-allocated-octets heap)))
-    ;; Check for consistency between hash table and queue.
-    (unless (zerop (hash-table-count table))
-      (internal-rucksack-error
- "Mismatch between dirty hash-table and queue while committing ~S:
+  (if (zerop (transaction-nr-dirty-objects transaction))
+      (close-transaction cache transaction)
+    (progn
+      ;; 1. Create the commit file
+      (create-commit-file transaction cache)
+      ;; 2. Commit all dirty objects.
+      ;; Q: What if this is interleaved with other commits?
+      (let ((queue (dirty-queue transaction))
+            (table (dirty-objects transaction))
+            (heap (heap cache))
+            nr-allocated-octets)
+        (with-allocation-counter (heap)
+          (loop until (queue-empty-p queue)
+                do (let* ((id (queue-remove queue))
+                          (object (gethash id table)))
+                     (when object
+                       ;; If it's not in the dirty-objects table anymore, the
+                       ;; object was already saved during this transaction-commit.
+                       ;; That's possible, because the queue can contain duplicates.
+                       (save-dirty-object object cache transaction id)
+                       ;; Remove from hash-table too.
+                       (remhash id table))))
+          (setq nr-allocated-octets (nr-allocated-octets heap)))
+        ;; Check for consistency between hash table and queue.
+        (unless (zerop (hash-table-count table))
+          (internal-rucksack-error
+           "Mismatch between dirty hash-table and queue while committing ~S:
 ~D objects left in hash-table."
-			       transaction
- 			       (hash-table-count table)))
-    ;; 3. Remove transaction from the cache's open transactions.
-    (close-transaction cache transaction)
-    ;; 4. Delete the commit file to indicate that everything went fine
-    ;; and we don't need to recover from this commit.
-    (delete-commit-file transaction cache)
-    ;; 5. Let the garbage collector do an amount of work proportional
-    ;; to the number of octets that were allocated during the commit.
-    (collect-some-garbage heap
-                          (gc-work-for-size heap nr-allocated-octets))
-    ;; 6. Make sure that all changes are actually on disk before
-    ;; we continue.
-    (finish-all-output rucksack)))
+           transaction
+           (hash-table-count table)))
+        ;; 3. Remove transaction from the cache's open transactions.
+        (close-transaction cache transaction)
+        ;; 4. Delete the commit file to indicate that everything went fine
+        ;; and we don't need to recover from this commit.
+        (delete-commit-file transaction cache)
+        ;; 5. Let the garbage collector do an amount of work proportional
+        ;; to the number of octets that were allocated during the commit.
+        (collect-some-garbage heap
+                              (gc-work-for-size heap nr-allocated-octets))
+        ;; 6. Make sure that all changes are actually on disk before
+        ;; we continue.
+        (finish-all-output rucksack)))))
 
 (defmethod finish-all-output ((rucksack standard-rucksack))
   (let ((cache (rucksack-cache rucksack)))
@@ -362,42 +363,6 @@ OLD-BLOCK."
   (close-transaction cache transaction))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; WITH-TRANSACTION
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
- 
-(defmacro with-transaction ((&rest args
-                             &key (rucksack '(current-rucksack))
-                             &allow-other-keys)
-                            &body body)
-  (let ((committed (gensym "COMMITTED"))
-        (transaction (gensym "TRANSACTION"))
-        (result (gensym "RESULT")))
-    `(let ((,transaction nil))       
-       (loop named ,transaction do         
-          (with-simple-restart (retry "Retry ~S" ,transaction)
-            (let ((,committed nil)
-                  (,result nil))
-              (unwind-protect
-                   (progn
-                     ;; Use a local variable for the transaction so that nothing
-                     ;; can replace it from underneath us, and only then bind
-                     ;; it to *TRANSACTION*. 
-                     (setf ,transaction (transaction-start :rucksack ,rucksack
-                                                           ,@(sans args :rucksack)))
-                     (let ((*transaction* ,transaction))
-                       (with-simple-restart (abort "Abort ~S" ,transaction)
-                         (setf ,result (progn ,@body))
-                         (transaction-commit ,transaction)
-                         (setf ,committed t)))
-                     ;; Normal exit from the WITH-SIMPLE-RESTART above -- either
-                     ;; everything went well or we aborted -- the ,COMMITTED will tell
-                     ;; us. In either case we jump out of the RETRY loop.
-                     (return-from ,transaction (values ,result ,committed)))
-                (unless ,committed
-                  (transaction-rollback ,transaction)))))
-            ;; Normal exit from the above block -- we selected the RETRY restart.
-            ))))
  
 
 

@@ -1,4 +1,4 @@
-;; $Id: objects.lisp,v 1.8 2006-08-10 12:36:16 alemmens Exp $
+;; $Id: objects.lisp,v 1.9 2006-08-24 15:21:25 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -75,9 +75,9 @@ to data in the cache.  They are never saved on disk."))
   object)
 
 (defun cache (object)
-  (let ((rucksack (rucksack object)))
-    (and rucksack
-         (rucksack-cache (rucksack object)))))
+  (and (slot-boundp object 'rucksack)
+       (rucksack object)
+       (rucksack-cache (rucksack object))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Low level persistent data structures.

@@ -1,4 +1,4 @@
-;; $Id: package.lisp,v 1.7 2006-08-11 12:44:21 alemmens Exp $
+;; $Id: package.lisp,v 1.8 2006-08-24 15:21:25 alemmens Exp $
 
 #-(or allegro lispworks sbcl openmcl)
   (error "Unsupported implementation: ~A" (lisp-implementation-type))
@@ -68,7 +68,7 @@
    ;; Transactions
    #:current-transaction
    #:transaction-start #:transaction-commit #:transaction-rollback
-   #:with-transaction
+   #:with-transaction #:*transaction*
    #:transaction #:standard-transaction
    #:transaction-start-1 #:transaction-commit-1
    #:transaction-id

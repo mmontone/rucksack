@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.10 2006-08-11 12:44:21 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.11 2006-08-24 15:21:25 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -213,14 +213,63 @@ refer to the slot names.
 (defun process-lock (lock)
   #+lispworks
   (mp:process-lock lock)
-  #-lispworks
+  #+sbcl
+  (sb-thread:get-mutex lock)
+  #-(or sbcl lispworks)
   (not-implemented 'process-lock))
+
 
 (defun process-unlock (lock)
   #+lispworks
   (mp:process-unlock lock)
-  #-lispworks
+  #+sbcl
+  (sb-thread:release-mutex lock)
+  #-(or sbcl lispworks)
   (not-implemented 'process-unlock))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; WITH-TRANSACTION
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; It would be prettier if we could put this macro in TRANSACTIONS.LISP, but
+;; we need it here already.
+
+(defparameter *transaction* nil
+  "The currently active transaction.")
+ 
+(defmacro with-transaction ((&rest args
+                             &key (rucksack '(current-rucksack))
+                             &allow-other-keys)
+                            &body body)
+  (let ((committed (gensym "COMMITTED"))
+        (transaction (gensym "TRANSACTION"))
+        (result (gensym "RESULT")))
+    `(let ((,transaction nil))       
+       (loop named ,transaction do         
+          (with-simple-restart (retry "Retry ~S" ,transaction)
+            (let ((,committed nil)
+                  (,result nil))
+              (unwind-protect
+                   (progn
+                     ;; Use a local variable for the transaction so that nothing
+                     ;; can replace it from underneath us, and only then bind
+                     ;; it to *TRANSACTION*. 
+                     (setf ,transaction (transaction-start :rucksack ,rucksack
+                                                           ,@(sans args :rucksack)))
+                     (let ((*transaction* ,transaction))
+                       (with-simple-restart (abort "Abort ~S" ,transaction)
+                         (setf ,result (progn ,@body))
+                         (transaction-commit ,transaction)
+                         (setf ,committed t)))
+                     ;; Normal exit from the WITH-SIMPLE-RESTART above -- either
+                     ;; everything went well or we aborted -- the ,COMMITTED will tell
+                     ;; us. In either case we jump out of the RETRY loop.
+                     (return-from ,transaction (values ,result ,committed)))
+                (unless ,committed
+                  (transaction-rollback ,transaction)))))
+            ;; Normal exit from the above block -- we selected the RETRY restart.
+            ))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Rucksacks
@@ -239,16 +288,12 @@ refer to the slot names.
 from which the garbage collector can reach all live objects.")
    (roots-changed-p :initform nil :accessor roots-changed-p)
    ;; Indexes
-   (class-index-table :initform (make-hash-table)
-                      :documentation
- "A mapping from class names to indexes.  Each index contains the ids
-of all instances from a class."
-                      :reader class-index-table)
-   (slot-index-tables :initform (make-hash-table)
-                      :reader slot-index-tables
-                      :documentation
- "A mapping from class names to slot index tables, where each slot
-index table is a mapping from slot names to slot indexes.  Each slot
+   (class-index-table :documentation
+ "A btree mapping class names to indexes.  Each index contains the ids
+of all instances from a class.")
+   (slot-index-tables :documentation
+ "A btree mapping class names to slot index tables, where each slot
+index table is a btree mapping slot names to slot indexes.  Each slot
 index maps slot values to object ids.")))
 
 (defmethod print-object ((rucksack rucksack) stream)
@@ -259,6 +304,43 @@ index maps slot values to object ids.")))
 
 (defmethod rucksack-roots-pathname ((rucksack standard-rucksack))
   (merge-pathnames "roots" (rucksack-directory rucksack)))
+
+
+(defmethod class-index-table ((rucksack standard-rucksack))
+  ;; Create class-index-table if it doesn't exist yet.
+  (flet ((do-it ()
+           (unless (slot-boundp rucksack 'class-index-table)
+             (let ((btree (make-instance 'btree
+                                         :rucksack rucksack
+                                         :key< 'string<
+                                         :value= 'p-eql
+                                         :unique-keys-p t)))
+               (setf (slot-value rucksack 'class-index-table) (object-id btree))))
+           (cache-get-object (slot-value rucksack 'class-index-table)
+                             (rucksack-cache rucksack))))
+    (if (current-transaction)
+        (do-it)
+      (with-transaction (:rucksack rucksack)
+        (do-it)))))
+
+
+(defmethod slot-index-tables ((rucksack standard-rucksack))
+  ;; Create slot-index-tables if they don't exist yet.
+  (flet ((do-it ()
+           (unless (slot-boundp rucksack 'slot-index-tables)  
+             (let ((btree (make-instance 'btree
+                                         :rucksack rucksack
+                                         :key< 'string<
+                                         :value= 'p-eql
+                                         :unique-keys-p t)))
+               (setf (slot-value rucksack 'slot-index-tables) (object-id btree))))
+           ;;
+           (cache-get-object (slot-value rucksack 'slot-index-tables)
+                             (rucksack-cache rucksack))))
+    (if (current-transaction)
+        (do-it)
+      (with-transaction (:rucksack rucksack)
+        (do-it)))))
 
 
 (defmethod initialize-instance :after ((rucksack standard-rucksack)
@@ -275,6 +357,7 @@ index maps slot values to object ids.")))
   (load-roots rucksack))
 
 
+
 (defun load-roots (rucksack)
   ;; Read roots (i.e. object ids) from the roots file (if there is one).
   ;; Also load the class and slot index tables.
@@ -282,18 +365,22 @@ index maps slot values to object ids.")))
     (when (probe-file roots-file)
       (destructuring-bind (root-list class-index slot-index)
           (load-objects roots-file)
-        (with-slots (roots class-index-table slot-index-tables)
+        (with-slots (roots class-index-table slot-index-tables cache)
             rucksack
-          (setf roots root-list
-                class-index-table (maybe-dereference-proxy class-index)
-                slot-index-tables (maybe-dereference-proxy slot-index))))))
+          (setf roots root-list)
+          (when class-index
+            (setf class-index-table class-index))
+          (when slot-index
+            (setf slot-index-tables slot-index))))))
   rucksack)
 
 
 (defun save-roots (rucksack)
   (save-objects (list (slot-value rucksack 'roots)
-                      (class-index-table rucksack)
-                      (slot-index-tables rucksack))
+                      (and (slot-boundp rucksack 'class-index-table)
+                           (slot-value rucksack 'class-index-table))
+                      (and (slot-boundp rucksack 'slot-index-tables)
+                           (slot-value rucksack 'slot-index-tables)))
                 (rucksack-roots-pathname rucksack))
   (setf (roots-changed-p rucksack) nil))
 
@@ -403,9 +490,11 @@ file is missing."
   (rucksack-commit rucksack))
 
 (defmethod rucksack-commit ((rucksack standard-rucksack))
-  (cache-commit (rucksack-cache rucksack))
-  (when (roots-changed-p rucksack)
-    (save-roots rucksack)))
+  (when (or (roots-changed-p rucksack)
+            (not (slot-boundp rucksack 'class-index-table))
+            (not (slot-boundp rucksack 'slot-index-tables)))
+    (save-roots rucksack))
+  (cache-commit (rucksack-cache rucksack)))
 
 ;;
 ;; Rollback
@@ -550,13 +639,13 @@ file is missing."
                                      &key (errorp nil))
   (unless (symbolp class)
     (setq class (class-name class)))
-  (when (and errorp (gethash class (class-index-table rucksack)))
+  (when (and errorp (btree-search (class-index-table rucksack) class
+                                  :errorp nil :default-value nil))
     (simple-rucksack-error "Class index for ~S already exists in ~A."
                            class
                            rucksack))
   (let ((index (rucksack-make-class-index rucksack class)))
-    (setf (gethash class (class-index-table rucksack)) index)
-    (add-rucksack-root index rucksack)
+    (btree-insert class index :if-exists :overwrite)
     index))
 
 (defmethod rucksack-make-class-index 
@@ -571,14 +660,16 @@ file is missing."
                                         &key (errorp nil))
   (unless (symbolp class)
     (setq class (class-name class)))
-  (when (and errorp
-             (not (gethash class (class-index-table rucksack))))
-    (simple-rucksack-error "Class index for ~S doesn't exist in ~A."
-                           class
-                           rucksack))
-  (let ((index (gethash class (class-index-table rucksack))))
-    (remhash class (class-index-table rucksack))
-    (delete-rucksack-root index rucksack)))
+  (handler-bind ((btree-deletion-error
+                  ;; Translate a btree error to something that makes more sense
+                  ;; in this context.
+                  (lambda (error)
+                    (declare (ignore error))
+                    (simple-rucksack-error "Class index for ~S doesn't exist in ~A."
+                                           class
+                                           rucksack))))
+    (btree-delete-key class
+                      :if-does-not-exist (if errorp :error :ignore))))
 
 
 (defmethod rucksack-map-class-indexes (rucksack function)
@@ -588,11 +679,19 @@ file is missing."
                                  &key (errorp nil))
   (unless (symbolp class)
     (setq class (class-name class)))
-  (or (gethash class (class-index-table rucksack))
-      (and errorp
-           (simple-rucksack-error "Can't find class index for ~S in ~A."
-                                  class
-                                  rucksack))))
+  (and (slot-boundp rucksack 'class-index-table)
+       (handler-bind ((btree-search-error
+                       ;; Translate a btree error to something that makes more sense
+                       ;; in this context.
+                       (lambda (error)
+                         (declare (ignore error))
+                         (simple-rucksack-error "Can't find class index for ~S in ~A."
+                                                class
+                                                rucksack))))
+         (btree-search (class-index-table rucksack) class
+                       :errorp errorp
+                       :default-value nil))))
+
 
 (defmethod rucksack-maybe-index-new-object ((rucksack standard-rucksack)
                                             class object)
@@ -640,67 +739,72 @@ file is missing."
   ;; Find the slot index table for CLASS, create a slot index and add that
   ;; index to the table.
   (let* ((slot-index-tables (slot-index-tables rucksack))
-         (slot-index-table (or (gethash class slot-index-tables)
-                               (let ((table (make-hash-table)))
-                                 (setf (gethash class slot-index-tables) table)
-                                 table)))
-         (new-slot-index (make-index index-spec unique-p))
-         (old-slot-index (gethash slot slot-index-table)))
-    ;; Add a new slot index table if necessary.
-    (when (and errorp old-slot-index)
-      (simple-rucksack-error "Slot index for slot ~S of class ~S
+         (slot-index-table
+          (or (btree-search slot-index-tables class :errorp nil)
+              (let ((table (make-instance 'btree
+                                          :key< 'string<
+                                          :value= 'p-eql
+                                          :unique-keys-p t)))
+                (btree-insert table slot-index-tables :if-exists :error)
+                table)))
+         (new-slot-index (make-index index-spec unique-p)))
+    (handler-bind ((btree-key-already-present-error
+                    (lambda (error)
+                      (declare (ignore error))
+                      (simple-rucksack-error "Slot index for slot ~S of class ~S
 already exists in ~A."
-                             slot
-                             class
-                             rucksack))
-    (add-rucksack-root new-slot-index rucksack)
-    (when old-slot-index
-      (delete-rucksack-root old-slot-index rucksack))
-    (setf (gethash slot slot-index-table) new-slot-index)))
+                                             slot
+                                             class
+                                             rucksack))))
+      (btree-insert slot slot-index-table new-slot-index
+                    :if-exists (if errorp :error :overwrite)))
+    new-slot-index))
+
 
 (defmethod rucksack-remove-slot-index (rucksack class slot &key (errorp nil))
   (unless (symbolp class)
     (setq class (class-name class)))
   (unless (symbolp slot)
     (setq slot (slot-definition-name slot)))
-  (flet ((oops ()
+  (flet ((oops (error)
+           (declare (ignore error))
            (simple-rucksack-error "Attempt to remove non-existing slot
 index for slot ~S of class ~S in ~A."
                                   slot
                                   class
                                   rucksack)))
-    (let ((slot-index-table (gethash class (slot-index-tables rucksack))))
-      (if slot-index-table
-          (if errorp
-              (let ((index (gethash slot slot-index-table)))
-                (if index
-                    (progn
-                      (remhash slot slot-index-table)
-                      (delete-rucksack-root index rucksack))
-                  (oops)))
-            (remhash slot slot-index-table))
-        (and errorp (oops))))))
+    ;; Return the slot name if everything went fine; otherwise, return
+    ;; NIL (or signal an error).
+    (and (handler-bind ((btree-search-error #'oops))
+
+           (let ((slot-index-table (btree-search (slot-index-tables rucksack) class
+                                                 :errorp errorp)))
+             (handler-bind ((btree-deletion-error #'oops))
+               (btree-delete-key slot slot-index-table
+                                 :if-does-not-exist (if errorp :error :ignore)))))
+         slot)))
 
 
 (defmethod rucksack-map-slot-indexes ((rucksack standard-rucksack) function
                                       &key (class t) (include-subclasses t))
   (if (eql class t)
-      (maphash (lambda (class slot-index-table)
-                 (maphash (lambda (slot slot-index)
-                            (funcall function class slot slot-index))
-                          slot-index-table))
-               (slot-index-tables rucksack))
+      (map-btree (slot-index-tables rucksack)
+                 (lambda (class slot-index-table)
+                   (map-btree slot-index-table
+                              (lambda (slot slot-index)
+                                (funcall function class slot slot-index)))))
     (let ((visited-p (make-hash-table)))
       (flet ((map-indexes (class)
                (unless (gethash class visited-p)
-                 (let ((slot-index-table (gethash (class-name class)
-                                                  (slot-index-tables rucksack))))
+                 (let ((slot-index-table (btree-search (slot-index-tables rucksack)
+                                                       (class-name class)
+                                                       :errorp nil)))
                    (when slot-index-table
-                     (maphash (lambda (slot slot-index)
-                                (funcall function (class-name class)
-                                         slot
-                                         slot-index))
-                              slot-index-table)))
+                     (map-btree slot-index-table
+                                (lambda (slot slot-index)
+                                  (funcall function (class-name class)
+                                           slot
+                                           slot-index)))))
                  (setf (gethash class visited-p) t)
                  (when include-subclasses
                    (mapc #'map-indexes
@@ -728,12 +832,12 @@ index for slot ~S of class ~S in ~A."
     (setq slot (slot-definition-name slot)))
   (let ((slot-index-tables (slot-index-tables rucksack)))
     (flet ((find-index (class)
-             (let ((slot-index-table (gethash class slot-index-tables)))
+             (let ((slot-index-table (btree-search slot-index-tables class
+                                                   :errorp nil)))
  	       (and slot-index-table
-                    (gethash slot slot-index-table)))))
+                    (btree-search slot-index-table slot :errorp nil)))))
       (or (find-index class)
-          (loop for superclass in (class-precedence-list 
-                                   (find-class class))
+          (loop for superclass in (class-precedence-list (find-class class))
                 thereis (find-index (class-name superclass)))
           (and errorp
                (simple-rucksack-error

@@ -1,4 +1,4 @@
-;; $Id: serialize.lisp,v 1.6 2006-08-11 12:44:21 alemmens Exp $
+;; $Id: serialize.lisp,v 1.7 2006-08-24 15:21:25 alemmens Exp $
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Serialize
@@ -1122,6 +1122,11 @@ implementation-dependent attributes."
   (let ((nr-slots (deserialize serializer)))
     (loop repeat nr-slots
           do (scan serializer gc))))
+
+
+(defmethod scan-contents ((marker (eql +unbound-slot+)) serializer gc)
+  ;; Just skip the marker and continue.
+  :do-nothing)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

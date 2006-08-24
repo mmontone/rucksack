@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.17 2006-08-09 13:23:18 alemmens Exp $
+;; $Id: garbage-collector.lisp,v 1.18 2006-08-24 15:21:25 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -221,14 +221,21 @@ collector."
           (loop until (or (eql (state heap) :ready) (<= amount 0))
                 do (ecase (state heap)
                      (:starting
-                      ;; We were not collecting garbage; start doing that now.
-                      (setf (nr-object-bytes-marked heap) 0
-                            (nr-heap-bytes-scanned heap) 0
-                            (nr-heap-bytes-sweeped heap) 0
-                            (nr-object-bytes-sweeped heap) 0
-                            ;; We don't need to copy the roots, because we're not
-                            ;; going to modify the list (just push and pop).
-                            (roots heap) (slot-value (rucksack heap) 'roots))
+                      (let ((rucksack (rucksack heap)))
+                        ;; We were not collecting garbage; start doing that now.
+                        (setf (nr-object-bytes-marked heap) 0
+                              (nr-heap-bytes-scanned heap) 0
+                              (nr-heap-bytes-sweeped heap) 0
+                              (nr-object-bytes-sweeped heap) 0
+                              ;; We don't need to copy the roots, because we're not
+                              ;; going to modify the list (just push and pop).
+                              ;; But we do need to add the btrees for the class-index-table
+                              ;; and slot-index-tables to the GC roots.
+                              (roots heap) (append (and (slot-boundp rucksack 'class-index-table)
+                                                        (list (slot-value rucksack 'class-index-table)))
+                                                   (and (slot-boundp rucksack 'slot-index-tables)
+                                                        (list (slot-value rucksack 'slot-index-tables)))
+                                                   (slot-value (rucksack heap) 'roots))))
                       (setf (state heap) :marking-object-table))
                      (:marking-object-table
                       (decf amount (mark-some-objects-in-table heap amount)))

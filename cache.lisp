@@ -1,4 +1,4 @@
-;; $Id: cache.lisp,v 1.9 2006-08-10 12:36:16 alemmens Exp $
+;; $Id: cache.lisp,v 1.10 2006-08-24 15:21:25 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -281,7 +281,8 @@ already dirty, nothing happens."
            ;; current transaction?  Fine, let's use it.
            (let ((object (gethash object-id (objects cache))))
              (and object
-                  (<= (transaction-id object) (transaction-id transaction))
+                  (or (null transaction)
+                      (<= (transaction-id object) (transaction-id transaction)))
                   object))
            ;; Modified by an open transaction?  Try to find the
            ;; 'compatible' version.
@@ -318,22 +319,23 @@ memory."
   ;; EFFICIENCY: Maybe we should use another data structure than a
   ;; hash table for faster searching in the potentially relevant
   ;; transactions?  An in-memory btree might be good...
-  (or 
-   ;; Modified by the current-transaction itself?  Then use that version.
-   (transaction-changed-object current-transaction object-id)
-   ;; Otherwise iterate over all open transactions, keeping track
-   ;; of the best candidate.
-   (let ((result-transaction nil)
-         (result nil))
-     (loop for transaction being the hash-value of (transactions cache)
-           for object = (transaction-changed-object transaction object-id)
-           when (and object
-                     (transaction-older-p transaction current-transaction)
-                     (or (null result-transaction)
-                         (transaction-older-p result-transaction transaction)))
-           do (setf result-transaction transaction
-                    result object))
-     result)))
+  (and current-transaction
+       (or 
+        ;; Modified by the current-transaction itself?  Then use that version.
+        (transaction-changed-object current-transaction object-id)
+        ;; Otherwise iterate over all open transactions, keeping track
+        ;; of the best candidate.
+        (let ((result-transaction nil)
+              (result nil))
+          (loop for transaction being the hash-value of (transactions cache)
+                for object = (transaction-changed-object transaction object-id)
+                when (and object
+                          (transaction-older-p transaction current-transaction)
+                          (or (null result-transaction)
+                              (transaction-older-p result-transaction transaction)))
+                do (setf result-transaction transaction
+                         result object))
+          result))))
 
 
 

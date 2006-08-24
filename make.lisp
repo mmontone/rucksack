@@ -1,4 +1,4 @@
-;; $Id: make.lisp,v 1.3 2006-05-25 13:01:38 alemmens Exp $
+;; $Id: make.lisp,v 1.4 2006-08-24 15:21:25 alemmens Exp $
 
 (in-package :cl-user)
 
@@ -23,7 +23,7 @@
                       "index"
                       "rucksack"
                       "transactions"
-                      "test")
+                      #+nil "test")
         do (tagbody
             :retry
             (let ((lisp (make-pathname :name file

@@ -1,4 +1,4 @@
-;; $Id: test.lisp,v 1.10 2006-08-11 12:44:21 alemmens Exp $
+;; $Id: test.lisp,v 1.11 2006-08-24 15:21:25 alemmens Exp $
 
 (in-package :test-rucksack)
 
@@ -26,7 +26,7 @@
 (defclass p-thing-1 ()
   ()
   (:metaclass persistent-class))
-
+  
 (defclass p-thing-2 ()
   ((x :initarg :x :reader x-of :persistence t))
   (:metaclass persistent-class))
@@ -258,7 +258,7 @@
           (format t "~&Deleting~%")
           (let ((btree (first (rucksack-roots rucksack))))
             (dotimes (i delete)
-              (when (zerop (mod (1+ i) 1000))
+              (when (zerop (mod (1+ i) 100))
                 (format t "~D " (1+ i)))
               (btree-delete-key btree (aref array i)))
             (check-order btree)
