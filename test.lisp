@@ -1,4 +1,4 @@
-;; $Id: test.lisp,v 1.11 2006-08-24 15:21:25 alemmens Exp $
+;; $Id: test.lisp,v 1.12 2006-08-24 15:45:02 alemmens Exp $
 
 (in-package :test-rucksack)
 
@@ -381,7 +381,7 @@
 (defun btree-stress-test (&key (n 1000))
   (loop for i below n
         do (print i)
-        do (test-non-unique-btree :n 1600 :node-size 12 :delete 1500)))
+        do (test-non-unique-btree :n 1600 :node-size 10 :delete 1500)))
 
 (defun test-btree-map (&key (display t) min max include-min include-max
                             (order :ascending))
