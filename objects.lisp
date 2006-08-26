@@ -1,4 +1,4 @@
-;; $Id: objects.lisp,v 1.9 2006-08-24 15:21:25 alemmens Exp $
+;; $Id: objects.lisp,v 1.10 2006-08-26 12:55:34 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -404,7 +404,12 @@ inherit from this class."))
 
 
 (defmethod shared-initialize :before ((object persistent-object) slots
-				      &key rucksack &allow-other-keys)
+				      &key rucksack
+                                      ;; The DONT-INDEX argument is used
+                                      ;; when creating the indexes themselves
+                                      ;; (to prevent infinite recursion).
+                                      (dont-index nil)
+                                      &allow-other-keys)
   ;; This happens when persistent-objects are created in memory, not when
   ;; they're loaded from the cache (loading uses ALLOCATE-INSTANCE instead).
   (let ((rucksack (or rucksack (rucksack object))))
@@ -414,7 +419,24 @@ inherit from this class."))
     ;; DO: Explain why we don't set the transaction-id slot here.
     (unless (slot-boundp object 'rucksack)
       (setf (slot-value object 'rucksack) rucksack))
-    (rucksack-maybe-index-new-object rucksack (class-of object) object)))
+    (unless dont-index
+      (rucksack-maybe-index-new-object rucksack (class-of object) object))))
+
+(defmethod shared-initialize :after ((object persistent-object) slots
+				      &key rucksack
+                                      (dont-index nil)
+                                      &allow-other-keys)
+  ;; Update slot indexes for persistent slots that are bound now.
+  (unless dont-index
+    (let ((class (class-of object)))
+      (dolist (slot (class-slots class))
+        (let ((slot-name (slot-definition-name slot)))
+          (when (and (slot-boundp object slot-name)
+                     (slot-persistence slot))
+            (rucksack-maybe-index-changed-slot rucksack
+                                               class object slot
+                                               nil (slot-value object slot-name)
+                                               nil t)))))))
 
 
 (defmethod print-object ((object persistent-object) stream)

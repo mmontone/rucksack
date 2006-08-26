@@ -1,4 +1,4 @@
-;; $Id: p-btrees.lisp,v 1.9 2006-08-10 12:36:16 alemmens Exp $
+;; $Id: p-btrees.lisp,v 1.10 2006-08-26 12:55:34 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -751,7 +751,8 @@ child node will be KEY<= the child node's key in the parent node.")
                             :btree btree
                             :key key
                             :value value)))))
-    (let ((binding (node-search-binding btree (btree-root btree) key)))
+    (let ((binding (and (slot-boundp btree 'root)
+                        (node-search-binding btree (btree-root btree) key))))
       (cond ((not binding)
              ;; The binding doesn't exist: forget it.
              (forget-it))

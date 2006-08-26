@@ -1,4 +1,4 @@
-;; $Id: index.lisp,v 1.5 2006-08-11 12:44:21 alemmens Exp $
+;; $Id: index.lisp,v 1.6 2006-08-26 12:55:34 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -15,7 +15,7 @@ the index value (or list of values, for indexes with non-unique keys).
 
 If EQUAL is specified, the other arguments are ignored; the function
 will be called once (if there is a key with the same value as EQUAL)
-or zero time (if there is no such key).
+or not at all (if there is no such key).
 
 MIN, MAX, INCLUDE-MIN and INCLUDE-MAX specify the interval.  The
 interval is left-open if MIN is nil, right-open if MAX is nil.  The
@@ -46,10 +46,15 @@ either :IGNORE (default) or :ERROR."))
 
 (defmethod map-index ((index btree) function
                       &rest args
-                      &key equal min max include-min include-max
+                      &key min max include-min include-max
+                      (equal nil equal-supplied)
                       (order :ascending))
-  (declare (ignorable equal min max include-min include-max))
-  (apply #'map-btree index function :order order args))
+  (declare (ignorable min max include-min include-max))
+  (if equal-supplied
+      (let ((value (btree-search index equal :errorp nil :default-value index)))
+        (unless (p-eql value index)
+          (funcall function equal value)))
+    (apply #'map-btree index function :order order args)))
 
 
 (defmethod index-insert ((index btree) key value &key (if-exists :overwrite))

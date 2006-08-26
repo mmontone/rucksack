@@ -1,4 +1,4 @@
-;; $Id: mop.lisp,v 1.5 2006-08-11 12:44:21 alemmens Exp $
+;; $Id: mop.lisp,v 1.6 2006-08-26 12:55:34 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -15,7 +15,7 @@
                      :accessor class-persistent-slots)
    (index :initarg :index :initform nil :accessor class-index
           :documentation "Can be either NIL (for no class index) or T
-(for the standard class index).  Default value is T.")))
+(for the standard class index).  Default value is NIL.")))
 
 (defclass persistent-slot-mixin ()
   ((persistence :initarg :persistence
@@ -148,7 +148,8 @@ should only be used when speed is critical.
 
 (defun ensure-class-schema (class old-slot-indexes)
   ;; Update class and slot indexes.
-  (when (some #'slot-persistence (class-direct-slots class))
+  (when (or (class-index class)
+            (some #'slot-persistence (class-direct-slots class)))
     ;; NOTE: We get the current-rucksack only if there are some
     ;; persistent slots, because this will also get called during
     ;; compilation of Rucksack (when the class definition of
