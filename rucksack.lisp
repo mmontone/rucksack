@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.12 2006-08-26 12:55:34 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.13 2006-08-29 11:41:40 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -66,15 +66,14 @@ that's specified in the :INDEX class option of CLASS.  An obsolete
 class index (i.e. a class index that's specified anymore in the class
 option) is removed, new class indexes are added."))
 
-(defgeneric rucksack-update-slot-indexes (rucksack class old-slot-indexes)
+(defgeneric rucksack-update-slot-indexes (rucksack class old-slots)
   (:documentation 
    "Compares the current slot indexes for CLASS to the slot indexes
 that are specified in the slot options for the direct slots of CLASS.
 Obsolete slot indexes (i.e. slot indexes that are not specified
-anymore in the slot options) are removed, new slot indexes are
-added.
-  OLD-SLOT-INDEXES is a list with the name, index and unique-p info
-of each slot."))
+anymore in the slot options or indexes for slots that don't exist
+anymore) are removed, new slot indexes are added.
+  OLD-SLOTS is a list with the previous slot definitions."))
 
 (defgeneric rucksack-add-class-index (rucksack class-designator &key errorp))
 
@@ -552,57 +551,85 @@ file is missing."
            :no-change))))
 
 
+
 (defmethod rucksack-update-slot-indexes ((rucksack standard-rucksack)
                                          (class persistent-class)
-                                         old-slot-indexes)
-  (dolist (slot (class-direct-slots class))
-    (let* ((index-spec (and (slot-persistence slot)
-                            (or (find-index-spec (slot-index slot) :errorp nil)
-                                (slot-index slot))))
-           (unique-p (slot-unique slot)))
-      (multiple-value-bind (current-index-spec current-unique-p)
-          (find-old-index-spec (slot-definition-name slot) old-slot-indexes)
-        (cond ((and (index-spec-equal index-spec current-index-spec)
-                    (eql unique-p current-unique-p))
-               ;; We keep the same index: no change needed.
-               :no-change)
-              ((and current-index-spec (null index-spec))
-               ;; The index is not wanted anymore: remove it.
-               (rucksack-remove-slot-index rucksack class slot :errorp t))
-              ((and (null current-index-spec) index-spec)
-               ;; We didn't have an index but we need one now: add one.
-               (rucksack-add-slot-index rucksack class slot index-spec unique-p
+                                         old-slots)
+  (let ((direct-slots (class-direct-slots class)))
+    ;; Remove indexes for old slots that don't exist anymore.
+    (loop for slot in old-slots
+          for slot-name = (slot-definition-name slot)
+          unless (find slot-name direct-slots :key #'slot-definition-name)
+          do (rucksack-remove-slot-index rucksack class slot-name :errorp t))
+    ;; Update indexes for the current set of direct slots.
+    (dolist (slot direct-slots)
+      (let ((index-spec (and (slot-persistence slot)
+                             (or (find-index-spec (slot-index slot) :errorp nil)
+                                 (slot-index slot))))
+            (unique-p (slot-unique slot))
+            (slot-name (slot-definition-name slot)))
+        (multiple-value-bind (current-index-spec current-unique-p)
+            (find-old-index-spec slot-name old-slots)
+          (cond ((and (index-spec-equal index-spec current-index-spec)
+                      (eql unique-p current-unique-p))
+                 ;; We keep the same index: no change needed.
+                 :no-change)
+                ((and current-index-spec (null index-spec))
+                 ;; The index is not wanted anymore: remove it.
+                 (rucksack-remove-slot-index rucksack class slot :errorp t))
+                ((and (null current-index-spec) index-spec)
+                 ;; We didn't have an index but we need one now: add one.
+                 (add-and-fill-slot-index rucksack class slot index-spec unique-p))
+                ((and current-index-spec index-spec)
+                 ;; We have an index but need a different one now.
+                 (replace-slot-index rucksack class slot index-spec unique-p))))))))
+
+
+(defun add-and-fill-slot-index (rucksack class slot index-spec unique-p)
+  ;; We didn't have an index but we need one now: add one.
+  (let ((index (rucksack-add-slot-index rucksack class slot index-spec unique-p
                                         :errorp t))
-              ((and current-index-spec index-spec)
-               ;; We have an index but need a different one now.  This requires
-               ;; some care because we need to re-index all objects from the old
-               ;; index.
-               (let ((current-index (rucksack-slot-index rucksack class slot))
-                     (new-index (rucksack-add-slot-index rucksack class slot
-                                                         index-spec
-                                                         unique-p
-                                                         :errorp nil)))
-                 ;; Re-index all objects for the new index.
-                 ;; DO: This re-indexing can cause an error (e.g. if the old
-                 ;; index has non-unique keys, the new index has unique keys
-                 ;; and some keys occur more than once).  We need to handle
-                 ;; that error here and offer some decent restarts (e.g.
-                 ;; remove the index entirely, or go back to the old index).
-                 (map-index current-index
-                            (lambda (slot-value object-id)
-                              (index-insert new-index slot-value object-id)))
-                 ;; We don't need to remove the old index explicitly, because
-                 ;; RUCKSACK-ADD-SLOT-INDEX already did that for us.
-                 )))))))
-  
-(defun find-old-index-spec (slot-name old-slot-indexes)
-  (let ((slot-info (cdr (assoc slot-name old-slot-indexes))))
-    (and slot-info
-         (destructuring-bind (index-spec-designator unique-p)
-             slot-info
-           (values (or (find-index-spec index-spec-designator :errorp nil)
-                       index-spec-designator)
-                   unique-p)))))
+        (slot-name (slot-definition-name slot)))
+    ;; Index all instances for the new index.
+    ;; NOTE: This will only work if the class is indexed, otherwise there is no
+    ;; affordable way to find all instances of the class.
+    (when (class-index class)
+      (rucksack-map-class rucksack class
+                          (lambda (object)
+                            (when (slot-boundp object slot-name)
+                              (index-insert index (slot-value object slot-name)
+                                            (object-id object))))))))
+
+
+(defun replace-slot-index (rucksack class slot index-spec unique-p)
+  ;; We have an index but need a different one now.  This requires
+  ;; some care because we need to re-index all objects from the old
+  ;; index.
+  (let ((current-index (rucksack-slot-index rucksack class slot))
+        (new-index (rucksack-add-slot-index rucksack class slot
+                                            index-spec
+                                            unique-p
+                                            :errorp nil)))
+    ;; Re-index all objects for the new index.
+    ;; DO: This re-indexing can cause an error (e.g. if the old
+    ;; index has non-unique keys, the new index has unique keys
+    ;; and some keys occur more than once).  We need to handle
+    ;; that error here and offer some decent restarts (e.g.
+    ;; remove the index entirely, or go back to the old index).
+    (map-index current-index
+               (lambda (slot-value object-id)
+                 (index-insert new-index slot-value object-id)))
+    ;; We don't need to remove the old index explicitly, because
+    ;; RUCKSACK-ADD-SLOT-INDEX already did that for us.
+    ))
+
+(defun find-old-index-spec (slot-name old-slots)
+  (let ((slot (find slot-name old-slots :key #'slot-definition-name)))
+    (and slot
+         (with-slots (index unique)
+             slot
+           (values (or (find-index-spec index :errorp nil) index)
+                   unique)))))
 
 
              
@@ -785,7 +812,7 @@ index for slot ~S of class ~S in ~A."
            (let ((slot-index-table (btree-search (slot-index-tables rucksack) class
                                                  :errorp errorp)))
              (handler-bind ((btree-deletion-error #'oops))
-               (btree-delete-key slot slot-index-table
+               (btree-delete-key slot-index-table slot
                                  :if-does-not-exist (if errorp :error :ignore)))))
          slot)))
 
@@ -914,3 +941,18 @@ index for slot ~S of class ~S in ~A."
                                    (declare (ignore index))
                                    (push class-name result))))
     result))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Schema updates
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defmethod rucksack-maybe-update-schema ((rucksack standard-rucksack)
+                                         class
+                                         old-slot-indexes)
+  ;; This is just a thin wrapper, so you can customize it if necessary.
+  (maybe-update-schema (schema-table (rucksack-cache rucksack))
+                       class
+                       old-slot-indexes))
+
+                       
+                                         

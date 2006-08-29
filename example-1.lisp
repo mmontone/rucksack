@@ -1,17 +1,15 @@
-;; $Id: example-1.lisp,v 1.2 2006-08-26 12:55:34 alemmens Exp $
+;; $Id: example-1.lisp,v 1.3 2006-08-29 11:41:40 alemmens Exp $
 
 (in-package :test-rucksack)
 
-;; NOTE: At the moment, this example works only when this file is compiled
-;; exactly once.  After the second compile, slot indexing will fail (because
-;; ENSURE-CLASS-SCHEMA isn't complete yet).
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Indexing, class redefinitions
+;;; Indexing example
+;;;
+;;; To run this example:
+;;; - compile and load this file
+;;; - (CREATE-HACKERS)
+;;; - (SHOW-HACKERS)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defparameter *example-1* #p"/tmp/rucksack/example-1/"))
 
 (defparameter *hackers* '("David" "Jim" "Peter" "Thomas"
                           "Arthur" "Jans" "Klaus" "James" "Martin"))
@@ -19,16 +17,18 @@
 (defun random-elt (list)
   (elt list (random (length list))))
 
-(eval-when (:compile-toplevel)
-  (with-rucksack (*rucksack* *example-1* :if-exists :supersede)
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+
+  (defparameter *hacker-rucksack* #p"/tmp/rucksack/hackers/")
+
+  (with-rucksack (*rucksack* *hacker-rucksack*)
     (with-transaction ()
 
-      ;; For classes that may change during program development, you should
-      ;; wrap all class definitions in a WITH-RUCKSACK to make sure that
-      ;; the corresponding schema definitions and indexes are updated correctly.
-      ;; (This is only necessary if you already have a rucksack that contains
-      ;; instances of the class that's being redefined, of course.)
-    
+      ;; We define some persistent classes with indexed slots.
+      ;; So we must wrap the class definition in a WITH-RUCKSACK,
+      ;; otherwise the indexes can't be built.
+
       (defclass hacker ()
         ((id :initform (gensym "HACKER-")
              :reader hacker-id
@@ -36,12 +36,10 @@
              :unique t)
          (name :initform (random-elt *hackers*)
                :accessor name
-               :index :case-insensitive-string-index)
-         (age :initform (random 100) :accessor age
-              :index :number-index))
+               :index :case-insensitive-string-index))
         (:metaclass persistent-class)
         (:index t))
-
+      
       (defclass lisp-hacker (hacker)
         ()
         (:metaclass persistent-class)
@@ -50,13 +48,12 @@
 
 (defmethod print-object ((hacker hacker) stream)
   (print-unreadable-object (hacker stream :type t)
-    (format stream "~S called ~S of age ~D"
+    (format stream "~S called ~S"
             (hacker-id hacker)
-            (name hacker)
-            (age hacker))))
+            (name hacker))))
 
-(defun example-1 ()
-  (with-rucksack (*rucksack* *example-1*)
+(defun create-hackers ()
+  (with-rucksack (*rucksack* *hacker-rucksack*)
     ;; Fill the rucksack with some hackers.
     (with-transaction ()
       (loop repeat 20
@@ -66,7 +63,7 @@
       (rucksack-map-class *rucksack* 'hacker #'print))))
 
 (defun show-hackers ()
-  (with-rucksack (*rucksack* *example-1*)
+  (with-rucksack (*rucksack* *hacker-rucksack*)
     (with-transaction ()
       (print "Hackers indexed by object id.")
       (rucksack-map-class *rucksack* 'hacker #'print)
@@ -84,7 +81,215 @@
                           :id-only t))))
 
 (defun show-indexes ()
-  (with-rucksack (r *example-1*)
+  (with-rucksack (r *hacker-rucksack*)
     (print (rs::rucksack-list-class-indexes r))
     (print (rs::rucksack-list-slot-indexes r))
     :ok))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Example output
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+#|
+
+CL-USER 2 > (in-package :test-rs)
+#<The TEST-RUCKSACK package, 74/256 internal, 0/16 external>
+
+TEST-RS 3 > (create-hackers)
+
+#<HACKER #:HACKER-9234 called "Martin"> 
+#<HACKER #:HACKER-9235 called "Martin"> 
+#<HACKER #:HACKER-9236 called "Martin"> 
+#<HACKER #:HACKER-9237 called "Jim"> 
+#<HACKER #:HACKER-9238 called "Thomas"> 
+#<HACKER #:HACKER-9239 called "David"> 
+#<HACKER #:HACKER-9240 called "Thomas"> 
+#<HACKER #:HACKER-9241 called "Jim"> 
+#<HACKER #:HACKER-9242 called "Martin"> 
+#<HACKER #:HACKER-9243 called "Jim"> 
+#<HACKER #:HACKER-9244 called "Peter"> 
+#<HACKER #:HACKER-9245 called "Jim"> 
+#<HACKER #:HACKER-9246 called "Thomas"> 
+#<HACKER #:HACKER-9247 called "Jans"> 
+#<HACKER #:HACKER-9248 called "Peter"> 
+#<HACKER #:HACKER-9249 called "Peter"> 
+#<HACKER #:HACKER-9250 called "Arthur"> 
+#<HACKER #:HACKER-9251 called "Thomas"> 
+#<HACKER #:HACKER-9252 called "James"> 
+#<HACKER #:HACKER-9253 called "Martin"> 
+#<LISP-HACKER #:HACKER-9254 called "Jans"> 
+#<LISP-HACKER #:HACKER-9255 called "Martin"> 
+#<LISP-HACKER #:HACKER-9256 called "Thomas"> 
+#<LISP-HACKER #:HACKER-9257 called "Klaus"> 
+#<LISP-HACKER #:HACKER-9258 called "David"> 
+#<LISP-HACKER #:HACKER-9259 called "Thomas"> 
+#<LISP-HACKER #:HACKER-9260 called "David"> 
+#<LISP-HACKER #:HACKER-9261 called "James"> 
+#<LISP-HACKER #:HACKER-9262 called "Peter"> 
+#<LISP-HACKER #:HACKER-9263 called "Peter"> 
+NIL
+T
+
+TEST-RS 4 > (show-hackers)
+
+"Hackers indexed by object id." 
+#<HACKER #:HACKER-9234 called "Martin"> 
+#<HACKER #:HACKER-9235 called "Martin"> 
+#<HACKER #:HACKER-9236 called "Martin"> 
+#<HACKER #:HACKER-9237 called "Jim"> 
+#<HACKER #:HACKER-9238 called "Thomas"> 
+#<HACKER #:HACKER-9239 called "David"> 
+#<HACKER #:HACKER-9240 called "Thomas"> 
+#<HACKER #:HACKER-9241 called "Jim"> 
+#<HACKER #:HACKER-9242 called "Martin"> 
+#<HACKER #:HACKER-9243 called "Jim"> 
+#<HACKER #:HACKER-9244 called "Peter"> 
+#<HACKER #:HACKER-9245 called "Jim"> 
+#<HACKER #:HACKER-9246 called "Thomas"> 
+#<HACKER #:HACKER-9247 called "Jans"> 
+#<HACKER #:HACKER-9248 called "Peter"> 
+#<HACKER #:HACKER-9249 called "Peter"> 
+#<HACKER #:HACKER-9250 called "Arthur"> 
+#<HACKER #:HACKER-9251 called "Thomas"> 
+#<HACKER #:HACKER-9252 called "James"> 
+#<HACKER #:HACKER-9253 called "Martin"> 
+#<LISP-HACKER #:HACKER-9254 called "Jans"> 
+#<LISP-HACKER #:HACKER-9255 called "Martin"> 
+#<LISP-HACKER #:HACKER-9256 called "Thomas"> 
+#<LISP-HACKER #:HACKER-9257 called "Klaus"> 
+#<LISP-HACKER #:HACKER-9258 called "David"> 
+#<LISP-HACKER #:HACKER-9259 called "Thomas"> 
+#<LISP-HACKER #:HACKER-9260 called "David"> 
+#<LISP-HACKER #:HACKER-9261 called "James"> 
+#<LISP-HACKER #:HACKER-9262 called "Peter"> 
+#<LISP-HACKER #:HACKER-9263 called "Peter"> 
+"Hackers indexed by name." 
+#<HACKER #:HACKER-9250 called "Arthur"> 
+#<LISP-HACKER #:HACKER-9260 called "David"> 
+#<LISP-HACKER #:HACKER-9258 called "David"> 
+#<HACKER #:HACKER-9239 called "David"> 
+#<LISP-HACKER #:HACKER-9261 called "James"> 
+#<HACKER #:HACKER-9252 called "James"> 
+#<LISP-HACKER #:HACKER-9254 called "Jans"> 
+#<HACKER #:HACKER-9247 called "Jans"> 
+#<HACKER #:HACKER-9245 called "Jim"> 
+#<HACKER #:HACKER-9243 called "Jim"> 
+#<HACKER #:HACKER-9241 called "Jim"> 
+#<HACKER #:HACKER-9237 called "Jim"> 
+#<LISP-HACKER #:HACKER-9257 called "Klaus"> 
+#<LISP-HACKER #:HACKER-9255 called "Martin"> 
+#<HACKER #:HACKER-9253 called "Martin"> 
+#<HACKER #:HACKER-9242 called "Martin"> 
+#<HACKER #:HACKER-9236 called "Martin"> 
+#<HACKER #:HACKER-9235 called "Martin"> 
+#<HACKER #:HACKER-9234 called "Martin"> 
+#<LISP-HACKER #:HACKER-9263 called "Peter"> 
+#<LISP-HACKER #:HACKER-9262 called "Peter"> 
+#<HACKER #:HACKER-9249 called "Peter"> 
+#<HACKER #:HACKER-9248 called "Peter"> 
+#<HACKER #:HACKER-9244 called "Peter"> 
+#<LISP-HACKER #:HACKER-9259 called "Thomas"> 
+#<LISP-HACKER #:HACKER-9256 called "Thomas"> 
+#<HACKER #:HACKER-9251 called "Thomas"> 
+#<HACKER #:HACKER-9246 called "Thomas"> 
+#<HACKER #:HACKER-9240 called "Thomas"> 
+#<HACKER #:HACKER-9238 called "Thomas"> 
+"Hackers indexed by hacker-id." 
+#<HACKER #:HACKER-9234 called "Martin"> 
+#<HACKER #:HACKER-9235 called "Martin"> 
+#<HACKER #:HACKER-9236 called "Martin"> 
+#<HACKER #:HACKER-9237 called "Jim"> 
+#<HACKER #:HACKER-9238 called "Thomas"> 
+#<HACKER #:HACKER-9239 called "David"> 
+#<HACKER #:HACKER-9240 called "Thomas"> 
+#<HACKER #:HACKER-9241 called "Jim"> 
+#<HACKER #:HACKER-9242 called "Martin"> 
+#<HACKER #:HACKER-9243 called "Jim"> 
+#<HACKER #:HACKER-9244 called "Peter"> 
+#<HACKER #:HACKER-9245 called "Jim"> 
+#<HACKER #:HACKER-9246 called "Thomas"> 
+#<HACKER #:HACKER-9247 called "Jans"> 
+#<HACKER #:HACKER-9248 called "Peter"> 
+#<HACKER #:HACKER-9249 called "Peter"> 
+#<HACKER #:HACKER-9250 called "Arthur"> 
+#<HACKER #:HACKER-9251 called "Thomas"> 
+#<HACKER #:HACKER-9252 called "James"> 
+#<HACKER #:HACKER-9253 called "Martin"> 
+#<LISP-HACKER #:HACKER-9254 called "Jans"> 
+#<LISP-HACKER #:HACKER-9255 called "Martin"> 
+#<LISP-HACKER #:HACKER-9256 called "Thomas"> 
+#<LISP-HACKER #:HACKER-9257 called "Klaus"> 
+#<LISP-HACKER #:HACKER-9258 called "David"> 
+#<LISP-HACKER #:HACKER-9259 called "Thomas"> 
+#<LISP-HACKER #:HACKER-9260 called "David"> 
+#<LISP-HACKER #:HACKER-9261 called "James"> 
+#<LISP-HACKER #:HACKER-9262 called "Peter"> 
+#<LISP-HACKER #:HACKER-9263 called "Peter"> 
+"Lisp hackers." 
+#<LISP-HACKER #:HACKER-9254 called "Jans"> 
+#<LISP-HACKER #:HACKER-9255 called "Martin"> 
+#<LISP-HACKER #:HACKER-9256 called "Thomas"> 
+#<LISP-HACKER #:HACKER-9257 called "Klaus"> 
+#<LISP-HACKER #:HACKER-9258 called "David"> 
+#<LISP-HACKER #:HACKER-9259 called "Thomas"> 
+#<LISP-HACKER #:HACKER-9260 called "David"> 
+#<LISP-HACKER #:HACKER-9261 called "James"> 
+#<LISP-HACKER #:HACKER-9262 called "Peter"> 
+#<LISP-HACKER #:HACKER-9263 called "Peter"> 
+"Non-lisp hackers." 
+#<HACKER #:HACKER-9234 called "Martin"> 
+#<HACKER #:HACKER-9235 called "Martin"> 
+#<HACKER #:HACKER-9236 called "Martin"> 
+#<HACKER #:HACKER-9237 called "Jim"> 
+#<HACKER #:HACKER-9238 called "Thomas"> 
+#<HACKER #:HACKER-9239 called "David"> 
+#<HACKER #:HACKER-9240 called "Thomas"> 
+#<HACKER #:HACKER-9241 called "Jim"> 
+#<HACKER #:HACKER-9242 called "Martin"> 
+#<HACKER #:HACKER-9243 called "Jim"> 
+#<HACKER #:HACKER-9244 called "Peter"> 
+#<HACKER #:HACKER-9245 called "Jim"> 
+#<HACKER #:HACKER-9246 called "Thomas"> 
+#<HACKER #:HACKER-9247 called "Jans"> 
+#<HACKER #:HACKER-9248 called "Peter"> 
+#<HACKER #:HACKER-9249 called "Peter"> 
+#<HACKER #:HACKER-9250 called "Arthur"> 
+#<HACKER #:HACKER-9251 called "Thomas"> 
+#<HACKER #:HACKER-9252 called "James"> 
+#<HACKER #:HACKER-9253 called "Martin"> 
+"Hacker object ids." 
+36 
+65 
+69 
+73 
+78 
+83 
+88 
+92 
+96 
+100 
+104 
+109 
+113 
+117 
+122 
+126 
+130 
+135 
+139 
+144 
+148 
+160 
+164 
+168 
+173 
+177 
+181 
+185 
+189 
+193 
+NIL
+T
+
+|#

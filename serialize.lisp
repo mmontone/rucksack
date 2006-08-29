@@ -1,4 +1,4 @@
-;; $Id: serialize.lisp,v 1.7 2006-08-24 15:21:25 alemmens Exp $
+;; $Id: serialize.lisp,v 1.8 2006-08-29 11:41:40 alemmens Exp $
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Serialize
@@ -1105,7 +1105,8 @@ implementation-dependent attributes."
   (let ((nr-slots (deserialize stream))
         (slots (saved-slots object)))
     (unless (= nr-slots (length slots))
-      (error "Slot mismatch while deserializing a standard object."))
+      (error "Slot mismatch while deserializing a standard object of class ~S."
+             (class-of object)))
     (loop for slot-name in (saved-slots object)
           do (let ((marker (read-next-marker stream)))
                (if (eql marker +unbound-slot+)

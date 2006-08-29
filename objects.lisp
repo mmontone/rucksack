@@ -1,4 +1,4 @@
-;; $Id: objects.lisp,v 1.10 2006-08-26 12:55:34 alemmens Exp $
+;; $Id: objects.lisp,v 1.11 2006-08-29 11:41:40 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -396,9 +396,9 @@ functions like P-CAR instead."))
    (rucksack :initarg :rucksack :reader rucksack :persistence nil :index nil))
   (:default-initargs
    :rucksack *rucksack*)
-  (:metaclass persistent-class
-   :indexed nil
-   :documentation "Classes of metaclass PERSISTENT-CLASS automatically
+  (:metaclass persistent-class)
+  (:index nil)
+  (:documentation "Classes of metaclass PERSISTENT-CLASS automatically
 inherit from this class."))
 
 
@@ -733,3 +733,28 @@ version for object #~D and transaction ~D."
       (internal-rucksack-error "Object-id mismatch (required: ~D; actual: ~D)."
                                object-id id))
     (values id nr-slots schema-id transaction-id prev-version)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Updating persistent instances
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; When a persistent object must be loaded from disk, Rucksack loads the
+;; schema nr and finds the corresponding schema.  If the schema is obsolete
+;; (i.e. there is a schema for the same class with a higher version number),
+;; Rucksack calls the generic function UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS
+;; after calling ALLOCATE-INSTANCE for the current class version.  The generic
+;; function is very similar to UPDATE-INSTANCE-FOR-REDEFINED-CLASS: it takes a
+;; list of added slots, a list of deleted slots and a property list containing
+;; the slot names and values for slots that were discarded and had values.
+
+(defgeneric update-persistent-instance-for-redefined-class
+    (instance added-slots discarded-slots property-list
+              &rest initargs &key &allow-other-keys)
+  (:method ((instance persistent-object) added-slots discarded-slots property-list
+            &rest initargs &key &allow-other-keys)
+   ;; The default method for this function ignores the deleted slots,
+   ;; initializes added slots according to their initargs or initforms and
+   ;; initializes shared slots (that did not change) with the values that
+   ;; were saved on disk.
+   'DO-IMPLEMENT-THIS))

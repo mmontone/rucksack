@@ -1,4 +1,4 @@
-;; $Id: mop.lisp,v 1.6 2006-08-26 12:55:34 alemmens Exp $
+;; $Id: mop.lisp,v 1.7 2006-08-29 11:41:40 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -48,6 +48,47 @@ should only be used when speed is critical.
   ())
 
 
+;;
+;; Copying and comparing slot definitions
+;;
+
+(defun copy-slot-definition (slot-def)
+  (make-instance (class-of slot-def)
+                 :name (slot-definition-name slot-def)
+                 :initargs (slot-definition-initargs slot-def)
+                 :readers (slot-definition-readers slot-def)
+                 :writers (slot-definition-writers slot-def)
+                 :allocation (slot-definition-allocation slot-def)
+                 :type (slot-definition-type slot-def)
+                 ;; Our own options.
+                 :persistence (slot-persistence slot-def)
+                 :index (slot-index slot-def)
+                 :unique (slot-unique slot-def)))
+
+
+(defun slot-definition-equal (slot-1 slot-2)
+  (and (equal (slot-persistence slot-1) (slot-persistence slot-2))
+       (index-spec-equal (slot-index slot-1) (slot-index slot-2))
+       (equal (slot-unique slot-1) (slot-unique slot-2))))
+
+
+(defun compare-slots (old-slots slots)
+  "Returns three values: a list of added slots, a list of discarded slots
+and a list of changed (according to SLOT-DEFINITION-EQUAL) slots."
+  (let ((added-slots (set-difference slots old-slots
+                                     :key #'slot-definition-name))
+        (discarded-slots (set-difference old-slots slots
+                                         :key #'slot-definition-name))
+        (changed-slots
+         (loop for slot in slots
+               for old-slot = (find (slot-definition-name slot) old-slots
+                                    :key #'slot-definition-name)
+               if (and old-slot
+                       (not (slot-definition-equal slot old-slot)))
+               collect slot)))
+    (values added-slots discarded-slots changed-slots)))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defmethod validate-superclass ((class standard-class)
@@ -78,8 +119,8 @@ should only be used when speed is critical.
 (defmethod clos:process-a-class-option ((class persistent-class)
                                         option-name
                                         value)
-  (if (member value '(:index :unique))
-      (list option-name value)
+  (if (eql option-name :index)
+      (cons option-name value)
     (call-next-method)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -108,28 +149,23 @@ should only be used when speed is critical.
     (ensure-class-schema class '())
     result))
 
+
 (defmethod reinitialize-instance :around ((class persistent-class)
                                           &rest args
                                           &key direct-superclasses
                                           &allow-other-keys)
-  (let* ((old-slot-defs (class-direct-slots class))
-         ;; Create a simple alist with slot name as key and
-         ;; a list with slot-index and slot-unique as value.
-         (old-slot-indexes (loop for slot-def in old-slot-defs
-                                 collect (list (slot-definition-name slot-def)
-                                               (slot-index slot-def)
-                                               (slot-unique slot-def)))))
-    (let ((result (apply #'call-next-method
-                         class
-                         :direct-superclasses (maybe-add-persistent-object-class
-                                               class
-                                               direct-superclasses)
-                         ;; Tell Lispworks that it shouldn't bypass
-                         ;; slot-value-using-class.
-                         #+lispworks :optimize-slot-access #+lispworks nil
-                         args)))
-      (ensure-class-schema class old-slot-indexes)
-      result)))
+  (let* ((old-slots (mapcar #'copy-slot-definition (class-direct-slots class)))
+         (result (apply #'call-next-method
+                        class
+                        :direct-superclasses (maybe-add-persistent-object-class
+                                              class
+                                              direct-superclasses)
+                        ;; Tell Lispworks that it shouldn't bypass
+                        ;; SLOT-VALUE-USING-CLASS.
+                        #+lispworks :optimize-slot-access #+lispworks nil
+                        args)))
+    (ensure-class-schema class old-slots)
+    result))
 
 
 (defun maybe-add-persistent-object-class (class direct-superclasses)
@@ -146,7 +182,7 @@ should only be used when speed is critical.
         direct-superclasses
       (cons root-class direct-superclasses))))
 
-(defun ensure-class-schema (class old-slot-indexes)
+(defun ensure-class-schema (class old-slots)
   ;; Update class and slot indexes.
   (when (or (class-index class)
             (some #'slot-persistence (class-direct-slots class)))
@@ -158,15 +194,25 @@ should only be used when speed is critical.
     (let ((rucksack (current-rucksack)))
       (when rucksack
         (rucksack-update-class-index rucksack class)
-        (rucksack-update-slot-indexes rucksack class old-slot-indexes))))
-  ;; DO: Update schema in schema table, when necessary.
-  'DO-THIS)
+        (rucksack-update-slot-indexes rucksack class old-slots)
+        ;; Update schema in schema table, if necessary.
+        (rucksack-maybe-update-schema rucksack class old-slots)))))
 
 
 (defmethod finalize-inheritance :after ((class persistent-class))
   ;; Register all persistent slots.
   (setf (class-persistent-slots class)
-        (remove-if-not #'slot-persistence (class-slots class))))
+        (remove-if-not #'slot-persistence (class-slots class)))
+  ;;
+  (when (or (class-index class) (class-persistent-slots class))
+    (let ((rucksack (current-rucksack)))
+      (when rucksack
+        (let* ((schema-table (schema-table (rucksack-cache rucksack)))
+               (schema (find-schema-for-class schema-table class)))
+          (when schema
+            (setf (persistent-slot-names schema)
+                  (mapcar #'slot-definition-name
+                          (class-persistent-slots class)))))))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -211,5 +257,3 @@ should only be used when speed is critical.
      
     ;; Return the effective slot definition.
     effective-slotdef))
-
-
