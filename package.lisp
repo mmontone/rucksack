@@ -1,4 +1,4 @@
-;; $Id: package.lisp,v 1.8 2006-08-24 15:21:25 alemmens Exp $
+;; $Id: package.lisp,v 1.9 2006-08-29 13:50:18 alemmens Exp $
 
 #-(or allegro lispworks sbcl openmcl)
   (error "Unsupported implementation: ~A" (lisp-implementation-type))
@@ -24,6 +24,7 @@
 
    ;; MOP related
    #:persistent-class
+   #:update-persistent-instance-for-redefined-class
 
    ;; Objects
    #:persistent-object
@@ -75,6 +76,8 @@
 
    ;; Conditions
    #:rucksack-error #:simple-rucksack-error #:transaction-conflict
+   #:internal-rucksack-error
+   #:duplicate-slot-value #:slot-error 
 
    ;; Indexes
    #:map-index #:index-insert #:index-delete #:make-index

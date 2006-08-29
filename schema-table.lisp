@@ -1,4 +1,4 @@
-;; $Id: schema-table.lisp,v 1.4 2006-08-29 11:41:40 alemmens Exp $
+;; $Id: schema-table.lisp,v 1.5 2006-08-29 13:50:18 alemmens Exp $
 
 (in-package :rucksack)          
 
@@ -20,15 +20,15 @@
    (version :initarg :version :initform 0 :reader schema-version
             :documentation "The combination of class-name and version number
 also uniquely identifies a schema.")
-   ;; Slot info
-   ;; DO: Keep track of all slots: their names, their initforms and their
-   ;; persistence related slot options.
-   ;; PERSISTENT-SLOT-NAMES is set during FINALIZE-INHERITANCE.
+   (obsolete-p :initform nil :accessor schema-obsolete-p)
+   ;; Slot info (computed during FINALIZE-INHERITANCE).
+   (added-slot-names :initform '() :accessor schema-added-slot-names)
+   (discarded-slot-names :initform '()  :accessor schema-discarded-slot-names)
    (persistent-slot-names :initarg :persistent-slot-names
                           :accessor persistent-slot-names
                           :documentation "A list with the names of all
 persistent effective slots.")
-   ;; Class info
+   ;; Class info (computed at schema creation time).
    (class-index :initarg :class-index :reader class-index)))
 
 (defmethod nr-persistent-slots ((schema schema))
@@ -102,11 +102,6 @@ at the next commit.")))
   ;; (or NIL if there is no schema for the class).
   (first (gethash (class-name class) (schema-table-by-name table))))
 
-(defmethod schema-obsolete-p ((table schema-table) schema)
-  (let ((most-recent-schema (find-schema-for-class table
-                                                   (schema-class-name schema))))
-    (not (= (schema-version most-recent-schema)
-            (schema-version schema)))))
 
 (defmethod find-or-create-schema-for-object ((table schema-table) object)
   ;; NOTE: This assumes that the class hasn't changed without the
@@ -211,4 +206,9 @@ at the next commit.")))
         (when (or added-slots discarded-slots changed-slots
                   (not (equal (class-index class) (class-index old-schema))))
           ;; Add a new schema for this class.
-          (create-schema table class (1+ (schema-version old-schema))))))))
+          (create-schema table class (1+ (schema-version old-schema)))
+          ;; Mark all older versions as obsolete.
+          (let ((old-schemas (rest (gethash (class-name class)
+                                            (schema-table-by-name table)))))
+            (loop for schema in old-schemas
+                  do (setf (schema-obsolete-p schema) t))))))))

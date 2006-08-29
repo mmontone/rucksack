@@ -1,4 +1,4 @@
-;; $Id: example-1.lisp,v 1.3 2006-08-29 11:41:40 alemmens Exp $
+;; $Id: example-1.lisp,v 1.4 2006-08-29 13:50:18 alemmens Exp $
 
 (in-package :test-rucksack)
 
@@ -7,6 +7,7 @@
 ;;;
 ;;; To run this example:
 ;;; - compile and load this file
+;;; - (IN-PACKAGE :TEST-RS)
 ;;; - (CREATE-HACKERS)
 ;;; - (SHOW-HACKERS)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

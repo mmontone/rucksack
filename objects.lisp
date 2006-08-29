@@ -1,4 +1,4 @@
-;; $Id: objects.lisp,v 1.11 2006-08-29 11:41:40 alemmens Exp $
+;; $Id: objects.lisp,v 1.12 2006-08-29 13:50:18 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -663,31 +663,53 @@ block containing the object."
                                      (transaction-id transaction)
                                      (heap cache))
     (declare (ignore id))
-    (let* ((schema (find-schema-for-id (schema-table cache) schema-id))
+    (let* ((table (schema-table cache))
+           (schema (find-schema-for-id table schema-id))
            (object (allocate-instance (find-class (schema-class-name schema)))))
       (unless (= nr-slots (nr-persistent-slots schema))
         (internal-rucksack-error
          "Schema inconsistency (expected ~D slots, got ~D slots)."
          (nr-persistent-slots schema)
          nr-slots))
-      ;; Load and set slot values.
-      ;; DO: We should probably initialize the transient slots to their
-      ;; initforms here.  And we should also deal with changed classes
-      ;; at this point.
-      ;; NOTE: The MOP doesn't intercept the (setf slot-value) here,
-      ;; because the rucksack and object-id slots are still unbound.
-      (loop for slot-name in (persistent-slot-names schema)
-            do (let ((marker (read-next-marker buffer)))
-                 (if (eql marker +unbound-slot+)
-                     (slot-makunbound object slot-name)
-                   (setf (slot-value object slot-name)
-                         (deserialize-contents marker buffer)))))
-      ;; Set CACHE, OBJECT-ID and TRANSACTION-ID slots if it's a persistent
-      ;; object. This needs to be done before persistent slots are initialized.
-      (when (typep object '(or persistent-object persistent-data))
-        (setf (slot-value object 'rucksack) (current-rucksack)
-              (slot-value object 'object-id) object-id
-              (slot-value object 'transaction-id) (transaction-id transaction)))
+      (let ((added-slots '())
+            (discarded-slots '())
+            ;; DISCARDED-SLOT-VALUES is a list of discarded slot names and
+            ;; their (obsolete) values.
+            (discarded-slot-values '()))
+        (when (schema-obsolete-p schema)
+          (setf added-slots (schema-added-slot-names schema)
+                discarded-slots (schema-discarded-slot-names schema)))
+        ;; Load and set slot values.
+        ;; DO: We should probably initialize the transient slots to their
+        ;; initforms here.
+        ;; NOTE: The MOP doesn't intercept the (setf slot-value) here,
+        ;; because the rucksack and object-id slots are still unbound.
+        (loop for slot-name in (persistent-slot-names schema)
+              do (let ((marker (read-next-marker buffer))
+                       (old-slot-p (member slot-name discarded-slots)))
+                   (if (eql marker +unbound-slot+)
+                       (unless old-slot-p
+                         (slot-makunbound object slot-name))
+                     ;; Deserialize the value
+                     (let ((value (deserialize-contents marker buffer)))
+                       (if old-slot-p
+                           (progn 
+                             (push value discarded-slot-values)
+                             (push slot-name discarded-slot-values))
+                         (setf (slot-value object slot-name) value))))))
+        ;; Set CACHE, OBJECT-ID and TRANSACTION-ID slots if it's a persistent
+        ;; object.
+        (when (typep object '(or persistent-object persistent-data))
+          (setf (slot-value object 'rucksack) (current-rucksack)
+                (slot-value object 'object-id) object-id
+                (slot-value object 'transaction-id) (transaction-id transaction)))
+        ;; Call UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS if necessary.
+        (when (schema-obsolete-p schema)
+          (update-persistent-instance-for-redefined-class
+           object
+           added-slots
+           discarded-slots
+           discarded-slot-values)))
       ;;
       (values object most-recent-p))))
 
@@ -753,8 +775,15 @@ version for object #~D and transaction ~D."
               &rest initargs &key &allow-other-keys)
   (:method ((instance persistent-object) added-slots discarded-slots property-list
             &rest initargs &key &allow-other-keys)
-   ;; The default method for this function ignores the deleted slots,
-   ;; initializes added slots according to their initargs or initforms and
-   ;; initializes shared slots (that did not change) with the values that
-   ;; were saved on disk.
-   'DO-IMPLEMENT-THIS))
+   ;; Default method: ignore the discarded slots and initialize added slots
+   ;; according to their initargs or initforms.
+   (let ((slots (class-slots (class-of instance))))
+     (loop for slot-name in added-slots
+           for slot = (find slot-name slots :key #'slot-definition-name)
+           for initfunction = (and slot
+                                   (slot-definition-initfunction slot))
+           when initfunction
+           ;; DO: Handle initargs!
+           do (setf (slot-value instance slot-name)
+                    (funcall initfunction))))))
+
