@@ -1,6 +1,6 @@
-;; $Id: test.lisp,v 1.12 2006-08-24 15:45:02 alemmens Exp $
+;; $Id: test.lisp,v 1.13 2006-08-30 14:05:40 alemmens Exp $
 
-(in-package :test-rucksack)
+(in-package :rucksack-test)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; A few quick tests to make sure the basics work.

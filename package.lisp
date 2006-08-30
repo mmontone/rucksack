@@ -1,4 +1,4 @@
-;; $Id: package.lisp,v 1.9 2006-08-29 13:50:18 alemmens Exp $
+;; $Id: package.lisp,v 1.10 2006-08-30 14:05:40 alemmens Exp $
 
 #-(or allegro lispworks sbcl openmcl)
   (error "Unsupported implementation: ~A" (lisp-implementation-type))
@@ -102,7 +102,10 @@
 
 
 
-(defpackage :test-rucksack
-  (:nicknames :test-rs)
-  (:use :cl :rucksack))
+(defpackage :rucksack-test
+  (:nicknames :rs-test)
+  (:use :common-lisp :rucksack))
 
+(defpackage :rucksack-test-schema-update
+  (:nicknames :rs-tsu)
+  (:use :common-lisp :rucksack))

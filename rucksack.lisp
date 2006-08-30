@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.13 2006-08-29 11:41:40 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.14 2006-08-30 14:05:40 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -560,7 +560,7 @@ file is missing."
     (loop for slot in old-slots
           for slot-name = (slot-definition-name slot)
           unless (find slot-name direct-slots :key #'slot-definition-name)
-          do (rucksack-remove-slot-index rucksack class slot-name :errorp t))
+          do (rucksack-remove-slot-index rucksack class slot-name :errorp nil))
     ;; Update indexes for the current set of direct slots.
     (dolist (slot direct-slots)
       (let ((index-spec (and (slot-persistence slot)
@@ -808,12 +808,12 @@ index for slot ~S of class ~S in ~A."
     ;; Return the slot name if everything went fine; otherwise, return
     ;; NIL (or signal an error).
     (and (handler-bind ((btree-search-error #'oops))
-
            (let ((slot-index-table (btree-search (slot-index-tables rucksack) class
                                                  :errorp errorp)))
-             (handler-bind ((btree-deletion-error #'oops))
-               (btree-delete-key slot-index-table slot
-                                 :if-does-not-exist (if errorp :error :ignore)))))
+             (and slot-index-table
+                  (handler-bind ((btree-deletion-error #'oops))
+                    (btree-delete-key slot-index-table slot
+                                      :if-does-not-exist (if errorp :error :ignore))))))
          slot)))
 
 
@@ -942,17 +942,6 @@ index for slot ~S of class ~S in ~A."
                                    (push class-name result))))
     result))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Schema updates
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defmethod rucksack-maybe-update-schema ((rucksack standard-rucksack)
-                                         class
-                                         old-slot-indexes)
-  ;; This is just a thin wrapper, so you can customize it if necessary.
-  (maybe-update-schema (schema-table (rucksack-cache rucksack))
-                       class
-                       old-slot-indexes))
 
                        
                                          

@@ -1,4 +1,4 @@
-;; $Id: mop.lisp,v 1.7 2006-08-29 11:41:40 alemmens Exp $
+;; $Id: mop.lisp,v 1.8 2006-08-30 14:05:40 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -146,7 +146,7 @@ and a list of changed (according to SLOT-DEFINITION-EQUAL) slots."
                        ;; slot-value-using-class.
                        #+lispworks :optimize-slot-access #+lispworks nil 
                        args)))
-    (ensure-class-schema class '())
+    (update-indexes class '())
     result))
 
 
@@ -164,7 +164,7 @@ and a list of changed (according to SLOT-DEFINITION-EQUAL) slots."
                         ;; SLOT-VALUE-USING-CLASS.
                         #+lispworks :optimize-slot-access #+lispworks nil
                         args)))
-    (ensure-class-schema class old-slots)
+    (update-indexes class old-slots)
     result))
 
 
@@ -182,37 +182,29 @@ and a list of changed (according to SLOT-DEFINITION-EQUAL) slots."
         direct-superclasses
       (cons root-class direct-superclasses))))
 
-(defun ensure-class-schema (class old-slots)
+(defun update-indexes (class old-slots)
   ;; Update class and slot indexes.
-  (when (or (class-index class)
-            (some #'slot-persistence (class-direct-slots class)))
-    ;; NOTE: We get the current-rucksack only if there are some
-    ;; persistent slots, because this will also get called during
-    ;; compilation of Rucksack (when the class definition of
-    ;; PERSISTENT-OBJECT is compiled).  At that stage the CURRENT-RUCKSACK
-    ;; function isn't even defined yet, so we shouldn't call it.
+  (when (fboundp 'current-rucksack)
+    ;; This function is also called during compilation of Rucksack
+    ;; (when the class definition of PERSISTENT-OBJECT is compiled).
+    ;; At that stage the CURRENT-RUCKSACK function isn't even defined
+    ;; yet, so we shouldn't call it.
     (let ((rucksack (current-rucksack)))
       (when rucksack
         (rucksack-update-class-index rucksack class)
-        (rucksack-update-slot-indexes rucksack class old-slots)
-        ;; Update schema in schema table, if necessary.
-        (rucksack-maybe-update-schema rucksack class old-slots)))))
+        (rucksack-update-slot-indexes rucksack class old-slots)))))
 
 
 (defmethod finalize-inheritance :after ((class persistent-class))
-  ;; Register all persistent slots.
+  ;; Register all (effective) persistent slots.
   (setf (class-persistent-slots class)
         (remove-if-not #'slot-persistence (class-slots class)))
-  ;;
-  (when (or (class-index class) (class-persistent-slots class))
+  ;; Update schemas if necessary.
+  (when (fboundp 'current-rucksack) ; see comment for UPDATE-INDEXES
     (let ((rucksack (current-rucksack)))
       (when rucksack
-        (let* ((schema-table (schema-table (rucksack-cache rucksack)))
-               (schema (find-schema-for-class schema-table class)))
-          (when schema
-            (setf (persistent-slot-names schema)
-                  (mapcar #'slot-definition-name
-                          (class-persistent-slots class)))))))))
+        (maybe-update-schemas (schema-table (rucksack-cache rucksack))
+                              class)))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

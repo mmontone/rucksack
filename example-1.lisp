@@ -1,13 +1,13 @@
-;; $Id: example-1.lisp,v 1.4 2006-08-29 13:50:18 alemmens Exp $
+;; $Id: example-1.lisp,v 1.5 2006-08-30 14:05:40 alemmens Exp $
 
-(in-package :test-rucksack)
+(in-package :rucksack-test)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Indexing example
 ;;;
 ;;; To run this example:
 ;;; - compile and load this file
-;;; - (IN-PACKAGE :TEST-RS)
+;;; - (IN-PACKAGE :RUCKSACK-TEST)
 ;;; - (CREATE-HACKERS)
 ;;; - (SHOW-HACKERS)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -93,9 +93,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #|
-
-CL-USER 2 > (in-package :test-rs)
-#<The TEST-RUCKSACK package, 74/256 internal, 0/16 external>
 
 TEST-RS 3 > (create-hackers)
 

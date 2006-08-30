@@ -1,4 +1,4 @@
-;; $Id: schema-table.lisp,v 1.5 2006-08-29 13:50:18 alemmens Exp $
+;; $Id: schema-table.lisp,v 1.6 2006-08-30 14:05:40 alemmens Exp $
 
 (in-package :rucksack)          
 
@@ -22,14 +22,20 @@
 also uniquely identifies a schema.")
    (obsolete-p :initform nil :accessor schema-obsolete-p)
    ;; Slot info (computed during FINALIZE-INHERITANCE).
-   (added-slot-names :initform '() :accessor schema-added-slot-names)
-   (discarded-slot-names :initform '()  :accessor schema-discarded-slot-names)
+   (added-slot-names :initform '()
+                     :accessor added-slot-names
+                     :documentation "A list with the names of all
+persistent slots that were added by the most recent version (compared
+to this version).")
+   (discarded-slot-names :initform '()
+                         :accessor discarded-slot-names
+                         :documentation "A list with the names of all
+persistent slots that were discarded by the most recent version
+(compared to this version).")
    (persistent-slot-names :initarg :persistent-slot-names
                           :accessor persistent-slot-names
                           :documentation "A list with the names of all
-persistent effective slots.")
-   ;; Class info (computed at schema creation time).
-   (class-index :initarg :class-index :reader class-index)))
+persistent effective slots.")))
 
 (defmethod nr-persistent-slots ((schema schema))
   (length (persistent-slot-names schema)))
@@ -102,6 +108,8 @@ at the next commit.")))
   ;; (or NIL if there is no schema for the class).
   (first (gethash (class-name class) (schema-table-by-name table))))
 
+(defmethod old-schemas-for-class ((table schema-table) class)
+  (rest (gethash (class-name class) (schema-table-by-name table))))
 
 (defmethod find-or-create-schema-for-object ((table schema-table) object)
   ;; NOTE: This assumes that the class hasn't changed without the
@@ -121,8 +129,7 @@ at the next commit.")))
                                :id (fresh-schema-id table)
                                :class-name (class-name class)
                                :version version
-                               :persistent-slot-names persistent-slots
-                               :class-index (compute-class-index class))))
+                               :persistent-slot-names persistent-slots)))
     (add-schema table schema)
     schema))
 
@@ -131,11 +138,6 @@ at the next commit.")))
   (declare (ignore object))
   (mapcar #'slot-definition-name (class-persistent-slots class)))
 
-(defgeneric compute-class-index (class)
-  (:method ((class persistent-class))
-   (class-index class))
-  (:method ((class t))
-   nil))
                    
 (defmethod add-schema ((table schema-table) (schema schema))
   (setf (gethash (schema-id schema) (schema-table-by-id table))
@@ -189,26 +191,25 @@ at the next commit.")))
 ;;; Schema updates
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defmethod maybe-update-schema ((table schema-table) class old-slots)
+(defmethod maybe-update-schemas ((table schema-table) class)
   ;; Rucksack analyzes the new class definition; if it's different from the
   ;; previous version, a new schema is added to the schema table.  From that
   ;; moment, when an instance of the redefined class is created it will be
   ;; saved with the new schema id.
-  ;; This is called by the (RE-)INITIALIZE-INSTANCE method for
-  ;; PERSISTENT-CLASS.
-  (let ((old-schema (find-schema-for-class table class)))
+  ;; This is called by the FINALIZE-INHERITANCE method for PERSISTENT-CLASS.
+  (let ((slots (mapcar #'slot-definition-name (class-persistent-slots class)))
+        (old-schema (find-schema-for-class table class)))
     (if (null old-schema)
         ;; There is no schema yet: create the first one.
-        (create-schema table class 0)
-      ;; There is a schema: create a new one if necessary.
-      (multiple-value-bind (added-slots discarded-slots changed-slots)
-          (compare-slots old-slots (class-direct-slots class))
-        (when (or added-slots discarded-slots changed-slots
-                  (not (equal (class-index class) (class-index old-schema))))
-          ;; Add a new schema for this class.
-          (create-schema table class (1+ (schema-version old-schema)))
-          ;; Mark all older versions as obsolete.
-          (let ((old-schemas (rest (gethash (class-name class)
-                                            (schema-table-by-name table)))))
-            (loop for schema in old-schemas
-                  do (setf (schema-obsolete-p schema) t))))))))
+        (create-schema table class 0 slots)
+      ;; There is a schema already: create a new one if necessary.
+      (when (set-difference slots (persistent-slot-names old-schema))
+        ;; Add a new schema for this class.
+        (create-schema table class (1+ (schema-version old-schema)) slots)
+        ;; Mark all older versions as obsolete and compute their
+        ;; slot diffs w.r.t. to the new schema
+        (dolist (schema (old-schemas-for-class table class))
+          (let ((old-slots (persistent-slot-names schema)))
+            (setf (schema-obsolete-p schema) t
+                  (added-slot-names schema) (set-difference slots old-slots)
+                  (discarded-slot-names schema) (set-difference old-slots slots))))))))

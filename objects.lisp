@@ -1,4 +1,4 @@
-;; $Id: objects.lisp,v 1.12 2006-08-29 13:50:18 alemmens Exp $
+;; $Id: objects.lisp,v 1.13 2006-08-30 14:05:40 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -677,8 +677,8 @@ block containing the object."
             ;; their (obsolete) values.
             (discarded-slot-values '()))
         (when (schema-obsolete-p schema)
-          (setf added-slots (schema-added-slot-names schema)
-                discarded-slots (schema-discarded-slot-names schema)))
+          (setf added-slots (added-slot-names schema)
+                discarded-slots (discarded-slot-names schema)))
         ;; Load and set slot values.
         ;; DO: We should probably initialize the transient slots to their
         ;; initforms here.
