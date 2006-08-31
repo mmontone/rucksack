@@ -1,4 +1,4 @@
-;; $Id: example-1.lisp,v 1.5 2006-08-30 14:05:40 alemmens Exp $
+;; $Id: example-1.lisp,v 1.6 2006-08-31 15:47:58 alemmens Exp $
 
 (in-package :rucksack-test)
 
@@ -83,8 +83,9 @@
 
 (defun show-indexes ()
   (with-rucksack (r *hacker-rucksack*)
-    (print (rs::rucksack-list-class-indexes r))
-    (print (rs::rucksack-list-slot-indexes r))
+    (with-transaction ()
+      (print (rs::rucksack-list-class-indexes r))
+      (print (rs::rucksack-list-slot-indexes r)))
     :ok))
 
 

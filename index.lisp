@@ -1,4 +1,4 @@
-;; $Id: index.lisp,v 1.6 2006-08-26 12:55:34 alemmens Exp $
+;; $Id: index.lisp,v 1.7 2006-08-31 15:47:58 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -39,16 +39,62 @@ either :IGNORE (default) or :ERROR."))
 
 ;; index-spec-equal (index-spec-1 index-spec-2) [Function]
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Index class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defclass index ()
+  ((spec :initarg :spec :reader index-spec)
+   (unique-keys-p :initarg :unique-keys-p :reader index-unique-keys-p)
+   (data :initarg :data :reader index-data
+         :documentation "The actual index data structure (e.g. a btree)."))
+  (:metaclass persistent-class)
+  (:index nil))
+
+(defmethod print-object ((index index) stream)
+  (print-unreadable-object (index stream :type t :identity t)
+    (format stream "~S with ~:[non-unique~;unique~] keys"
+            (index-spec index)
+            (index-unique-keys-p index))))
+
+(defmethod index-similar-p ((index-1 index) (index-2 index))
+  (and (index-spec-equal (index-spec index-1) (index-spec index-2))
+       (equal (index-unique-keys-p index-1) (index-unique-keys-p index-2))))
+
+;;
+;; Trampolines
+;;
+
+(defmethod map-index ((index index) function
+                      &rest args
+                      &key min max include-min include-max
+                      (equal nil)
+                      (order :ascending))
+  (declare (ignorable min max include-min include-max equal order))
+  (apply #'map-index-data (index-data index) function args))
+
+(defmethod index-insert ((index index) key value &key (if-exists :overwrite))
+  (index-data-insert (index-data index) key value
+                     :if-exists if-exists))
+
+(defmethod index-delete ((index index) key value
+                         &key (if-does-not-exist :ignore))
+  (index-data-delete (index-data index) key value
+                     :if-does-not-exist if-does-not-exist))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Indexing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defmethod map-index ((index btree) function
-                      &rest args
-                      &key min max include-min include-max
-                      (equal nil equal-supplied)
-                      (order :ascending))
+;; NOTE: If you define your own indexing data structures, you need to supply
+;; methods for the three generic functions below: MAP-INDEX-DATA,
+;; INDEX-DATA-INSERT and INDEX-DATA-DELETE.
+
+(defmethod map-index-data ((index btree) function
+                           &rest args
+                           &key min max include-min include-max
+                           (equal nil equal-supplied)
+                           (order :ascending))
   (declare (ignorable min max include-min include-max))
   (if equal-supplied
       (let ((value (btree-search index equal :errorp nil :default-value index)))
@@ -57,30 +103,35 @@ either :IGNORE (default) or :ERROR."))
     (apply #'map-btree index function :order order args)))
 
 
-(defmethod index-insert ((index btree) key value &key (if-exists :overwrite))
+(defmethod index-data-insert ((index btree) key value
+                              &key (if-exists :overwrite))
   (btree-insert index key value :if-exists if-exists))
 
-(defmethod index-delete ((index btree) key value
-                         &key (if-does-not-exist :ignore))
+(defmethod index-data-delete ((index btree) key value
+                              &key (if-does-not-exist :ignore))
   (btree-delete index key value :if-does-not-exist if-does-not-exist))
 
-;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Index specs
-;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; An index spec is a symbol or a list starting with a symbol
 ;; and followed by a plist of keywords and values.
 ;; Examples: BTREE, (BTREE :KEY< <  :VALUE= P-EQL)
 
+(defun make-index (index-spec unique-keys-p &key (class 'index))
+  ;; NOTE: All index data classes must accept the :UNIQUE-KEYS-P initarg.
+  (let ((data (if (symbolp index-spec)
+                  (make-instance index-spec :unique-keys-p unique-keys-p)
+                (apply #'make-instance
+                       (first index-spec)
+                       :unique-keys-p unique-keys-p
+                       (rest index-spec)))))
+    (make-instance class
+                   :spec index-spec
+                   :unique-keys-p unique-keys-p
+                   :data data)))
 
-(defun make-index (index-spec unique-keys-p)
-  ;; NOTE: All index classes must accept the :UNIQUE-KEYS-P initarg.
-  (if (symbolp index-spec)
-      (make-instance index-spec :unique-keys-p unique-keys-p)
-    (apply #'make-instance
-           (first index-spec)
-           :unique-keys-p unique-keys-p
-           (rest index-spec))))
 
 (defun index-spec-equal (index-spec-1 index-spec-2)
   "Returns T iff two index specs are equal."

@@ -1,4 +1,4 @@
-;; $Id: objects.lisp,v 1.13 2006-08-30 14:05:40 alemmens Exp $
+;; $Id: objects.lisp,v 1.14 2006-08-31 15:47:58 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -784,6 +784,5 @@ version for object #~D and transaction ~D."
                                    (slot-definition-initfunction slot))
            when initfunction
            ;; DO: Handle initargs!
-           do (setf (slot-value instance slot-name)
-                    (funcall initfunction))))))
+           do (setf (slot-value instance slot-name) (funcall initfunction))))))
 

@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.14 2006-08-30 14:05:40 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.15 2006-08-31 15:47:58 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -555,10 +555,10 @@ file is missing."
 (defmethod rucksack-update-slot-indexes ((rucksack standard-rucksack)
                                          (class persistent-class)
                                          old-slots)
-  (let ((direct-slots (class-direct-slots class)))
-    ;; Remove indexes for old slots that don't exist anymore.
-    (loop for slot in old-slots
-          for slot-name = (slot-definition-name slot)
+  (let ((direct-slots (class-direct-slots class))
+        (indexed-slot-names (rucksack-indexed-slots-for-class rucksack class)))
+    ;; Remove indexes for slots that don't exist anymore.
+    (loop for slot-name in indexed-slot-names
           unless (find slot-name direct-slots :key #'slot-definition-name)
           do (rucksack-remove-slot-index rucksack class slot-name :errorp nil))
     ;; Update indexes for the current set of direct slots.
@@ -568,8 +568,11 @@ file is missing."
                                  (slot-index slot))))
             (unique-p (slot-unique slot))
             (slot-name (slot-definition-name slot)))
-        (multiple-value-bind (current-index-spec current-unique-p)
-            (find-old-index-spec slot-name old-slots)
+        (let* ((current-index (rucksack-slot-index rucksack class slot-name
+                                                   :errorp nil
+                                                   :include-superclasses nil))
+               (current-index-spec (and current-index (index-spec current-index)))
+               (current-unique-p (and current-index (index-unique-keys-p current-index))))
           (cond ((and (index-spec-equal index-spec current-index-spec)
                       (eql unique-p current-unique-p))
                  ;; We keep the same index: no change needed.
@@ -919,27 +922,39 @@ index for slot ~S of class ~S in ~A."
                          do (map-slot class))))))
       (map-slot (if (symbolp class) (find-class class) class)))))
 
+
+(defun rucksack-indexed-slots-for-class (rucksack class)
+  "Returns a list with the names of the indexed direct slots of CLASS."
+  (unless (symbolp class)
+    (setq class (class-name class)))
+  (let ((result '()))
+    (rucksack-map-slot-indexes rucksack
+                               (lambda (class-name slot-name slot-index)
+                                 (declare (ignore slot-index))
+                                 (when (eql class-name class)
+                                   (push slot-name result))))
+    result))
+
+
 ;;
 ;; Debugging
 ;;
 
 (defun rucksack-list-slot-indexes (rucksack)
   (let ((result '()))
-    (with-transaction ()
-      (rucksack-map-slot-indexes rucksack
-                                 (lambda (class-name slot-name slot-index)
-                                   (declare (ignore slot-index))
-                                   (push (cons class-name slot-name)
-                                         result))))
+    (rucksack-map-slot-indexes rucksack
+                               (lambda (class-name slot-name slot-index)
+                                 (declare (ignore slot-index))
+                                 (push (cons class-name slot-name)
+                                       result)))
     result))
 
 (defun rucksack-list-class-indexes (rucksack)
   (let ((result '()))
-    (with-transaction ()
-      (rucksack-map-class-indexes rucksack
-                                 (lambda (class-name index)
-                                   (declare (ignore index))
-                                   (push class-name result))))
+    (rucksack-map-class-indexes rucksack
+                                (lambda (class-name index)
+                                  (declare (ignore index))
+                                  (push class-name result)))
     result))
 
 
