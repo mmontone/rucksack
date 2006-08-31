@@ -1,0 +1,38 @@
+;; $Id: notes.txt,v 1.1 2006-08-31 15:53:57 alemmens Exp $
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Some random notes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+* UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS & friends.
+
+  What should we do when the class has been redefined more than once
+  before an instance is loaded?  Example: an instance of class PERSON
+  (with schema version 0) was saved.  Now PERSON is redefined twice,
+  and the most recent schema for class PERSON has version number 2.
+  Ideally, UPDATE-PERSISTENT-INSTANCE-... would be called twice.  But
+  that doesn't work in practice, because we can only allocate an instance
+  corresponding to the most recent class definition.
+
+  Suppose that version 0 of the PERSON class had an AGE slot, version 1
+  discards the AGE slot and adds a YEAR-OF-BIRTH slot, and version 2
+  discards the YEAR-OF-BIRTH slot and adds a BIRTH-DATE slot.  Suppose
+  also that there are PERSON instances corresponding to version 0,
+  instances of version 1 and instances of version 2.
+
+  When loading instances of version 2, we don't need to do anything special
+  because version 2 is the most recent version.  For instances of version 1,
+  UPDATE-PERSISTENT-INSTANCE-... will be called with BIRTH-DATE as added
+  slot, YEAR-OF-BIRTH as discarded slot and the property list (YEAR-OF-BIRTH
+  <year-of-birth>).  For instances of version 0, UPDATE-PERSISTENT-INSTANCE-...
+  will be called with BIRTH-DATE as added slot, AGE as discarded slot and
+  the property list (AGE <age>).
+
+  So UPDATE-PERSISTENT-INSTANCE-... will be called exactly once, and it
+  needs to inspect the lists of added/discarded slots if it wants to handle
+  multiple version changes.
+
+  Whenever a schema becomes obsolete, we mark it as obsolete and register
+  the names of the slots that were added and the slots that were discarded
+  (by the most recent version, compared to this version).
+

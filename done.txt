@@ -1,0 +1,71 @@
+* 2006-08-31
+
+- Write test cases for schema updates and user defined methods for
+  UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS.
+
+- Indexing: compare the specified slot/class indexes to the indexes that
+  exist in the Rucksack, *not* to the indexes specified in the previous
+  version of the class definition.  Otherwise we get inconsistencies
+  when we recompile class definitions from scratch with a Rucksack that
+  already exists.
+
+- Write test case for slots with redefined indexes.  This also tests
+  the default method for UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS.
+
+* 2006-08-30
+
+- FINALIZE-INHERITANCE: Compute slot diffs for obsolete schemas.
+
+- More work on UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS.
+
+* 2006-08-29
+
+- Partial implementation of UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS
+  & friends.
+
+* 2006-08-29
+
+- Example-1: indexing should still work after recompiling.
+
+- RUCKSACK-UPDATE-SLOT-INDEXES: Remove indexes for old slots that
+  don't exist anymore.
+
+- Some work on schema updates.
+
+- Compute persistent slots at the right moment.
+
+
+* 2006-08-26
+
+- Make sure that indexing works correctly with subclasses.
+- Fix some more indexing bugs.
+
+
+* 2006-08
+
+- The class and slot indexes were normal hash tables, but they should be
+  persistent objects like everything else: I replaced them by btrees.
+
+- Get process-lock and process-unlock working on SBCL (thanks to Geoff Cant).
+
+
+* 2006-08
+
+- Save and load the index tables when closing/opening a rucksack.
+
+- Implement the :UNIQUE slot option.
+
+- Improve predefined slot index specs.
+
+
+* 2006-08
+
+- Add a SERIAL-TRANSACTION-RUCKSACK class that allows for only one transaction
+  at a time (by using a transaction lock).  This allows for a fast track
+  towards a working Rucksack implementation.  Then parallel transactions
+  can be added later.
+
+- Don't do any GC at all while a transaction is writing objects to disk.
+  Instead we keep track of the amount of disk space allocated by the committing
+  transaction.  Then we do a (partial) GC immediately after committing the
+  transaction.
