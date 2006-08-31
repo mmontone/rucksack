@@ -2,7 +2,7 @@ DO:
 
 - Handle initargs in LOAD-OBJECT and UPDATE-PERSISTENT-...
 
-- Initialize transient slots during LOAD-OBJECT.
+- Initialize non-persistent slots during LOAD-OBJECT.
 
 - Figure out if there's a better way than
     (eval-when (:compile-toplevel :load-toplevel :execute) ...)
@@ -24,9 +24,6 @@ DO:
      be called automatically.  This has the disadvantage that all values
      of transient slots will be gone.
   3. Forbid it and signal some kind of error.
-
-- Get rid of the PROCESS-A-CLASS-OPTION stuff and handle the :INDEX class
-  option in a way that's compatible with AMOP.
 
 - I'm not sure that :INCLUDE-SUBCLASSES NIL makes sense for
   RUCKSACK-MAP-SLOT.  Think about this.

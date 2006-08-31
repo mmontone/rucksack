@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.15 2006-08-31 15:47:58 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.16 2006-08-31 20:09:18 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -66,14 +66,13 @@ that's specified in the :INDEX class option of CLASS.  An obsolete
 class index (i.e. a class index that's specified anymore in the class
 option) is removed, new class indexes are added."))
 
-(defgeneric rucksack-update-slot-indexes (rucksack class old-slots)
+(defgeneric rucksack-update-slot-indexes (rucksack class)
   (:documentation 
    "Compares the current slot indexes for CLASS to the slot indexes
 that are specified in the slot options for the direct slots of CLASS.
 Obsolete slot indexes (i.e. slot indexes that are not specified
 anymore in the slot options or indexes for slots that don't exist
-anymore) are removed, new slot indexes are added.
-  OLD-SLOTS is a list with the previous slot definitions."))
+anymore) are removed, new slot indexes are added."))
 
 (defgeneric rucksack-add-class-index (rucksack class-designator &key errorp))
 
@@ -553,8 +552,7 @@ file is missing."
 
 
 (defmethod rucksack-update-slot-indexes ((rucksack standard-rucksack)
-                                         (class persistent-class)
-                                         old-slots)
+                                         (class persistent-class))
   (let ((direct-slots (class-direct-slots class))
         (indexed-slot-names (rucksack-indexed-slots-for-class rucksack class)))
     ;; Remove indexes for slots that don't exist anymore.
@@ -686,8 +684,7 @@ file is missing."
 
 (defmethod rucksack-make-class-index 
            ((rucksack standard-rucksack) class
-            &key
-            (index-spec '(btree :key< < :value= p-eql)))
+            &key (index-spec '(btree :key< < :value= p-eql)))
   ;; A class index maps object ids to objects.
   (declare (ignore class))
   (make-index index-spec t))

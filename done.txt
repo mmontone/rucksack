@@ -1,5 +1,8 @@
 * 2006-08-31
 
+- Get rid of the Lispworks-specific PROCESS-A-CLASS-OPTION stuff and handle
+  the :INDEX class option in a way that's compatible with AMOP.
+
 - Write test cases for schema updates and user defined methods for
   UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS.
 

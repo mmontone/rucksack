@@ -1,4 +1,4 @@
-;; $Id: test-index-1a.lisp,v 1.1 2006-08-31 15:50:27 alemmens Exp $
+;; $Id: test-index-1a.lisp,v 1.2 2006-08-31 20:09:18 alemmens Exp $
 
 (in-package :rucksack-test)
 
@@ -23,7 +23,7 @@
 
   (defparameter *hacker-rucksack* #p"/tmp/rucksack/hackers/")
 
-  (with-rucksack (*rucksack* *hacker-rucksack*)
+  (with-rucksack (*rucksack* *hacker-rucksack* :if-exists :supersede)
     (with-transaction ()
 
       ;; We define some persistent classes with indexed slots.

@@ -1,4 +1,4 @@
-;; $Id: mop.lisp,v 1.8 2006-08-30 14:05:40 alemmens Exp $
+;; $Id: mop.lisp,v 1.9 2006-08-31 20:09:17 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -13,9 +13,19 @@
 (defclass persistent-class (standard-class)
   ((persistent-slots :initform '()
                      :accessor class-persistent-slots)
-   (index :initarg :index :initform nil :accessor class-index
+   (index :initarg :index :initform nil
           :documentation "Can be either NIL (for no class index) or T
 (for the standard class index).  Default value is NIL.")))
+
+(defmethod class-index ((class persistent-class))
+  ;; According to the MOP, the INDEX slot is initialized with the
+  ;; list of items following the :INDEX option, but we're only
+  ;; interested in the first item of that list.
+  (first (slot-value class 'index)))
+
+;;
+;; Persistent slot definitions
+;;
 
 (defclass persistent-slot-mixin ()
   ((persistence :initarg :persistence
@@ -115,14 +125,6 @@ and a list of changed (according to SLOT-DEFINITION-EQUAL) slots."
       (list* option value already-processed-options)
     (call-next-method)))
 
-#+lispworks
-(defmethod clos:process-a-class-option ((class persistent-class)
-                                        option-name
-                                        value)
-  (if (eql option-name :index)
-      (cons option-name value)
-    (call-next-method)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Initializing the persistent-class metaobjects
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -146,7 +148,7 @@ and a list of changed (according to SLOT-DEFINITION-EQUAL) slots."
                        ;; slot-value-using-class.
                        #+lispworks :optimize-slot-access #+lispworks nil 
                        args)))
-    (update-indexes class '())
+    (update-indexes class)
     result))
 
 
@@ -154,17 +156,16 @@ and a list of changed (according to SLOT-DEFINITION-EQUAL) slots."
                                           &rest args
                                           &key direct-superclasses
                                           &allow-other-keys)
-  (let* ((old-slots (mapcar #'copy-slot-definition (class-direct-slots class)))
-         (result (apply #'call-next-method
-                        class
-                        :direct-superclasses (maybe-add-persistent-object-class
-                                              class
-                                              direct-superclasses)
-                        ;; Tell Lispworks that it shouldn't bypass
-                        ;; SLOT-VALUE-USING-CLASS.
-                        #+lispworks :optimize-slot-access #+lispworks nil
-                        args)))
-    (update-indexes class old-slots)
+  (let ((result (apply #'call-next-method
+                       class
+                       :direct-superclasses (maybe-add-persistent-object-class
+                                             class
+                                             direct-superclasses)
+                       ;; Tell Lispworks that it shouldn't bypass
+                       ;; SLOT-VALUE-USING-CLASS.
+                       #+lispworks :optimize-slot-access #+lispworks nil
+                       args)))
+    (update-indexes class)
     result))
 
 
@@ -182,7 +183,7 @@ and a list of changed (according to SLOT-DEFINITION-EQUAL) slots."
         direct-superclasses
       (cons root-class direct-superclasses))))
 
-(defun update-indexes (class old-slots)
+(defun update-indexes (class)
   ;; Update class and slot indexes.
   (when (fboundp 'current-rucksack)
     ;; This function is also called during compilation of Rucksack
@@ -192,7 +193,7 @@ and a list of changed (according to SLOT-DEFINITION-EQUAL) slots."
     (let ((rucksack (current-rucksack)))
       (when rucksack
         (rucksack-update-class-index rucksack class)
-        (rucksack-update-slot-indexes rucksack class old-slots)))))
+        (rucksack-update-slot-indexes rucksack class)))))
 
 
 (defmethod finalize-inheritance :after ((class persistent-class))
