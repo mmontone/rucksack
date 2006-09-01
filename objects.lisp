@@ -1,4 +1,4 @@
-;; $Id: objects.lisp,v 1.14 2006-08-31 15:47:58 alemmens Exp $
+;; $Id: objects.lisp,v 1.15 2006-09-01 13:57:07 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -771,18 +771,21 @@ version for object #~D and transaction ~D."
 ;; the slot names and values for slots that were discarded and had values.
 
 (defgeneric update-persistent-instance-for-redefined-class
-    (instance added-slots discarded-slots property-list
-              &rest initargs &key &allow-other-keys)
+    (instance added-slots discarded-slots property-list &key)
   (:method ((instance persistent-object) added-slots discarded-slots property-list
-            &rest initargs &key &allow-other-keys)
+            &key)
    ;; Default method: ignore the discarded slots and initialize added slots
-   ;; according to their initargs or initforms.
+   ;; according to their initfunctions.
    (let ((slots (class-slots (class-of instance))))
      (loop for slot-name in added-slots
            for slot = (find slot-name slots :key #'slot-definition-name)
            for initfunction = (and slot
                                    (slot-definition-initfunction slot))
            when initfunction
-           ;; DO: Handle initargs!
+           ;; NOTE: We don't handle initargs, and I think we don't need to.
+           ;; We follow the CLHS description of UPDATE-INSTANCE-FOR-REDEFINED-CLASS,
+           ;; which says: "When it is called by the system to update an
+           ;; instance whose class has been redefined, no initialization
+           ;; arguments are provided." 
            do (setf (slot-value instance slot-name) (funcall initfunction))))))
 

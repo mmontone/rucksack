@@ -1,4 +1,4 @@
-;; $Id: mop.lisp,v 1.9 2006-08-31 20:09:17 alemmens Exp $
+;; $Id: mop.lisp,v 1.10 2006-09-01 13:57:07 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -110,20 +110,6 @@ and a list of changed (according to SLOT-DEFINITION-EQUAL) slots."
                                 (superclass standard-class))
   t)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Processing class and slot options for objects of metaclass
-;;; PERSISTENT-CLASS.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-#+lispworks
-(defmethod clos:process-a-slot-option ((class persistent-class)
-                                       option
-                                       value
-                                       already-processed-options
-                                       slot)
-  (if (member option '(:index :persistence :unique))
-      (list* option value already-processed-options)
-    (call-next-method)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Initializing the persistent-class metaobjects

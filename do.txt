@@ -1,20 +1,8 @@
 DO: 
 
-- Handle initargs in LOAD-OBJECT and UPDATE-PERSISTENT-...
-
-- Initialize non-persistent slots during LOAD-OBJECT.
-
-- Figure out if there's a better way than
-    (eval-when (:compile-toplevel :load-toplevel :execute) ...)
-  to make sure that class definitions within a WITH-RUCKSACK are treated
-  as top level definitions.
-
-- Maybe signal a continuable error when the in-memory class definition does
-  not correspond to the most recent schema.  If the user decides to
-  continue, UPDATE-PERSISTENT-INSTANCE-... will be called when necessary.
-
 - What about in-memory persistent instances when the class definition
-  changes?  We should make sure that those are updated too.  There seem
+  changes?  We should make sure that those are updated too.  Some possible
+  strategies:
   to be three strategies:
   1. Rely on Lisp's normal UPDATE-INSTANCE-FOR-REDEFINED-CLASS mechanism.
      Then the programmer must write methods for both UPDATE-INSTANCE-...
@@ -22,15 +10,16 @@ DO:
   2. Remove all instances of the redefined class from the cache.
      Then the objects will be loaded from disk again, and U-P-I-F-R-C will
      be called automatically.  This has the disadvantage that all values
-     of transient slots will be gone.
+     of transient slots will be gone; then again, I'm not sure if transient
+     slots make much sense anyway for persistent objects.
+     CLHS says: 
+       "Updating such an instance occurs at an implementation-dependent time,
+       but no later than the next time a slot of that instance is read or
+       written."
+     Maybe we can also hook into SLOT-VALUE-USING-CLASS and (SETF S-V-U-C)
+     to automatically reload the object.  Or maybe write an after method on
+     Lisp's UPDATE-INSTANCE-FOR-REDEFINED-CLASS that calls UPDATE-PERSISTENT-...
   3. Forbid it and signal some kind of error.
-
-- I'm not sure that :INCLUDE-SUBCLASSES NIL makes sense for
-  RUCKSACK-MAP-SLOT.  Think about this.
-
-- Does indexing in example-1 work correctly if we don't use
-  *RUCKSACK* in WITH-RUCKSACK?  Maybe WITH-RUCKSACK should always
-  bind *RUCKSACK*?
 
 - There's still a btree bug that's uncovered by the stress test.
   Fix it.
@@ -47,7 +36,20 @@ DO:
   from the transaction id).  That's one step towards avoiding locks
   on transaction commit.
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+* MAYBE LATER
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+- Maybe signal a continuable error when the in-memory class definition does
+  not correspond to the most recent schema.  If the user decides to
+  continue, UPDATE-PERSISTENT-INSTANCE-... will be called when necessary.
+
+- Think about non-persistent slots.  Should we initialize them during
+  LOAD-OBJECT?
+
+- I'm not sure that :INCLUDE-SUBCLASSES NIL makes sense for
+  RUCKSACK-MAP-SLOT.  Think about this.
+
 - Deal with CHANGE-CLASS: call UPDATE-PERSISTENT-INSTANCE-FOR-DIFFERENT-CLASS
   when necessary.  (Maybe it's never necessary and we can just use the
   existing UPDATE-INSTANCE-FOR-DIFFERENT-CLASS mechanism?)
-

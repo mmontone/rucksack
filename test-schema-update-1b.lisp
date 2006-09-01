@@ -1,4 +1,4 @@
-;; $Id: test-schema-update-1b.lisp,v 1.1 2006-08-31 15:47:58 alemmens Exp $
+;; $Id: test-schema-update-1b.lisp,v 1.2 2006-09-01 13:57:07 alemmens Exp $
 
 (in-package :rucksack-test-schema-update)
 
@@ -15,7 +15,7 @@
 ;;
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (with-rucksack (*rucksack* *dir*)
+  (with-rucksack (rs *dir*)
     (with-transaction ()
       
       (defclass person ()
@@ -50,7 +50,7 @@
 
 
 ;; Create some persons with the new class definition.
-(with-rucksack (*rucksack* *dir*)
+(with-rucksack (rs *dir*)
   (with-transaction ()
     (loop repeat 10
           do (make-instance 'person))))
@@ -60,11 +60,11 @@
 ;; update them and we want to keep a few old instances for the next
 ;; part of the test).
 
-(with-rucksack (*rucksack* *dir*)
+(with-rucksack (rs *dir*)
   (with-transaction ()
-    (let ((cache (rucksack-cache *rucksack*))
+    (let ((cache (rucksack-cache rs))
           (count 0))
-      (rucksack-map-class *rucksack* 'person
+      (rucksack-map-class rs 'person
                           (lambda (id)
                             (when (evenp count)
                               (print (cache-get-object id cache)))

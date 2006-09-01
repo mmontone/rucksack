@@ -1,8 +1,9 @@
-;; $Id: notes.txt,v 1.1 2006-08-31 15:53:57 alemmens Exp $
+;; $Id: notes.txt,v 1.2 2006-09-01 13:57:07 alemmens Exp $
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Some random notes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 * UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS & friends.
 
@@ -35,4 +36,24 @@
   Whenever a schema becomes obsolete, we mark it as obsolete and register
   the names of the slots that were added and the slots that were discarded
   (by the most recent version, compared to this version).
+
+
+* Handling initargs in LOAD-OBJECT and UPDATE-PERSISTENT-INSTANCE-...
+
+Actually, initargs are only relevant for slots that have been added by
+a class redefinition, so they're only relevant for
+UPDATE-PERSISTENT-INSTANCE-...  (This is because objects created by
+LOAD-OBJECT are disk versions of object that have once been
+initialized by Lisp's normal INITIALIZE-INSTANCE methods, which
+already took care of the initargs when the object was created for the
+first time.)
+
+Looking at the CLHS description of
+UPDATE-INSTANCE-FOR-REDEFINED-CLASS, I think that
+UPDATE-PERSISTENT-INSTANCE-... doesn't need to handle initargs at all:
+
+  "The generic function update-instance-for-redefined-class also takes
+  any number of initialization arguments. When it is called by the system
+  to update an instance whose class has been redefined, no initialization
+  arguments are provided."
 

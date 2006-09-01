@@ -1,4 +1,4 @@
-;; $Id: test-schema-update-1a.lisp,v 1.1 2006-08-31 15:47:58 alemmens Exp $
+;; $Id: test-schema-update-1a.lisp,v 1.2 2006-09-01 13:57:07 alemmens Exp $
 
 (in-package :rucksack-test-schema-update)
 
@@ -19,7 +19,7 @@
 
   (defparameter *dir* #P"/tmp/rucksack/schema-update/")
   
-  (with-rucksack (*rucksack* *dir* :if-exists :supersede)
+  (with-rucksack (rs *dir* :if-exists :supersede)
     (with-transaction ()
       
       (defclass person ()
@@ -41,16 +41,16 @@
             (age person))))
 
 ;; Create some persons.
-(with-rucksack (*rucksack* *dir*)
+(with-rucksack (rs *dir*)
   (with-transaction ()
     (loop repeat 10
           do (make-instance 'person))))
 
 
 ;; Show them.
-(with-rucksack (*rucksack* *dir*)
+(with-rucksack (rs *dir*)
   (with-transaction ()
-    (rucksack-map-class *rucksack* 'person #'print)))
+    (rucksack-map-class rs 'person #'print)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Sample output

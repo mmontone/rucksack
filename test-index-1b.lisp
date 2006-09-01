@@ -1,4 +1,4 @@
-;; $Id: test-index-1b.lisp,v 1.1 2006-08-31 15:50:27 alemmens Exp $
+;; $Id: test-index-1b.lisp,v 1.2 2006-09-01 13:57:07 alemmens Exp $
 
 (in-package :rs-test)
 
@@ -23,7 +23,7 @@
 ;;;   (3) the index has been filled with the new values for the age slot.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(with-rucksack (*rucksack* *hacker-rucksack*)
+(with-rucksack (rs *hacker-rucksack*)
   (with-transaction ()
 
     ;; For classes that may change during program development, you should
@@ -46,10 +46,10 @@
       (:index t))))
 
 (defun show-hackers-by-age ()
-  (with-rucksack (*rucksack* *hacker-rucksack*)
+  (with-rucksack (rs *hacker-rucksack*)
     (with-transaction ()
       (print "Hackers by age.")
-      (rucksack-map-slot *rucksack* 'hacker 'age
+      (rucksack-map-slot rs 'hacker 'age
                          (lambda (hacker)
                            (format t "~&~A has age ~D.~%"
                                    (name hacker)

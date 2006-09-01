@@ -1,4 +1,4 @@
-;; $Id: cache.lisp,v 1.10 2006-08-24 15:21:25 alemmens Exp $
+;; $Id: cache.lisp,v 1.11 2006-09-01 13:57:06 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -249,8 +249,8 @@ objects.")))
   "Checks for transaction conflicts and signals a transaction conflict
 if necessary.  Change the object's status to dirty.  If the object is
 already dirty, nothing happens."
-  ;; This function is called by (setf slot-value-using-class),
-  ;; slot-makunbound-using-class and p-data-write.
+  ;; This function is called by (SETF SLOT-VALUE-USING-CLASS),
+  ;; SLOT-MAKUNBOUND-USING-CLASS and P-DATA-WRITE.
   (let ((object-id (object-id object))
         (transaction (current-transaction)))
     ;; Check for transaction conflict.

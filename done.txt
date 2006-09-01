@@ -1,3 +1,17 @@
+* 2006-09-01
+
+- Get rid of the Lispworks-specific PROCESS-A-SLOT-OPTION stuff and handle
+  the slot options in a way that's compatible with AMOP.
+
+- Removed INITARGS argument for UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS,
+  because it turns out not to be necessary (see details in notes.txt).
+
+- Add explanation to test-index-1a.lisp about the use of
+    (eval-when (:compile-toplevel :load-toplevel :execute) ...)
+
+- Replace *RUCKSACK* by RS in test-*.lisp.
+
+
 * 2006-08-31
 
 - Get rid of the Lispworks-specific PROCESS-A-CLASS-OPTION stuff and handle

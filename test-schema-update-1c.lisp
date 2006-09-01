@@ -1,4 +1,4 @@
-;; $Id: test-schema-update-1c.lisp,v 1.1 2006-08-31 15:47:58 alemmens Exp $
+;; $Id: test-schema-update-1c.lisp,v 1.2 2006-09-01 13:57:07 alemmens Exp $
 
 (in-package :rucksack-test-schema-update)
 
@@ -14,7 +14,7 @@
 ;;
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (with-rucksack (*rucksack* *dir*)
+  (with-rucksack (rs *dir*)
     (with-transaction ()
       
       (defclass person ()
@@ -73,15 +73,15 @@
 
 
 ;; Create some persons with the second version of the class definition.
-(with-rucksack (*rucksack* *dir*)
+(with-rucksack (rs *dir*)
   (with-transaction ()
     (loop repeat 10
           do (make-instance 'person))))
 
 ;; Show all persons (for three versions of the class definition).
-(with-rucksack (*rucksack* *dir*)
+(with-rucksack (rs *dir*)
   (with-transaction ()
-    (rucksack-map-class *rucksack* 'person #'print)))
+    (rucksack-map-class rs 'person #'print)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Sample output
