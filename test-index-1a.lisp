@@ -1,4 +1,4 @@
-;; $Id: test-index-1a.lisp,v 1.3 2006-09-01 13:57:07 alemmens Exp $
+;; $Id: test-index-1a.lisp,v 1.4 2006-09-03 14:40:51 alemmens Exp $
 
 (in-package :rucksack-test)
 
@@ -94,7 +94,7 @@
 
 #|
 
-TEST-RS 3 > (create-hackers)
+RS-TEST 3 > (create-hackers)
 
 #<HACKER #:HACKER-9234 called "Martin"> 
 #<HACKER #:HACKER-9235 called "Martin"> 
@@ -129,7 +129,7 @@ TEST-RS 3 > (create-hackers)
 NIL
 T
 
-TEST-RS 4 > (show-hackers)
+RS-TEST 4 > (show-hackers)
 
 "Hackers indexed by object id." 
 #<HACKER #:HACKER-9234 called "Martin"> 

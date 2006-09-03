@@ -1,4 +1,4 @@
-;; $Id: objects.lisp,v 1.15 2006-09-01 13:57:07 alemmens Exp $
+;; $Id: objects.lisp,v 1.16 2006-09-03 14:40:51 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -403,13 +403,14 @@ inherit from this class."))
 
 
 
-(defmethod shared-initialize :before ((object persistent-object) slots
-				      &key rucksack
-                                      ;; The DONT-INDEX argument is used
-                                      ;; when creating the indexes themselves
-                                      ;; (to prevent infinite recursion).
-                                      (dont-index nil)
-                                      &allow-other-keys)
+(defmethod initialize-instance :before ((object persistent-object)
+                                        &rest args
+                                        &key rucksack
+                                        ;; The DONT-INDEX argument is used
+                                        ;; when creating the indexes themselves
+                                        ;; (to prevent infinite recursion).
+                                        (dont-index nil)
+                                        &allow-other-keys)
   ;; This happens when persistent-objects are created in memory, not when
   ;; they're loaded from the cache (loading uses ALLOCATE-INSTANCE instead).
   (let ((rucksack (or rucksack (rucksack object))))
@@ -422,10 +423,10 @@ inherit from this class."))
     (unless dont-index
       (rucksack-maybe-index-new-object rucksack (class-of object) object))))
 
-(defmethod shared-initialize :after ((object persistent-object) slots
-				      &key rucksack
-                                      (dont-index nil)
-                                      &allow-other-keys)
+(defmethod initialize-instance :after ((object persistent-object)
+                                       &rest args
+                                       &key rucksack (dont-index nil)
+                                       &allow-other-keys)
   ;; Update slot indexes for persistent slots that are bound now.
   (unless dont-index
     (let ((class (class-of object)))
@@ -433,7 +434,7 @@ inherit from this class."))
         (let ((slot-name (slot-definition-name slot)))
           (when (and (slot-boundp object slot-name)
                      (slot-persistence slot))
-            (rucksack-maybe-index-changed-slot rucksack
+            (rucksack-maybe-index-changed-slot (or rucksack (rucksack object))
                                                class object slot
                                                nil (slot-value object slot-name)
                                                nil t)))))))
@@ -772,10 +773,11 @@ version for object #~D and transaction ~D."
 
 (defgeneric update-persistent-instance-for-redefined-class
     (instance added-slots discarded-slots property-list &key)
-  (:method ((instance persistent-object) added-slots discarded-slots property-list
+  (:method ((instance persistent-object) added-slots discarded-slots plist
             &key)
    ;; Default method: ignore the discarded slots and initialize added slots
-   ;; according to their initfunctions.
+   ;; according to their initforms.  We do this 'by hand' and not by calling
+   ;; SHARED-INITIALIZE because slot indexes may need to be updated too.
    (let ((slots (class-slots (class-of instance))))
      (loop for slot-name in added-slots
            for slot = (find slot-name slots :key #'slot-definition-name)
@@ -788,4 +790,16 @@ version for object #~D and transaction ~D."
            ;; instance whose class has been redefined, no initialization
            ;; arguments are provided." 
            do (setf (slot-value instance slot-name) (funcall initfunction))))))
+
+
+(defmethod update-instance-for-redefined-class
+           ((object persistent-object) added-slots discarded-slots plist
+            &rest initargs &key)
+  ;; This method exists for updating in-memory persistent objects
+  ;; of which the class definition has changed.
+  (declare (ignore initargs)) ; there shouldn't be any, anyway
+  (cache-touch-object object (rucksack-cache (rucksack object)))
+  (update-persistent-instance-for-redefined-class object added-slots
+                                                  discarded-slots plist))
+
 

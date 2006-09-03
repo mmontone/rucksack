@@ -1,4 +1,4 @@
-;; $Id: notes.txt,v 1.2 2006-09-01 13:57:07 alemmens Exp $
+;; $Id: notes.txt,v 1.3 2006-09-03 14:40:51 alemmens Exp $
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Some random notes
@@ -39,6 +39,7 @@
 
 
 * Handling initargs in LOAD-OBJECT and UPDATE-PERSISTENT-INSTANCE-...
+  [2006-09-01]
 
 Actually, initargs are only relevant for slots that have been added by
 a class redefinition, so they're only relevant for
@@ -56,4 +57,37 @@ UPDATE-PERSISTENT-INSTANCE-... doesn't need to handle initargs at all:
   any number of initialization arguments. When it is called by the system
   to update an instance whose class has been redefined, no initialization
   arguments are provided."
+
+
+* Updating in-memory persistent instances when the class definition changes
+  [2006-09-02]
+
+We should make sure that those are updated too.  Some possible strategies:
+
+1. Don't do anything special but rely on Lisp's normal
+   UPDATE-INSTANCE-FOR-REDEFINED-CLASS mechanism.  Then the programmer
+   must write methods for both UPDATE-INSTANCE-...  and
+   UPDATE-PERSISTENT-INSTANCE-... .  That seems error prone.
+
+2. Remove all instances of the redefined class from the cache.  Then
+   the objects will be loaded from disk again, and U-P-I-F-R-C will be
+   called automatically.  This has the disadvantage that all values of
+   transient slots will be gone; then again, I'm not sure if transient
+   slots make much sense anyway for persistent objects.  CLHS says:
+   "Updating such an instance occurs at an implementation-dependent
+   time, but no later than the next time a slot of that instance is
+   read or written."  Maybe we can also hook into
+   SLOT-VALUE-USING-CLASS and (SETF S-V-U-C) to automatically reload
+   the object.  Or maybe write an after method on Lisp's
+   UPDATE-INSTANCE-FOR-REDEFINED-CLASS that calls
+   UPDATE-PERSISTENT-...
+
+3. Forbid it and signal some kind of error.
+
+4. Write default method for Lisp's UPDATE-INSTANCE-FOR-REDEFINED-CLASS
+   that marks the object as dirty and calls Rucksack's
+   UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS.
+
+Strategy 4 looks like a simple and reasonably clean solution to me.
+I'll implement that.
 

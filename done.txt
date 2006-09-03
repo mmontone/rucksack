@@ -1,3 +1,11 @@
+* 2006-09-03
+
+- Handle updates of in-memory persistent objects by writing a method
+  for Lisp's UPDATE-INSTANCE-FOR-REDEFINED-CLASS that marks the object
+  as dirty and calls Rucksack's
+  UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS.
+
+
 * 2006-09-01
 
 - Get rid of the Lispworks-specific PROCESS-A-SLOT-OPTION stuff and handle

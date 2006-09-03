@@ -1,28 +1,9 @@
 DO: 
 
-- What about in-memory persistent instances when the class definition
-  changes?  We should make sure that those are updated too.  Some possible
-  strategies:
-  to be three strategies:
-  1. Rely on Lisp's normal UPDATE-INSTANCE-FOR-REDEFINED-CLASS mechanism.
-     Then the programmer must write methods for both UPDATE-INSTANCE-...
-     and UPDATE-PERSISTENT-INSTANCE-... .  That seems error prone.
-  2. Remove all instances of the redefined class from the cache.
-     Then the objects will be loaded from disk again, and U-P-I-F-R-C will
-     be called automatically.  This has the disadvantage that all values
-     of transient slots will be gone; then again, I'm not sure if transient
-     slots make much sense anyway for persistent objects.
-     CLHS says: 
-       "Updating such an instance occurs at an implementation-dependent time,
-       but no later than the next time a slot of that instance is read or
-       written."
-     Maybe we can also hook into SLOT-VALUE-USING-CLASS and (SETF S-V-U-C)
-     to automatically reload the object.  Or maybe write an after method on
-     Lisp's UPDATE-INSTANCE-FOR-REDEFINED-CLASS that calls UPDATE-PERSISTENT-...
-  3. Forbid it and signal some kind of error.
+- Make Rucksack crash proof.  (Use a copying GC?)
 
-- There's still a btree bug that's uncovered by the stress test.
-  Fix it.
+- There's still a btree bug that's detected (very rarely) by the
+  stress test.  Fix it.
 
 - Check that btrees actually signal an error for duplicate keys.
   Handle those errors correctly for slot indexes.
@@ -45,7 +26,7 @@ DO:
   continue, UPDATE-PERSISTENT-INSTANCE-... will be called when necessary.
 
 - Think about non-persistent slots.  Should we initialize them during
-  LOAD-OBJECT?
+  LOAD-OBJECT?  Do we need them at all?
 
 - I'm not sure that :INCLUDE-SUBCLASSES NIL makes sense for
   RUCKSACK-MAP-SLOT.  Think about this.
