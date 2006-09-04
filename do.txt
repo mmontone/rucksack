@@ -1,5 +1,9 @@
 DO: 
 
+- In SBCL, FINALIZE-INHERITANCE is not called when a class was redefined
+  and a new instance of the redefined class is created.  (In Lispworks,
+  it *is* called then.)
+
 - Make Rucksack crash proof.  (Use a copying GC?)
 
 - There's still a btree bug that's detected (very rarely) by the

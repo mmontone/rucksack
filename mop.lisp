@@ -1,4 +1,4 @@
-;; $Id: mop.lisp,v 1.10 2006-09-01 13:57:07 alemmens Exp $
+;; $Id: mop.lisp,v 1.11 2006-09-04 12:34:34 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -15,7 +15,13 @@
                      :accessor class-persistent-slots)
    (index :initarg :index :initform nil
           :documentation "Can be either NIL (for no class index) or T
-(for the standard class index).  Default value is NIL.")))
+(for the standard class index).  Default value is NIL.")
+   (changed-p :initform nil :accessor class-changed-p
+              :documentation "True iff the class definition was changed
+but the schemas haven't been updated yet.  This flag is necessary because
+some MOP implementations don't call FINALIZE-INHERITANCE when a class
+was redefined and a new instance of the redefined class is created.")))
+
 
 (defmethod class-index ((class persistent-class))
   ;; According to the MOP, the INDEX slot is initialized with the
@@ -151,8 +157,10 @@ and a list of changed (according to SLOT-DEFINITION-EQUAL) slots."
                        ;; SLOT-VALUE-USING-CLASS.
                        #+lispworks :optimize-slot-access #+lispworks nil
                        args)))
+    (setf (class-changed-p class) t)
     (update-indexes class)
     result))
+
 
 
 (defun maybe-add-persistent-object-class (class direct-superclasses)
@@ -183,6 +191,9 @@ and a list of changed (according to SLOT-DEFINITION-EQUAL) slots."
 
 
 (defmethod finalize-inheritance :after ((class persistent-class))
+  (update-slot-info class))
+
+(defun update-slot-info (class)
   ;; Register all (effective) persistent slots.
   (setf (class-persistent-slots class)
         (remove-if-not #'slot-persistence (class-slots class)))
@@ -191,8 +202,13 @@ and a list of changed (according to SLOT-DEFINITION-EQUAL) slots."
     (let ((rucksack (current-rucksack)))
       (when rucksack
         (maybe-update-schemas (schema-table (rucksack-cache rucksack))
-                              class)))))
+                              class))))
+  ;;
+  (setf (class-changed-p class) nil))
 
+(defun maybe-update-slot-info (class)
+  (when (class-changed-p class)
+    (update-slot-info class)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Computing slot definitions
@@ -236,3 +252,4 @@ and a list of changed (according to SLOT-DEFINITION-EQUAL) slots."
      
     ;; Return the effective slot definition.
     effective-slotdef))
+ 

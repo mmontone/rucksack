@@ -1,12 +1,13 @@
-;; $Id: test-schema-update-1c.lisp,v 1.2 2006-09-01 13:57:07 alemmens Exp $
+;; $Id: test-schema-update-1c.lisp,v 1.3 2006-09-04 12:34:34 alemmens Exp $
 
 (in-package :rucksack-test-schema-update)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Schema updates and UPDATE-INSTANCE-FOR-REDEFINED-CLASS, part 3 of 3
 ;;;
-;;; Compile and load this file after compiling and loading
-;;; test-schema-update-1c.lisp
+;;; Run this example after test-schema-update-1b.lisp:
+;;; - compile and load this file
+;;; - evaluate (TEST-3)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;
@@ -72,16 +73,16 @@
   (nth-value 5 (decode-universal-time (date-of-birth person))))
 
 
-;; Create some persons with the second version of the class definition.
-(with-rucksack (rs *dir*)
-  (with-transaction ()
-    (loop repeat 10
-          do (make-instance 'person))))
-
-;; Show all persons (for three versions of the class definition).
-(with-rucksack (rs *dir*)
-  (with-transaction ()
-    (rucksack-map-class rs 'person #'print)))
+(defun test-3 ()
+  ;; Create some persons with the second version of the class definition.
+  (with-rucksack (rs *dir*)
+    (with-transaction ()
+      (loop repeat 10
+            do (make-instance 'person))))
+  ;; Show all persons (for three versions of the class definition).
+  (with-rucksack (rs *dir*)
+    (with-transaction ()
+      (rucksack-map-class rs 'person #'print))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Sample output

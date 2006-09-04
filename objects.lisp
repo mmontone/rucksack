@@ -1,4 +1,4 @@
-;; $Id: objects.lisp,v 1.16 2006-09-03 14:40:51 alemmens Exp $
+;; $Id: objects.lisp,v 1.17 2006-09-04 12:34:34 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -402,8 +402,14 @@ functions like P-CAR instead."))
 inherit from this class."))
 
 
+(defparameter *initializing-instance*
+  ;; A hack to paper over some MOP differences.  Maybe a cleaner way
+  ;; to solve this would be to write our own method for SHARED-INITIALIZE,
+  ;; as suggested by Pascal Costanza.
+  ;; See emails of 2006-09-03/04 on rucksack-devel@common-lisp.net.
+  nil)
 
-(defmethod initialize-instance :before ((object persistent-object)
+(defmethod initialize-instance :around ((object persistent-object)
                                         &rest args
                                         &key rucksack
                                         ;; The DONT-INDEX argument is used
@@ -411,6 +417,7 @@ inherit from this class."))
                                         ;; (to prevent infinite recursion).
                                         (dont-index nil)
                                         &allow-other-keys)
+  (maybe-update-slot-info (class-of object))
   ;; This happens when persistent-objects are created in memory, not when
   ;; they're loaded from the cache (loading uses ALLOCATE-INSTANCE instead).
   (let ((rucksack (or rucksack (rucksack object))))
@@ -421,23 +428,27 @@ inherit from this class."))
     (unless (slot-boundp object 'rucksack)
       (setf (slot-value object 'rucksack) rucksack))
     (unless dont-index
-      (rucksack-maybe-index-new-object rucksack (class-of object) object))))
-
-(defmethod initialize-instance :after ((object persistent-object)
-                                       &rest args
-                                       &key rucksack (dont-index nil)
-                                       &allow-other-keys)
-  ;; Update slot indexes for persistent slots that are bound now.
-  (unless dont-index
-    (let ((class (class-of object)))
-      (dolist (slot (class-slots class))
-        (let ((slot-name (slot-definition-name slot)))
-          (when (and (slot-boundp object slot-name)
-                     (slot-persistence slot))
-            (rucksack-maybe-index-changed-slot (or rucksack (rucksack object))
-                                               class object slot
-                                               nil (slot-value object slot-name)
-                                               nil t)))))))
+      (rucksack-maybe-index-new-object rucksack (class-of object) object)))
+  ;;
+  (let (;; Tell (SETF SLOT-VALUE-USING-CLASS), which may be called
+        ;; by SHARED-INITIALIZE in some implementations, that we're
+        ;; just initializing the instance and it shouldn't try to
+        ;; update any indexes.
+        (*initializing-instance* t))
+    (let ((result (call-next-method)))
+      ;; Update slot indexes for persistent slots that are bound now.
+      (unless dont-index
+        (let ((class (class-of object)))
+          (dolist (slot (class-slots class))
+            (let ((slot-name (slot-definition-name slot)))
+              (when (and (slot-boundp object slot-name)
+                         (slot-persistence slot))
+                (rucksack-maybe-index-changed-slot (or rucksack (rucksack object))
+                                                   class object slot
+                                                   nil (slot-value object slot-name)
+                                                   nil t))))))
+      ;;
+      result)))
 
 
 (defmethod print-object ((object persistent-object) stream)
@@ -468,8 +479,8 @@ inherit from this class."))
 (defmethod slot-value-using-class :around ((class persistent-class)
                                            object
                                            slot)
+  (maybe-update-slot-info class)
   ;; Automatically dereference proxies.
-  (declare (ignore class slot))
   (maybe-dereference-proxy (call-next-method)))
 
 
@@ -477,6 +488,7 @@ inherit from this class."))
                                                   (class persistent-class)
                                                   object
                                                   slot-name-or-def)
+  (maybe-update-slot-info class)
   ;; If this is a persistent slot, tell the cache that this object
   ;; has changed. The cache will save it when necessary.
   (let ((slot (slot-def-and-name class slot-name-or-def)))
@@ -492,10 +504,11 @@ inherit from this class."))
                (result (call-next-method)))
           (cache-touch-object object (cache object))
           ;; Update indexes.
-          (rucksack-maybe-index-changed-slot (rucksack object)
-                                             class object slot
-                                             old-value new-value
-                                             old-boundp t)
+          (unless *initializing-instance*
+            (rucksack-maybe-index-changed-slot (rucksack object)
+                                               class object slot
+                                               old-value new-value
+                                               old-boundp t))
           result)
       (call-next-method))))
 
@@ -503,6 +516,7 @@ inherit from this class."))
 (defmethod slot-makunbound-using-class :around ((class persistent-class)
                                                 object
                                                 slot-name-or-def)
+  (maybe-update-slot-info class)
   ;; If this is a persistent slot, tell the cache that this object
   ;; has changed. Rely on the cache to save it when necessary.
   (let ((slot (slot-def-and-name class slot-name-or-def)))

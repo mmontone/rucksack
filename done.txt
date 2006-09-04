@@ -1,3 +1,13 @@
+* 2006-09-04
+
+- Take care of some differences between the MOP implementations of Lispworks
+  and SBCL.  Lispworks doesn't call (setf slot-value-using-class) in
+  SHARED-INITIALIZE, but SBCL does.  Lispworks calls FINALIZE-INHERITANCE
+  after a class is redefined and a new instance is created, but SBCL
+  doesn't.  All tests now work for Lispworks (5.0) and SBCL (0.9.16).
+
+- Some work on a copying GC.
+
 * 2006-09-03
 
 - Handle updates of in-memory persistent objects by writing a method

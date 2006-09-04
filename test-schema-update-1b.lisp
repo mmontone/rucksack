@@ -1,13 +1,15 @@
-;; $Id: test-schema-update-1b.lisp,v 1.2 2006-09-01 13:57:07 alemmens Exp $
+;; $Id: test-schema-update-1b.lisp,v 1.3 2006-09-04 12:34:34 alemmens Exp $
 
 (in-package :rucksack-test-schema-update)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Schema updates and UPDATE-INSTANCE-FOR-REDEFINED-CLASS, part 2 of 3
 ;;;
-;;; Compile and load this file after compiling and loading
-;;; test-schema-update-1a.lisp.  Study the output, and then compile
-;;; and load test-schema-update-1c.lisp.
+;;; Run this example after test-schema-update-1a.lisp:
+;;;
+;;; - Compile and load this file
+;;; - Evaluate (TEST-2)
+;;; - Then move on to test-schema-update-1c.lisp.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;
@@ -49,27 +51,28 @@
   (- +this-year+ (year-of-birth person)))
 
 
-;; Create some persons with the new class definition.
-(with-rucksack (rs *dir*)
-  (with-transaction ()
-    (loop repeat 10
-          do (make-instance 'person))))
+(defun test-2 ()
+  ;; Create some persons with the new class definition.
+  (with-rucksack (rs *dir*)
+    (with-transaction ()
+      (loop repeat 10
+            do (make-instance 'person))))
 
-;; Show some PERSON instances and some old PERSON instances.
-;; (We don't show all PERSON instances, because showing them may
-;; update them and we want to keep a few old instances for the next
-;; part of the test).
-
-(with-rucksack (rs *dir*)
-  (with-transaction ()
-    (let ((cache (rucksack-cache rs))
-          (count 0))
-      (rucksack-map-class rs 'person
-                          (lambda (id)
-                            (when (evenp count)
-                              (print (cache-get-object id cache)))
-                            (incf count))
-                          :id-only t))))
+  ;; Show some PERSON instances and some old PERSON instances.
+  ;; (We don't show all PERSON instances, because showing them may
+  ;; update them and we want to keep a few old instances for the next
+  ;; part of the test).
+  
+  (with-rucksack (rs *dir*)
+    (with-transaction ()
+      (let ((cache (rucksack-cache rs))
+            (count 0))
+        (rucksack-map-class rs 'person
+                            (lambda (id)
+                              (when (evenp count)
+                                (print (cache-get-object id cache)))
+                              (incf count))
+                            :id-only t)))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

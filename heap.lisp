@@ -1,4 +1,4 @@
-;; $Id: heap.lisp,v 1.11 2006-08-10 12:36:16 alemmens Exp $
+;; $Id: heap.lisp,v 1.12 2006-09-04 12:34:34 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -17,6 +17,9 @@
 
 (defgeneric heap-stream (heap)
   (:documentation "Returns the heap's stream."))
+
+(defgeneric heap-start (heap)
+  (:documentation "Returns the position of the first block in the heap."))
 
 (defgeneric heap-end (heap)
   (:documentation "Returns the end of the heap."))
@@ -52,8 +55,9 @@ to other blocks, object ids and object heap positions.")
                 ;; Just a buffer for 1 cell.
                 :reader cell-buffer)
    (end :accessor heap-end
-        :documentation "The end of the heap.  This number is stored in the first
-heap cell.")
+        :documentation "The end of the heap.  For free-list heaps, this number
+is stored in the first heap cell. For appending heaps, it's stored in the
+end of the file.")
    (max-size :initarg :max-size
              :initform nil :accessor max-heap-size
              :documentation "The maximum size (in octets) for the heap.
@@ -69,14 +73,6 @@ was called.")))
 ;;
 ;; Open/close/initialize
 ;;
-
-(defmethod initialize-instance :after ((heap heap) &key &allow-other-keys)
-  ;; Initialize the heap end.
-  (if (zerop (file-length (heap-stream heap)))
-      (setf (heap-end heap) +pointer-size+)
-    (setf (slot-value heap 'end) (pointer-value 0 heap))))
-
-
 
 (defun open-heap (pathname
                   &key (class 'heap) rucksack (options '())
@@ -99,19 +95,9 @@ was called.")))
 (defmethod finish-heap-output ((heap heap))
   (finish-output (heap-stream heap)))
 
-;;
-;; Heap start/end
-;;
 
-(defgeneric heap-start (heap)
-  (:method ((heap heap))
-   ;; Default: return the position just after the heap end cell.
-   +pointer-size+)
-  (:documentation "Returns the position of the first block in the heap."))
-
-(defmethod (setf heap-end) :after (end (heap heap))
-  ;; Store the heap end in the file.
-  (setf (pointer-value 0 heap) end))
+(defmethod heap-size ((heap heap))
+  (- (heap-end heap) (heap-start heap)))
 
 ;;
 ;; Pointers
@@ -205,6 +191,10 @@ contains a pointer to the next block on the same free list."))
 
 (defmethod initialize-instance :after ((heap free-list-heap)
                                        &key &allow-other-keys)
+  ;; Initialize the heap end.
+  (if (zerop (file-length (heap-stream heap)))
+      (setf (heap-end heap) +pointer-size+)
+    (setf (slot-value heap 'end) (pointer-value 0 heap)))
   ;; Load or create the array of free list pointers.
   (setf (slot-value heap 'starts)
         (make-array (nr-free-lists heap)))
@@ -229,6 +219,16 @@ contains a pointer to the next block on the same free list."))
   "Returns a pointer to the cell containing the free list start."
   (+ +pointer-size+ ; skip heap end cell
      (* size-class +pointer-size+)))
+
+
+(defmethod heap-start ((heap free-list-heap))
+  ;; A free-list-heap starts with an array of pointers to the first element
+  ;; of each free list; the heap blocks start after that array.
+  (free-list-pointer (nr-free-lists heap)))
+
+(defmethod (setf heap-end) :after (end (heap free-list-heap))
+  ;; Store the heap end in the file.
+  (setf (pointer-value 0 heap) end))
 
 ;;
 ;;
@@ -291,17 +291,6 @@ specified position.  This includes the size of the block header."))
   ;; the block is occupied.
   (block-header block heap))
 
-;;
-;;
-
-
-(defmethod heap-start ((heap free-list-heap))
-  ;; A free-list-heap starts with an array of pointers to the first element
-  ;; of each free list; the heap blocks start after that array.
-  (free-list-pointer (nr-free-lists heap)))
-
-(defmethod heap-size ((heap free-list-heap))
-  (- (heap-end heap) (heap-start heap)))
 
 ;;
 ;; Allocating and deallocating blocks
@@ -464,6 +453,45 @@ list."
   ;; Don't bother to actually read it.  All blocks have the same size anyway.
   (declare (ignore block))
   (min-block-size heap))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Appending heap (as used by copying garbage collector)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defclass appending-heap (heap)
+  ;; For an APPENDING-HEAP, all writes take place to the heap's end.
+  ;; The last 7 octets of the file always contain a serialized version
+  ;; of the heap's end.
+  ())
+
+(defmethod allocate-block ((heap appending-heap) &key size &allow-other-keys)
+  (let ((block (heap-end heap)))
+    ;; Put block size (including the size of header) into header.
+    (setf (block-size block heap) size)
+    ;;
+    (incf (heap-end heap) size)
+    (values block size)))
+
+(defmethod (setf heap-end) :after (end (heap appending-heap))
+  (let ((stream (heap-stream heap)))
+    (file-position stream end)
+    ;; Write new end to the end of the file.
+    (serialize-marker +positive-byte-48+ stream)
+    (serialize-byte-48 end stream)))
+
+(defmethod heap-start ((heap appending-heap))
+  0)
+
+(defmethod load-heap-end ((heap appending-heap))
+  (let* ((stream (heap-stream heap))
+         ;; 7 octets: one for a marker, 6 for a byte-48.
+         (pos (- (file-length stream) 7)))
+    (file-position stream pos)
+    (let ((end (deserialize stream)))
+      (unless (= end pos)
+        (error "Heap may be corrupt (heap-end info is missing."))
+      (setf (slot-value heap 'end) end))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

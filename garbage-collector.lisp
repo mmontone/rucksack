@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.18 2006-08-24 15:21:25 alemmens Exp $
+;; $Id: garbage-collector.lisp,v 1.19 2006-09-04 12:34:34 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -7,7 +7,30 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defclass garbage-collector ()
-  ())
+  ((object-table :initarg :object-table :reader object-table)
+   (buffer :initform (make-instance 'serialization-buffer)
+           :reader serialization-buffer)
+   (rucksack :initarg :rucksack :reader rucksack)
+   ;; Some state used for incremental garbage collection.
+   (roots :initarg :roots :initform '() :accessor roots
+          :documentation "A list of object-ids of roots that must be kept alive.")
+   (state :initform :ready
+          :type (member :starting
+                        :finishing
+                        :ready
+                        ;; For copying collector
+                        :copying
+                        ;; For mark-and-sweep collector
+                        :marking-object-table
+                        :scanning
+                        :sweeping-heap
+                        :sweeping-object-table)
+          :accessor state)
+   (doing-work :initform nil :accessor gc-doing-work
+               ;; NOTE: This flag is probably not necessary anymore and
+               ;; should probably be removed.
+               :documentation
+               "A flag to prevent recursive calls to COLLECT-SOME-GARBAGE.")))
 
 
 (defgeneric scan (buffer garbage-collector)
@@ -24,33 +47,42 @@ evacuating (depending on garbage collector type) any child objects."))
     ;; Most of the SCAN-CONTENTS methods are in serialize.lisp.
     (scan-contents marker buffer gc)))
 
+
+
+(defmethod gc-work-for-size ((heap heap) size)
+  ;; The garbage collector needs to be ready when there's no more free space
+  ;; left in the heap. So when SIZE octets are allocated, the garbage collector
+  ;; needs to collect a proportional amount of bytes:
+  ;;
+  ;;     Size / Free = Work / WorkLeft
+  ;;
+  ;; or: Work = (Size / Free) * WorkLeft
+  ;;
+  (if (zerop size)
+      0
+    (let* ((free (free-space heap))
+           (work-left (work-left heap)))
+      (if (>= size free)
+          work-left
+        (floor (* size work-left) free)))))
+
+(defmethod free-space ((heap heap))
+  ;; Returns an estimate of the number of octets that can be
+  ;; allocated until the heap is full (i.e. heap-end >= heap-max-end).
+  ;; For a copying collector, this number is very close to the truth.
+  ;; But for mark-and-sweep collectorsestimate it is a very conservative
+  ;; estimate, because we only count the heap space that hasn't been
+  ;; reserved by one of the free lists (because you can't be sure that
+  ;; a free list block can actually be used to allocate an arbitrary-sized
+  ;; block).
+  (- (max-heap-end heap) (heap-end heap)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Mark and sweep collector
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defclass mark-and-sweep-heap (garbage-collector free-list-heap serializer)
-  ((object-table :initarg :object-table :reader object-table)
-   (buffer :initform (make-instance 'serialization-buffer)
-           :reader serialization-buffer)
-   (rucksack :initarg :rucksack :reader rucksack)
-   ;; Some state used for incremental garbage collection.
-   (roots :initarg :roots :initform '() :accessor roots
-          :documentation "A list of object-ids of roots that must be marked.")
-   (state :initform :ready
-          :type (member :starting
-                        :marking-object-table
-                        :scanning
-                        :sweeping-heap
-                        :sweeping-object-table
-                        :finishing
-                        :ready)
-          :accessor state)
-   (doing-work :initform nil :accessor gc-doing-work
-               ;; NOTE: This flag is probably not necessary anymore and
-               ;; should probably be removed.
-               :documentation
-               "A flag to prevent recursive calls to COLLECT-SOME-GARBAGE.")
-   ;; Some counters that keep track of the amount of work done by
+  (;; Some counters that keep track of the amount of work done by
    ;; the garbage collector.
    (nr-object-bytes-marked :initform 0 :accessor nr-object-bytes-marked)
    (nr-heap-bytes-scanned :initform 0 :accessor nr-heap-bytes-scanned)
@@ -92,7 +124,6 @@ rounded up.)")))
 (defmethod close-heap :after ((heap mark-and-sweep-heap))
   (close-heap (object-table heap)))
 
-
 (defmethod initialize-block (block block-size (heap mark-and-sweep-heap))
   ;; This is called by a free list heap while creating free blocks.
   ;; Write the block size (as a negative number) in the start of the
@@ -122,32 +153,7 @@ rounded up.)")))
 ;; Hooking into free list methods
 ;;
 
-(defmethod gc-work-for-size ((heap mark-and-sweep-heap) size)
-  ;; The garbage collector needs to be ready when there's no more free space
-  ;; left in the heap. So when SIZE octets are allocated, the garbage collector
-  ;; needs to collect a proportional amount of bytes:
-  ;;
-  ;;     Size / Free = Work / WorkLeft
-  ;;
-  ;; or: Work = (Size / Free) * WorkLeft
-  ;;
-  (if (zerop size)
-      0
-    (let* ((free (free-space heap))
-           (work-left (work-left heap)))
-      (if (>= size free)
-          work-left
-        (floor (* size work-left) free)))))
 
-
-(defmethod free-space ((heap mark-and-sweep-heap))
-  ;; Returns an estimate of the number of octets that can be
-  ;; allocated until the heap is full (i.e. heap-end >= heap-max-end).
-  ;; We use a conservative estimate and only count the heap space that
-  ;; hasn't been reserved by one of the free lists (because you can't
-  ;; be sure that a free list block can actually be used to allocate
-  ;; an arbitrary-sized block).
-  (- (max-heap-end heap) (heap-end heap)))
 
 
 (defmethod expand-heap :after ((heap mark-and-sweep-heap) block-size)
@@ -480,12 +486,8 @@ collector."
 
 #| MAYBE LATER
 
-(defclass compacting-heap (heap)
-  ((top :initform 0 :accessor top
-        :documentation "The file-position where new objects can be allocated.")))
 
-
-(defclass copying-collector (garbage-collector serializer)
+(defclass copying-heap (garbage-collector serializer)
   ((space-0 :initarg :space-0 :reader space-0)
    (space-1 :initarg :space-1 :reader space-1)
    (from-space :accessor from-space)
@@ -494,6 +496,14 @@ collector."
                  :documentation "The position in to-space where the next object
 can be evacuated.")))
 
+(defmethod collect-some-garbage ((heap copying-collector) amount)
+  'DO-THIS)
+
+(defmethod gc-work-for-size ((heap copying-collector) nr-allocated-octets)
+  'DO-THIS)
+
+(defmethod close-heap :after ((heap copying-heap))
+  (close-heap (object-table heap)))
 
 (defmethod deserialize-byte ((gc copying-collector)
                              &optional (eof-error-p t))
@@ -551,7 +561,8 @@ can be evacuated.")))
 ;;
 
 
-(defmethod trace-contents ((marker (eql +cached-object+))
+(defmethod scan-contents ((marker (eql +cached-object+))
+                          buffer
                           (gc copying-collector))
   ;; Hook into the scanner: when the scanner finds a cached-object,
   ;; it evacuates that object and returns.

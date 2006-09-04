@@ -1,12 +1,15 @@
-;; $Id: test-schema-update-1a.lisp,v 1.2 2006-09-01 13:57:07 alemmens Exp $
+;; $Id: test-schema-update-1a.lisp,v 1.3 2006-09-04 12:34:34 alemmens Exp $
 
 (in-package :rucksack-test-schema-update)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Schema updates and UPDATE-INSTANCE-FOR-REDEFINED-CLASS, part 1 of 3
 ;;;
-;;; After compiling and loading this file, compile and load
-;;; test-schema-update-1b.lisp.
+;;; After compiling and loading this file, evaluate:
+;;; - (in-package :rucksack-test-schema-update)
+;;; - (test-1)
+;;;
+;;; Then move on to test-schema-update-1b.lisp.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defparameter *names* '(john dick mary jane peter ronald))
@@ -40,17 +43,17 @@
             (name person)
             (age person))))
 
-;; Create some persons.
-(with-rucksack (rs *dir*)
-  (with-transaction ()
-    (loop repeat 10
-          do (make-instance 'person))))
 
-
-;; Show them.
-(with-rucksack (rs *dir*)
-  (with-transaction ()
-    (rucksack-map-class rs 'person #'print)))
+(defun test-1 ()
+  ;; Create some persons.
+  (with-rucksack (rs *dir*)
+    (with-transaction ()
+      (loop repeat 10
+            do (make-instance 'person))))
+  ;; Show them.
+  (with-rucksack (rs *dir*)
+    (with-transaction ()
+      (rucksack-map-class rs 'person #'print))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Sample output
