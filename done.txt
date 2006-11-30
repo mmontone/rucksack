@@ -1,3 +1,11 @@
+* 2006-11-30
+
+- FLET MAP-INDEXES should be LABELS MAP-INDEXES (thanks to Cyrus Harmon)
+
+- The :EQUAL parameter for MAP-INDEX-DATA wasn't handled correctly
+  for indexes with non-unique keys (reported by Cyrus Harmon).
+
+
 * 2006-09-04
 
 - Take care of some differences between the MOP implementations of Lispworks

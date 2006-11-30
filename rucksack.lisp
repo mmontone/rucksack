@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.16 2006-08-31 20:09:18 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.17 2006-11-30 10:45:34 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -826,21 +826,21 @@ index for slot ~S of class ~S in ~A."
                               (lambda (slot slot-index)
                                 (funcall function class slot slot-index)))))
     (let ((visited-p (make-hash-table)))
-      (flet ((map-indexes (class)
-               (unless (gethash class visited-p)
-                 (let ((slot-index-table (btree-search (slot-index-tables rucksack)
-                                                       (class-name class)
-                                                       :errorp nil)))
-                   (when slot-index-table
-                     (map-btree slot-index-table
-                                (lambda (slot slot-index)
-                                  (funcall function (class-name class)
-                                           slot
-                                           slot-index)))))
-                 (setf (gethash class visited-p) t)
-                 (when include-subclasses
-                   (mapc #'map-indexes
-                         (class-direct-subclasses class))))))
+      (labels ((map-indexes (class)
+                 (unless (gethash class visited-p)
+                   (let ((slot-index-table (btree-search (slot-index-tables rucksack)
+                                                         (class-name class)
+                                                         :errorp nil)))
+                     (when slot-index-table
+                       (map-btree slot-index-table
+                                  (lambda (slot slot-index)
+                                    (funcall function (class-name class)
+                                             slot
+                                             slot-index)))))
+                   (setf (gethash class visited-p) t)
+                   (when include-subclasses
+                     (mapc #'map-indexes
+                           (class-direct-subclasses class))))))
         (map-indexes (if (symbolp class) (find-class class) class))))))
 
 

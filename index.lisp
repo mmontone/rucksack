@@ -1,4 +1,4 @@
-;; $Id: index.lisp,v 1.7 2006-08-31 15:47:58 alemmens Exp $
+;; $Id: index.lisp,v 1.8 2006-11-30 10:45:34 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -99,7 +99,13 @@ either :IGNORE (default) or :ERROR."))
   (if equal-supplied
       (let ((value (btree-search index equal :errorp nil :default-value index)))
         (unless (p-eql value index)
-          (funcall function equal value)))
+          (if (btree-unique-keys-p index)
+              ;; We have a single value: call FUNCTION directly.
+              (funcall function equal value)
+            ;; We have a persistent list of values: call FUNCTION for
+            ;; each element of that list.
+            (p-mapc (lambda (elt) (funcall function equal elt))
+                    value))))
     (apply #'map-btree index function :order order args)))
 
 
