@@ -1,4 +1,4 @@
-;; $Id: mop.lisp,v 1.11 2006-09-04 12:34:34 alemmens Exp $
+;; $Id: mop.lisp,v 1.12 2007-01-16 08:31:49 charmon Exp $
 
 (in-package :rucksack)
 
@@ -249,6 +249,17 @@ and a list of changed (according to SLOT-DEFINITION-EQUAL) slots."
             (index-slotdefs
              (setf (slot-value effective-slotdef 'index)
                    (slot-index (car index-slotdefs))))))
+     
+    ;; If exactly one direct slot is unique, then the effective one is
+    ;; too. If more then one is unique, signal an error.
+    (let ((unique-slotdefs (remove-if-not #'slot-unique persistent-slotdefs)))
+      (cond ((cdr unique-slotdefs)
+             (error "Multiple uniques for slot ~S in ~S:~% ~{~S~^, ~}."
+                    slot-name class
+                    (mapcar #'slot-unique unique-slotdefs)))
+            (unique-slotdefs
+             (setf (slot-value effective-slotdef 'unique)
+                   (slot-unique (car unique-slotdefs))))))
      
     ;; Return the effective slot definition.
     effective-slotdef))
