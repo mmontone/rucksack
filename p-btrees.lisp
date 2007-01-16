@@ -1,4 +1,4 @@
-;; $Id: p-btrees.lisp,v 1.10 2006-08-26 12:55:34 alemmens Exp $
+;; $Id: p-btrees.lisp,v 1.11 2007-01-16 08:42:24 charmon Exp $
 
 (in-package :rucksack)
 
@@ -205,7 +205,7 @@ predicate.")
                :initform 'btree-node)
    (max-node-size :initarg :max-node-size
                   :reader btree-max-node-size
-                  :initform 100
+                  :initform 32
                   :documentation "An integer specifying the preferred
 maximum number of keys per btree node.")
    (unique-keys-p :initarg :unique-keys-p
