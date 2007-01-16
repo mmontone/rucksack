@@ -1,4 +1,4 @@
-;; $Id: p-btrees.lisp,v 1.11 2007-01-16 08:42:24 charmon Exp $
+;; $Id: p-btrees.lisp,v 1.12 2007-01-16 08:47:36 charmon Exp $
 
 (in-package :rucksack)
 
@@ -497,28 +497,45 @@ child node will be KEY<= the child node's key in the parent node.")
   "Returns the subnode that contains more information for the given key."
   ;; Find the first binding with a key >= the given key and return
   ;; the corresponding subnode.
-  ;; EFFICIENCY: We should probably use binary search for this.
-  (loop with btree-key< = (btree-key< btree)
-        with last-index = (1- (btree-node-index-count node))
-        for i to last-index
-        for binding = (node-binding node i)
-        when (or (= i last-index)
-                 (funcall btree-key< key (binding-key binding))
-                 (not (funcall btree-key< (binding-key binding) key)))
-        do (return-from find-subnode (binding-value binding)))
-  (error "This shouldn't happen."))
+  (let ((btree-key< (btree-key< btree))
+        (last (1- (btree-node-index-count node))))
+    (labels ((binary-search (start end)
+               (let* ((mid (+ start (ash (- end start) -1))))
+                 (cond ((= start mid)
+                        (let ((start-binding (node-binding node start)))
+                          (if (funcall btree-key< (binding-key start-binding) key)
+                              (binding-value (node-binding node end))
+                              (binding-value start-binding))))
+                       (t
+                        (let ((mid-binding (node-binding node mid)))
+                          (if (funcall btree-key< (binding-key mid-binding) key)
+                              (binary-search mid end)
+                              (binary-search start mid))))))))
+      (if (funcall btree-key< (binding-key (node-binding node (1- last))) key)
+          (binding-value (node-binding node last))
+          (binary-search 0 last)))))
 
 (defun find-binding-in-node (key node btree)
-  (let ((index-count (btree-node-index-count node)))
-    (and (plusp index-count)
-         (loop with array = (btree-node-index node)
-               with btree-key< = (btree-key< btree)
-               for i from 0 below index-count
-               for candidate = (p-aref array i)
-               for candidate-key = (binding-key candidate)
-               while (funcall btree-key< candidate-key key)
-               finally (when (funcall (btree-key= btree) key candidate-key)
-                         (return candidate))))))
+  (let ((btree-key< (btree-key< btree))
+        (array (btree-node-index node))
+        (index-count (btree-node-index-count node)))
+    (labels ((binary-search (start end)
+               (let* ((mid (+ start (ash (- end start) -1))))
+                 (cond ((= start mid)
+                        (let ((start-binding (p-aref array start)))
+                          (if (funcall btree-key< (binding-key start-binding) key)
+                              (when (< end index-count)
+                                (p-aref array end))
+                              start-binding)))
+                       (t (let ((mid-binding (p-aref array mid)))
+                            (if (funcall btree-key< (binding-key mid-binding) key)
+                                (binary-search mid end)
+                                (binary-search start mid))))))))
+      (when (plusp index-count)
+        (let ((candidate (binary-search 0 index-count)))
+          (when (and candidate
+                     (funcall (btree-key= btree) (binding-key candidate) key))
+            candidate))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Insert
