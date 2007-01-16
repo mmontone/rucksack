@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.19 2006-09-04 12:34:34 alemmens Exp $
+;; $Id: garbage-collector.lisp,v 1.20 2007-01-16 08:57:43 charmon Exp $
 
 (in-package :rucksack)
 
@@ -444,6 +444,14 @@ collector."
       (setf (state heap) :finishing))
     ;; Return the amount of work done.
     work-done))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;              
+;;; Parameters to control GC
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defparameter *collect-garbage-on-commit* t
+  "A flag to indicate whether or not transaction-commit collects garbage")
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;              
 ;;; MAYBE LATER: MERGING DEAD BLOCKS.

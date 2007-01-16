@@ -1,4 +1,4 @@
-;; $Id: transactions.lisp,v 1.11 2006-08-24 15:21:25 alemmens Exp $
+;; $Id: transactions.lisp,v 1.12 2007-01-16 08:57:43 charmon Exp $
 
 (in-package :rucksack)
 
@@ -171,6 +171,13 @@ at a time."))
 ;; Committing a transaction
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;; use without-rucksack-gcing to locally set
+;;; *collect-garbage-on-commit* to nil in order to supress rucksack
+;;; garbage collection on commit
+(defmacro without-rucksack-gcing (&body body)
+  `(let ((*collect-garbage-on-commit* nil))
+     ,@body))
+
 (defun transaction-commit (transaction &key (rucksack (current-rucksack)))
   "Call transaction-commit-1 to do the real work."
   (transaction-commit-1 transaction (rucksack-cache rucksack) rucksack))
@@ -216,8 +223,9 @@ at a time."))
         (delete-commit-file transaction cache)
         ;; 5. Let the garbage collector do an amount of work proportional
         ;; to the number of octets that were allocated during the commit.
-        (collect-some-garbage heap
-                              (gc-work-for-size heap nr-allocated-octets))
+        (when *collect-garbage-on-commit*
+          (collect-some-garbage heap
+                                (gc-work-for-size heap nr-allocated-octets)))
         ;; 6. Make sure that all changes are actually on disk before
         ;; we continue.
         (finish-all-output rucksack)))))

@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.17 2006-11-30 10:45:34 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.18 2007-01-16 08:57:43 charmon Exp $
 
 (in-package :rucksack)
 
@@ -238,13 +238,18 @@ refer to the slot names.
   "The currently active transaction.")
  
 (defmacro with-transaction ((&rest args
-                             &key (rucksack '(current-rucksack))
+                             &key
+                             (rucksack '(current-rucksack))
+                             (inhibit-gc nil inhibit-gc-supplied-p)
                              &allow-other-keys)
                             &body body)
   (let ((committed (gensym "COMMITTED"))
         (transaction (gensym "TRANSACTION"))
         (result (gensym "RESULT")))
-    `(let ((,transaction nil))       
+    `(let ((,transaction nil)
+           (*collect-garbage-on-commit* (if ,inhibit-gc-supplied-p
+                                            ,(not inhibit-gc)
+                                            *collect-garbage-on-commit*)))
        (loop named ,transaction do         
           (with-simple-restart (retry "Retry ~S" ,transaction)
             (let ((,committed nil)

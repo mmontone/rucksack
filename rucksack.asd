@@ -1,9 +1,9 @@
-;;; $Id: rucksack.asd,v 1.5 2007-01-16 08:47:36 charmon Exp $
+;;; $Id: rucksack.asd,v 1.6 2007-01-16 08:57:43 charmon Exp $
 
 (in-package :cl-user)
 
 (asdf:defsystem :rucksack
-  :version "0.1.3"
+  :version "0.1.4"
   :serial t
   :components ((:file "queue")
                (:file "package")
