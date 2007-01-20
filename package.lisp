@@ -1,4 +1,4 @@
-;; $Id: package.lisp,v 1.10 2006-08-30 14:05:40 alemmens Exp $
+;; $Id: package.lisp,v 1.11 2007-01-20 18:17:55 alemmens Exp $
 
 #-(or allegro lispworks sbcl openmcl)
   (error "Unsupported implementation: ~A" (lisp-implementation-type))

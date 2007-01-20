@@ -1,4 +1,4 @@
-;; $Id: heap.lisp,v 1.12 2006-09-04 12:34:34 alemmens Exp $
+;; $Id: heap.lisp,v 1.13 2007-01-20 18:17:55 alemmens Exp $
 
 (in-package :rucksack)
 

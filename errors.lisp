@@ -1,4 +1,4 @@
-;; $Id: errors.lisp,v 1.2 2006-05-16 22:01:27 alemmens Exp $
+;; $Id: errors.lisp,v 1.3 2007-01-20 18:17:55 alemmens Exp $
 
 (in-package :rucksack)
 

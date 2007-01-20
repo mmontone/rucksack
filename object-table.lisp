@@ -1,4 +1,4 @@
-;; $Id: object-table.lisp,v 1.3 2006-08-03 11:39:39 alemmens Exp $
+;; $Id: object-table.lisp,v 1.4 2007-01-20 18:17:55 alemmens Exp $
 
 (in-package :rucksack)
 

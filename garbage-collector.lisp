@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.20 2007-01-16 08:57:43 charmon Exp $
+;; $Id: garbage-collector.lisp,v 1.21 2007-01-20 18:17:55 alemmens Exp $
 
 (in-package :rucksack)
 

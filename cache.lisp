@@ -1,4 +1,4 @@
-;; $Id: cache.lisp,v 1.11 2006-09-01 13:57:06 alemmens Exp $
+;; $Id: cache.lisp,v 1.12 2007-01-20 18:17:55 alemmens Exp $
 
 (in-package :rucksack)
 

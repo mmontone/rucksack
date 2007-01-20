@@ -1,4 +1,4 @@
-;; $Id: mop.lisp,v 1.12 2007-01-16 08:31:49 charmon Exp $
+;; $Id: mop.lisp,v 1.13 2007-01-20 18:17:55 alemmens Exp $
 
 (in-package :rucksack)
 

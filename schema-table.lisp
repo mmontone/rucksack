@@ -1,4 +1,4 @@
-;; $Id: schema-table.lisp,v 1.6 2006-08-30 14:05:40 alemmens Exp $
+;; $Id: schema-table.lisp,v 1.7 2007-01-20 18:17:55 alemmens Exp $
 
 (in-package :rucksack)          
 
