@@ -1,3 +1,9 @@
+* 2007-01-21 - version 0.1.6
+
+- Added serializing/deserializing of structures.  Only works on SBCL.
+  (Thanks to Levente Mészáros.)
+
+
 * 2006-11-30
 
 - FLET MAP-INDEXES should be LABELS MAP-INDEXES (thanks to Cyrus Harmon)

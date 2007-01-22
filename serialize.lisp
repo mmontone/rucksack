@@ -1,4 +1,4 @@
-;; $Id: serialize.lisp,v 1.9 2007-01-20 18:17:55 alemmens Exp $
+;; $Id: serialize.lisp,v 1.10 2007-01-22 10:23:14 alemmens Exp $
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Serialize
@@ -170,6 +170,7 @@ fixed width fields.")
 (defconstant +unbound-slot+             #x71)
 (defconstant +shared-object-definition+ #x72)
 (defconstant +shared-object-reference+  #x73)
+(defconstant +structure-object+         #x77)
 
 ;; Rest
 
@@ -1133,8 +1134,56 @@ implementation-dependent attributes."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Structures
 ;;;
-;;; Can't be serialized portably.  Let's forget about them here.
+;;; Can't be serialized portably.  The version below works for SBCL at the
+;;; moment, but using structures in Rucksack is risky: if a structure 
+;;; definition changes, Rucksack won't know about it and you'll probably
+;;; run into big problems.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+#+sbcl
+(defmethod serialize ((object structure-object) serializer)
+  (serialize-structure-object object serializer))
+
+(defun serialize-structure-object (object serializer)
+  ;; A structure object is serialized as:
+  ;; - structure name
+  ;; - number of slots
+  ;; - slot values
+  (serialize-marker +structure-object+ serializer)
+  (serialize (class-name (class-of object)) serializer)
+  (save-slots object serializer))
+
+(defmethod save-slots ((object structure-object) serializer)
+  (let ((slots (saved-slots object)))
+    (serialize (length slots) serializer)
+    (loop for slot-name in (saved-slots object)
+          do (serialize (slot-value object slot-name) serializer))))
+
+#+sbcl
+(defmethod deserialize-contents ((marker (eql +structure-object+)) serializer)
+  (let* ((class-name (deserialize serializer))
+         (object (allocate-instance (find-class class-name))))
+    (load-slots object serializer)))
+
+(defmethod load-slots ((object structure-object) stream)
+  (let ((nr-slots (deserialize stream))
+        (slots (saved-slots object)))
+    (unless (= nr-slots (length slots))
+      (error "Slot mismatch while deserializing a structure object of class ~S."
+             (class-of object)))
+    (loop for slot-name in (saved-slots object)
+          do (let ((marker (read-next-marker stream)))
+               (setf (slot-value object slot-name)
+                     (deserialize-contents marker stream))))
+    object))
+
+(defmethod scan-contents ((marker (eql +structure-object+)) serializer gc)
+  ;; Skip class name
+  (scan serializer gc)
+  ;; Scan all slots
+  (let ((nr-slots (deserialize serializer)))
+    (loop repeat nr-slots
+      do (scan serializer gc))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Arrays
