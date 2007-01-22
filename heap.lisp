@@ -1,4 +1,4 @@
-;; $Id: heap.lisp,v 1.13 2007-01-20 18:17:55 alemmens Exp $
+;; $Id: heap.lisp,v 1.14 2007-01-22 10:55:46 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -405,7 +405,7 @@ list."
   ;; the block that distinguishes free blocks from occupied blocks.
   (:method (block block-size (heap free-list-heap))
    ;; Default: do nothing
-   (declare (ignore block block-size))
+   (declare (ignore block-size))
    block))
 
 ;;
@@ -420,7 +420,7 @@ list."
                      unless (free-list-empty-p size-class heap)
                      collect (free-list-info size-class heap)))
          (total (loop for plist in info
-                      sum (getf plist :nr-free-octets))))
+                      sum (or (getf plist :nr-free-octets) 0))))
     (values total info)))
 
 

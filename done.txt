@@ -1,3 +1,8 @@
+* 2007-01-22 - version 0.1.7
+
+- Get rid of two SBCL compiler warnings. (Reported by Cyrus Harmon.)
+
+
 * 2007-01-21 - version 0.1.6
 
 - Added serializing/deserializing of structures.  Only works on SBCL.
@@ -6,7 +11,7 @@
 
 * 2006-11-30
 
-- FLET MAP-INDEXES should be LABELS MAP-INDEXES (thanks to Cyrus Harmon)
+- FLET MAP-INDEXES should be LABELS MAP-INDEXES (thanks to Cyrus Harmon).
 
 - The :EQUAL parameter for MAP-INDEX-DATA wasn't handled correctly
   for indexes with non-unique keys (reported by Cyrus Harmon).
