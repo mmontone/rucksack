@@ -1,3 +1,12 @@
+* 2007-03-13 - version 0.1.8
+
+- Fix a bug in LEAF-DELETE-KEY (thanks to Henrik Hjelte).
+
+- Add RUCKSACK-DELETE-OBJECT, RUCKSACK-DELETE-OBJECTS and
+  RUCKSACK-ROOT-P (suggested by Henrik Hjelte).  I haven't
+  tested these functions yet.
+
+
 * 2007-01-22 - version 0.1.7
 
 - Get rid of two SBCL compiler warnings. (Reported by Cyrus Harmon.)

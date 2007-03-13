@@ -1,4 +1,4 @@
-;; $Id: heap.lisp,v 1.14 2007-01-22 10:55:46 alemmens Exp $
+;; $Id: heap.lisp,v 1.15 2007-03-13 13:13:00 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -81,7 +81,8 @@ was called.")))
                       :element-type '(unsigned-byte 8)
                       :direction :io
                       :if-exists if-exists
-                      :if-does-not-exist if-does-not-exist)))
+                      :if-does-not-exist if-does-not-exist
+                      #+openmcl :sharing #+openmcl :external)))
     (apply #'make-instance
            class
            :stream stream

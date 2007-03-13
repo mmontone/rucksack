@@ -1,4 +1,4 @@
-;; $Id: p-btrees.lisp,v 1.13 2007-01-20 18:17:55 alemmens Exp $
+;; $Id: p-btrees.lisp,v 1.14 2007-03-13 13:13:00 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -828,7 +828,7 @@ child node will be KEY<= the child node's key in the parent node.")
       (ecase if-does-not-exist
         (:ignore (return-from leaf-delete-key))
         (:error (error 'btree-search-error :btree btree :key key))))
-    (remove-key leaf key)
+    (remove-key leaf (binding-key binding))
     (unless (node-full-enough-p btree leaf)
       (enlarge-node btree leaf parent-stack))))
 

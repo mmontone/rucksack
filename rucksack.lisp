@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.19 2007-01-20 18:17:55 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.20 2007-03-13 13:13:00 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -30,6 +30,10 @@
   (:documentation
  "Returns a list with all objects in the root set of a rucksack.  You
 shouldn't modify this list."))
+
+(defgeneric rucksack-root-p (object rucksack)
+  (:documentation
+   "Returns true iff OBJECT is a member of the root set of a rucksack."))
 
 (defgeneric rucksack-cache (rucksack)
   (:documentation "Returns the cache for a rucksack."))
@@ -178,6 +182,13 @@ CRITERIA hold.
 refer to the slot names.
   Example of a filter expression: (and (= age 20) (string= city \"Hamburg\"))
 "))
+
+
+(defgeneric rucksack-delete-object (rucksack object)
+  (:documentation
+   "Removes OBJECT from RUCKSACK, i.e. removes object from the
+rucksack roots (if it is a root) and from all class and slot indexes
+in which it appears."))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -421,6 +432,10 @@ index maps slot values to object ids.")))
                         rucksack)
     ;; We don't need to nreverse the list, because the order isn't specified.
     result))
+
+(defmethod rucksack-root-p (object (rucksack standard-rucksack))
+  (member (object-id object)
+          (slot-value rucksack 'roots)))
 
 ;;
 ;; Opening
@@ -961,4 +976,33 @@ index for slot ~S of class ~S in ~A."
 
 
                        
-                                         
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Deleting objects
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defmethod rucksack-delete-object ((rucksack standard-rucksack) object)
+  (let ((object-id (object-id object))
+        (class-name (class-name (class-of object))))
+    ;; Remove object from class index if necessary.
+    (let ((class-index (rucksack-class-index rucksack (class-of object)
+                                             :errorp nil)))
+      (when class-index
+        (index-delete class-index object-id object-id)))
+    ;; Remove object from slot indexes if necessary.
+    (let ((indexed-slot-names (rucksack-indexed-slots-for-class rucksack
+                                                                (class-of object))))
+      (loop for slot-name in indexed-slot-names do
+            (index-delete (rucksack-slot-index rucksack class-name slot-name)
+                          (slot-value object slot-name)
+                          object-id
+                          :if-does-not-exist :ignore)))
+    ;; Remove object from roots if necessary.
+    (when (rucksack-root-p object rucksack)
+      (delete-rucksack-root object rucksack))))
+
+
+(defun rucksack-delete-objects (rucksack objects)
+  (dolist (object objects)
+    (rucksack-delete-object rucksack object)))
+
+
