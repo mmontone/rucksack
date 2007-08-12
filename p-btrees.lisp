@@ -1,4 +1,4 @@
-;; $Id: p-btrees.lisp,v 1.14 2007-03-13 13:13:00 alemmens Exp $
+;; $Id: p-btrees.lisp,v 1.15 2007-08-12 13:01:14 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -538,6 +538,61 @@ child node will be KEY<= the child node's key in the parent node.")
             candidate))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Debugging
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun check-btree (btree)
+  ;; Check that it is completely sorted.
+  (let (prev-key)
+    (map-btree-keys btree
+                    (lambda (key value)
+                      (declare (ignore value))
+                      (when prev-key
+                        (unless (funcall (btree-key< btree) prev-key key)
+                          (pprint (btree-as-cons btree))
+                          (error "Btree inconsistency between ~D and ~D" prev-key key)))
+                      (setq prev-key key))))
+  ;; Check that it is balanced
+  (unless (btree-balanced-p btree)
+    (error "Btree ~S is not balanced." btree)))
+
+(defun check-bnode-keys (tree node)
+  "Check a btree node (and its descendants) for consistency.  This is only used
+for debugging."
+  (car
+   (last
+    (loop with index = (btree-node-index node)
+          with leaf-p = (btree-node-leaf-p node)
+          for i below (btree-node-index-count node)
+          for binding = (p-aref index i)
+          collect
+          (if leaf-p
+              (if (btree-unique-keys-p tree)
+                  (binding-key binding)
+                (binding-key (node-binding node
+                                           i)))
+            (progn
+              (let ((x (check-bnode-keys tree
+                                         (binding-value binding))))
+                (when x
+                  (unless (or (eq x 'key-irrelevant)
+                              (eq (binding-key binding) 'key-irrelevant))
+                    (unless (funcall (btree-key= tree)
+                                     (funcall (btree-key-key tree)
+                                              (binding-key binding))
+                                     (funcall (btree-key-key tree)
+                                              x))
+                      (print "Found error")
+                      (describe (binding-key binding))
+                      (describe x)
+                      (pprint (btree-as-cons tree))
+                      (error "Inconsistent bnode key at ~a binding ~a binding-key ~a val ~a X ~a"
+                             node binding (binding-key binding)
+                             (binding-value binding) x)))))
+              (binding-key binding)))))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Insert
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -548,7 +603,7 @@ child node will be KEY<= the child node's key in the parent node.")
            :btree btree
            :datum key
            :expected-type (btree-key-type btree)))
-  (unless (typep value (btree-key-type btree))
+  (unless (typep value (btree-value-type btree))
     (error 'btree-type-error
            :btree btree
            :datum value
@@ -569,21 +624,6 @@ child node will be KEY<= the child node's key in the parent node.")
   ;; Return the inserted value.
   value)
 
-(defun check-btree (btree)
-  ;; Check that it is completely sorted.
-  (let (prev-key)
-    (map-btree-keys btree
-                    (lambda (key value)
-                      (declare (ignore value))
-                      (when prev-key
-                        (unless (funcall (btree-key< btree) prev-key key)
-                          (pprint (btree-as-cons btree))
-                          (error "Btree inconsistency between ~D and ~D" prev-key key)))
-                      (setq prev-key key))))
-  ;; Check that it is balanced
-  (unless (btree-balanced-p btree)
-    (error "Btree ~S is not balanced." btree)))
-                   
 
 (defun make-root (btree left-key left-subnode right-key right-subnode)
   (let* ((root (make-instance (btree-node-class btree) :btree btree)))
@@ -828,9 +868,20 @@ child node will be KEY<= the child node's key in the parent node.")
       (ecase if-does-not-exist
         (:ignore (return-from leaf-delete-key))
         (:error (error 'btree-search-error :btree btree :key key))))
-    (remove-key leaf (binding-key binding))
-    (unless (node-full-enough-p btree leaf)
-      (enlarge-node btree leaf parent-stack))))
+
+    (let* ((position (key-position key leaf))
+           (length (btree-node-index-count leaf))
+           (was-biggest-key-p (= position (1- length))))
+      
+      (remove-key leaf (binding-key binding))
+      
+      (unless (node-full-enough-p btree leaf)
+        (enlarge-node btree leaf parent-stack))
+      
+      (when was-biggest-key-p
+        (unless (= 0 (btree-node-index-count leaf))
+          (update-parents-for-deleted-key btree parent-stack key (biggest-key leaf)))))))
+
 
 (defun enlarge-node (btree node parent-stack)
   ;; NODE is not full enough (less than half full), so we redistribute
@@ -858,6 +909,17 @@ child node will be KEY<= the child node's key in the parent node.")
         (join-nodes btree left-sibling node parent-stack)
         (return-from enlarge-node))))
   (error "This should not happen."))
+
+
+(defun update-parents-for-deleted-key (btree parent-stack old-key new-key)
+  (when parent-stack
+    (let ((node (first parent-stack)))
+      (when node
+        (let ((position (key-position old-key node)))
+          (when position
+            (setf (binding-key (node-binding node position))
+                  new-key)
+            (update-parents-for-deleted-key btree (rest parent-stack) old-key new-key)))))))
 
  
 ;; The idea is that DISTRIBUTE-ELEMENTS will only be called if the union of

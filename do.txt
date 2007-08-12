@@ -1,12 +1,6 @@
 DO: 
 
-- There's still a btree bug that's detected (very rarely) by the
-  stress test.  Fix it.
-
 - Make Rucksack crash proof.  (Use a copying GC?)
-
-- Check that btrees actually signal an error for duplicate keys.
-  Handle those errors correctly for slot indexes.
 
 - Make sure that the GC gets rid of all obsolete object versions.
 

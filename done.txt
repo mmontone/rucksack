@@ -1,3 +1,23 @@
+* 2007-08-12 - version 0.1.9
+
+- Fix btree bug during btree-delete: if we're deleting the biggest key
+  from a leaf, we should update the parents so they'll use the key that
+  has now become the biggest.  (Henrik Hjelte.)
+
+- Try to signal an error when an incompatible value is given to
+  indexed slots, e.g. trying to put a string into a slot with a
+  :symbol-index. (Henrik Hjelte)
+
+- Signal an error during when putting duplicate values into a slot for
+  which duplicate values are not allowed.  (Henrik Hjelte)
+
+- Use BTREE-VALUE-TYPE, not BTREE-KEY-TYPE, when type checking a value
+  during BTREE-INSERT.  (Henrik Hjelte)
+
+- Wrap COMPILE-FILE calls in a WITH-COMPILATION-UNIT to prevent
+  superfluous warnings about undefined functions.
+
+
 * 2007-03-13 - version 0.1.8
 
 - Fix a bug in LEAF-DELETE-KEY (thanks to Henrik Hjelte).

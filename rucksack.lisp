@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.20 2007-03-13 13:13:00 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.21 2007-08-12 13:01:14 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -874,9 +874,13 @@ index for slot ~S of class ~S in ~A."
     (when index
       (let ((id (object-id object)))
         (when old-boundp
-          (index-delete index old-value id :if-does-not-exist :ignore))
+          (index-delete index old-value id
+                        :if-does-not-exist :ignore))
         (when new-boundp
-          (index-insert index new-value id))))))
+          (index-insert index new-value id
+                        :if-exists (if (slot-unique slot)
+                                       :error
+                                     :overwrite)))))))
 
 
 (defmethod rucksack-slot-index ((rucksack standard-rucksack) class slot

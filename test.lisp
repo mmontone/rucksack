@@ -1,4 +1,4 @@
-;; $Id: test.lisp,v 1.14 2007-01-20 18:17:55 alemmens Exp $
+;; $Id: test.lisp,v 1.15 2007-08-12 13:01:14 alemmens Exp $
 
 (in-package :rucksack-test)
 
@@ -207,7 +207,9 @@
 
 (defun check-order (btree)
   (format t "~&Checking order and balance~%")
-  (rs::check-btree btree))
+  (rs::check-btree btree)
+  (format t " and keys~%")
+  (rs::check-bnode-keys btree (rs::btree-root btree)))
 
 (defun check-contents (btree)
   (format t "~&Checking contents~%")
