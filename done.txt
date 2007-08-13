@@ -6,13 +6,13 @@
 
 - Try to signal an error when an incompatible value is given to
   indexed slots, e.g. trying to put a string into a slot with a
-  :symbol-index. (Henrik Hjelte)
+  :symbol-index. (Takehiko Abe)
 
 - Signal an error during when putting duplicate values into a slot for
-  which duplicate values are not allowed.  (Henrik Hjelte)
+  which duplicate values are not allowed.  (Takehiko Abe)
 
 - Use BTREE-VALUE-TYPE, not BTREE-KEY-TYPE, when type checking a value
-  during BTREE-INSERT.  (Henrik Hjelte)
+  during BTREE-INSERT.  (Takehiko Abe)
 
 - Wrap COMPILE-FILE calls in a WITH-COMPILATION-UNIT to prevent
   superfluous warnings about undefined functions.
