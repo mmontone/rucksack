@@ -1,4 +1,4 @@
-;;; $Id: rucksack.asd,v 1.11 2007-08-12 13:01:14 alemmens Exp $
+;;; $Id: rucksack.asd,v 1.12 2008-01-16 15:08:21 alemmens Exp $
 
 (in-package :cl-user)
 
@@ -21,4 +21,3 @@
                (:file "rucksack")
                (:file "transactions")
                (:file "test")))
-    

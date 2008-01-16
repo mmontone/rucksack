@@ -1,4 +1,4 @@
-;; $Id: p-btrees.lisp,v 1.15 2007-08-12 13:01:14 alemmens Exp $
+;; $Id: p-btrees.lisp,v 1.16 2008-01-16 15:08:20 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -869,11 +869,11 @@ for debugging."
         (:ignore (return-from leaf-delete-key))
         (:error (error 'btree-search-error :btree btree :key key))))
 
-    (let* ((position (key-position key leaf))
+    (let* ((position (key-position key leaf (btree-key= btree)))
            (length (btree-node-index-count leaf))
            (was-biggest-key-p (= position (1- length))))
       
-      (remove-key leaf (binding-key binding))
+      (remove-key leaf (binding-key binding) (btree-key= btree))
       
       (unless (node-full-enough-p btree leaf)
         (enlarge-node btree leaf parent-stack))
@@ -915,7 +915,7 @@ for debugging."
   (when parent-stack
     (let ((node (first parent-stack)))
       (when node
-        (let ((position (key-position old-key node)))
+        (let ((position (key-position old-key node (btree-key= btree))))
           (when position
             (setf (binding-key (node-binding node position))
                   new-key)
@@ -978,7 +978,7 @@ for debugging."
                :start1 left-length
                :start2 0 :end2 right-length)
     ;; Remove key which pointed to LEFT-NODE.
-    (remove-key parent (binding-key left-binding))
+    (remove-key parent (binding-key left-binding) (btree-key= btree))
     ;; Make binding which pointed to RIGHT-NODE point to LEFT-NODE.
     (setf (binding-value right-binding) left-node)
     ;; Set new length of LEFT-NODE.
@@ -1002,8 +1002,8 @@ for debugging."
         do (setf (node-binding node i) nil))
   (setf (btree-node-index-count node) new-length))
 
-(defun remove-key (node key)
-  (let ((position (key-position key node))
+(defun remove-key (node key test)
+  (let ((position (key-position key node test))
         (length (btree-node-index-count node)))
     (unless (>= position (1- length))
       ;; Move bindings to the left.
@@ -1013,9 +1013,10 @@ for debugging."
                    :start2 (1+ position) :end2 length)))
     (shorten node (1- length))))
     
-(defun key-position (key node)
+(defun key-position (key node test)
   (p-position key (btree-node-index node)
               :key #'binding-key
+              :test test
               :end (btree-node-index-count node)))
 
 (defun node-full-enough-p (btree node)

@@ -1,4 +1,4 @@
-;; $Id: transactions.lisp,v 1.13 2007-01-20 18:17:55 alemmens Exp $
+;; $Id: transactions.lisp,v 1.14 2008-01-16 15:08:21 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -39,7 +39,7 @@
    (dirty-objects :initarg :dirty-objects
                   :initform (make-hash-table)
                   :reader dirty-objects
-                  :documentation "A hash-table (from id to object)
+                  :documentation "A hash-table \(from id to object)
 containing all objects of which the slot changes have not been written
 to disk yet.")
    (dirty-queue :initarg :dirty-queue
@@ -48,7 +48,7 @@ to disk yet.")
                 :documentation "A queue with the ids of all objects
 that have been created or modified since the last commit.  The queue
 is in least-recently-dirtied-first order.  During a commit, the
-objects are written to disk in the same order (this is necessary to
+objects are written to disk in the same order \(this is necessary to
 guarantee that the garbage collector never sees an id of an object
 that doesn't exist on disk yet.")))
 
