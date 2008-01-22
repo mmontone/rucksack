@@ -1,4 +1,4 @@
-;; $Id: heap.lisp,v 1.15 2007-03-13 13:13:00 alemmens Exp $
+;; $Id: heap.lisp,v 1.16 2008-01-22 17:02:07 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -575,7 +575,10 @@ list."
   (with-slots (contents)
       buffer
     ;; If the buffer isn't big enough, make a bigger buffer.
-    (when (< (length contents) nr-octets)
+    ;; We can't use LENGTH instead of ARRAY-DIMENSION, because
+    ;; LENGTH looks at the fill pointer instead of the entire
+    ;; buffer.
+    (when (< (array-dimension contents 0) nr-octets)
       (setf contents
             (make-array nr-octets
                         :adjustable t
