@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.21 2007-08-12 13:01:14 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.22 2008-01-22 15:59:24 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -304,8 +304,9 @@ from which the garbage collector can reach all live objects.")
    (roots-changed-p :initform nil :accessor roots-changed-p)
    ;; Indexes
    (class-index-table :documentation
- "A btree mapping class names to indexes.  Each index contains the ids
-of all instances from a class.")
+ "A btree mapping class names to class indexes.  Each class index
+contains the ids of all instances from a class; technically speaking,
+it maps object ids to themselves.")
    (slot-index-tables :documentation
  "A btree mapping class names to slot index tables, where each slot
 index table is a btree mapping slot names to slot indexes.  Each slot

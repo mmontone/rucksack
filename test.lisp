@@ -1,4 +1,4 @@
-;; $Id: test.lisp,v 1.15 2007-08-12 13:01:14 alemmens Exp $
+;; $Id: test.lisp,v 1.16 2008-01-22 15:59:24 alemmens Exp $
 
 (in-package :rucksack-test)
 
@@ -432,5 +432,3 @@
              (inner (p-cdr (p-cdr (p-cdr root)))))
         ;; we expect the list ("Waldorf" "Statler") here
         (list (p-car inner) (p-cdr inner))))))
-
-

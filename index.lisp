@@ -1,4 +1,4 @@
-;; $Id: index.lisp,v 1.10 2007-08-12 13:01:13 alemmens Exp $
+;; $Id: index.lisp,v 1.11 2008-01-22 15:59:24 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -196,18 +196,18 @@ either :OVERWRITE (default) or :ERROR."
                      '(btree :key< < :value= p-eql))
 
   (define-index-spec :string-index
-                     '(btree :key< string< :value p-eql :key-type string))
+                     '(btree :key< string< :value= p-eql :key-type string))
 
   (define-index-spec :symbol-index
-                     '(btree :key< string< :value p-eql :key-type symbol))
+                     '(btree :key< string< :value= p-eql :key-type symbol))
 
   (define-index-spec :case-insensitive-string-index
-                     '(btree :key< string-lessp :value p-eql :key-type string))
+                     '(btree :key< string-lessp :value= p-eql :key-type string))
 
   (define-index-spec :trimmed-string-index
                      ;; Like :STRING-INDEX, but with whitespace trimmed left
                      ;; and right.
                      '(btree :key< string<
                              :key-key trim-whitespace
-                             :value p-eql
+                             :value= p-eql
                              :key-type string)))

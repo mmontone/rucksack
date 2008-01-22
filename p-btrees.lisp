@@ -1,4 +1,4 @@
-;; $Id: p-btrees.lisp,v 1.16 2008-01-16 15:08:20 alemmens Exp $
+;; $Id: p-btrees.lisp,v 1.17 2008-01-22 15:59:24 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -261,7 +261,9 @@ can't be saved on disk.")))
     (lambda (key1 key2)
       (let ((key1 (funcall key-key key1))
             (key2 (funcall key-key key2)))
-        (and (not (funcall key< key1 key2))
+        (and (not (eql key1 'key-irrelevant))
+             (not (eql key2 'key-irrelevant))
+             (not (funcall key< key1 key2))
              (not (funcall key< key2 key1)))))))
 
 (defmethod btree-key>= ((btree btree))
@@ -869,18 +871,23 @@ for debugging."
         (:ignore (return-from leaf-delete-key))
         (:error (error 'btree-search-error :btree btree :key key))))
 
-    (let* ((position (key-position key leaf (btree-key= btree)))
+    (let* ((position (key-position btree key leaf))
            (length (btree-node-index-count leaf))
            (was-biggest-key-p (= position (1- length))))
       
-      (remove-key leaf (binding-key binding) (btree-key= btree))
-      
-      (unless (node-full-enough-p btree leaf)
-        (enlarge-node btree leaf parent-stack))
+      (remove-key btree leaf (binding-key binding))
       
       (when was-biggest-key-p
+        ;; Parent nodes always keep track of the biggest key in
+        ;; their child nodes.  So if we just deleted the biggest
+        ;; key from this leaf, the parent node needs to be updated
+        ;; with the key that is now the biggest of this leaf.
         (unless (= 0 (btree-node-index-count leaf))
-          (update-parents-for-deleted-key btree parent-stack key (biggest-key leaf)))))))
+          (let ((biggest-key (biggest-key leaf)))
+            (update-parents-for-deleted-key btree parent-stack key biggest-key))))
+      
+      (unless (node-full-enough-p btree leaf)
+        (enlarge-node btree leaf parent-stack)))))
 
 
 (defun enlarge-node (btree node parent-stack)
@@ -889,21 +896,22 @@ for debugging."
   ;; are only half full; in that case we merge some nodes.)
   (let ((parent (first parent-stack)))
     ;; Don't enlarge root node.
-    (unless parent
+    (when (null parent)
       (return-from enlarge-node))
     (let ((node-pos (node-position node parent))
           left-sibling)
-      (when (plusp node-pos) ; there is a left sibling
+      (when (plusp node-pos)
+        ;; There is a left sibling.
         (setq left-sibling (binding-value (node-binding parent (1- node-pos))))
         (unless (node-has-min-size-p btree left-sibling)
           (distribute-elements left-sibling node parent)
           (return-from enlarge-node)))
-      (when (< (1+ node-pos) (btree-node-index-count parent)) ; there is a right sibling
+      (when (< (1+ node-pos) (btree-node-index-count parent))
+        ;; There is a right sibling.
         (let ((right-sibling (binding-value (node-binding parent (1+ node-pos)))))
-          (unless (node-has-min-size-p btree right-sibling)
-            (distribute-elements node right-sibling parent)
-            (return-from enlarge-node))
-          (join-nodes btree node right-sibling parent-stack)
+          (if (node-has-min-size-p btree right-sibling)
+              (join-nodes btree node right-sibling parent-stack)
+            (distribute-elements node right-sibling parent))
           (return-from enlarge-node)))
       (when left-sibling
         (join-nodes btree left-sibling node parent-stack)
@@ -915,22 +923,23 @@ for debugging."
   (when parent-stack
     (let ((node (first parent-stack)))
       (when node
-        (let ((position (key-position old-key node (btree-key= btree))))
+        (let ((position (key-position btree old-key node)))
           (when position
             (setf (binding-key (node-binding node position))
                   new-key)
             (update-parents-for-deleted-key btree (rest parent-stack) old-key new-key)))))))
 
  
-;; The idea is that DISTRIBUTE-ELEMENTS will only be called if the union of
-;; the two nodes has enough elements for two "legal" nodes.  JOIN-NODES,
-;; OTOH, makes one node out of two, deletes one key in the parent, and
-;; finally checks the parent to see if it has to be enlarged as well.
+;; The idea is that DISTRIBUTE-ELEMENTS will only be called if the
+;; union of the two nodes has enough elements for two nodes that are
+;; 'full enough'.  JOIN-NODES, OTOH, makes one node out of two,
+;; deletes one key in the parent, and finally checks the parent to see
+;; if it has to be enlarged as well.
 
 (defun distribute-elements (left-node right-node parent)
-  ;; One of LEFT-NODE and RIGHT-NODE doesn't have enough elements, but
-  ;; the union of both has enough elements for two nodes, so we
-  ;; redistribute the elements between the two nodes.
+  "One of LEFT-NODE and RIGHT-NODE doesn't have enough elements, but
+the union of both has enough elements for two nodes, so we
+redistribute the elements between the two nodes."
   (let* ((left-index (btree-node-index left-node))
          (left-length (btree-node-index-count left-node))
          (right-index (btree-node-index right-node))
@@ -963,8 +972,8 @@ for debugging."
           (biggest-key left-node))))
 
 (defun join-nodes (btree left-node right-node parent-stack)
-  ;; Create one node which contains the elements of both LEFT-NODE and
-  ;; RIGHT-NODE.
+  "Create one node which contains the elements of both LEFT-NODE and
+RIGHT-NODE."
   (let* ((parent (first parent-stack))
          (left-index (btree-node-index left-node))
          (left-length (btree-node-index-count left-node))
@@ -978,7 +987,7 @@ for debugging."
                :start1 left-length
                :start2 0 :end2 right-length)
     ;; Remove key which pointed to LEFT-NODE.
-    (remove-key parent (binding-key left-binding) (btree-key= btree))
+    (remove-key btree parent (binding-key left-binding))
     ;; Make binding which pointed to RIGHT-NODE point to LEFT-NODE.
     (setf (binding-value right-binding) left-node)
     ;; Set new length of LEFT-NODE.
@@ -1002,8 +1011,8 @@ for debugging."
         do (setf (node-binding node i) nil))
   (setf (btree-node-index-count node) new-length))
 
-(defun remove-key (node key test)
-  (let ((position (key-position key node test))
+(defun remove-key (btree node key)
+  (let ((position (key-position btree key node))
         (length (btree-node-index-count node)))
     (unless (>= position (1- length))
       ;; Move bindings to the left.
@@ -1013,10 +1022,10 @@ for debugging."
                    :start2 (1+ position) :end2 length)))
     (shorten node (1- length))))
     
-(defun key-position (key node test)
+(defun key-position (btree key node)
   (p-position key (btree-node-index node)
               :key #'binding-key
-              :test test
+              :test (btree-key= btree)
               :end (btree-node-index-count node)))
 
 (defun node-full-enough-p (btree node)

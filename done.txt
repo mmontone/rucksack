@@ -1,3 +1,18 @@
+* 2008-01-22 - version 0.1.11
+
+- Fix bug caused by LEAF-DELETE-KEY.  Reported and fixed by
+  Brad Beveridge.
+
+- Fix some typos (:VALUE should be :VALUE=) in index.lisp.
+
+
+* 2008-01-16 - version 0.1.10
+
+- When deleting a key from a btree, use the BTREE-KEY= function (not
+  P-EQL) to determine the position of the key.  Reported and fixed
+  by Leonid Novikov.
+
+
 * 2007-08-12 - version 0.1.9
 
 - Fix btree bug during btree-delete: if we're deleting the biggest key
