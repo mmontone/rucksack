@@ -1,4 +1,4 @@
-;; $Id: test-schema-update-1c.lisp,v 1.3 2006-09-04 12:34:34 alemmens Exp $
+;; $Id: test-schema-update-1c.lisp,v 1.1 2008-01-23 15:49:07 alemmens Exp $
 
 (in-package :rucksack-test-schema-update)
 

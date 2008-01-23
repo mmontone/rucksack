@@ -1,4 +1,4 @@
-;; $Id: test-index-1b.lisp,v 1.2 2006-09-01 13:57:07 alemmens Exp $
+;; $Id: test-index-1b.lisp,v 1.1 2008-01-23 15:49:07 alemmens Exp $
 
 (in-package :rs-test)
 
