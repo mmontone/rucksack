@@ -1,4 +1,4 @@
-;; $Id: package.lisp,v 1.11 2007-01-20 18:17:55 alemmens Exp $
+;; $Id: package.lisp,v 1.12 2008-01-23 15:43:42 alemmens Exp $
 
 #-(or allegro lispworks sbcl openmcl)
   (error "Unsupported implementation: ~A" (lisp-implementation-type))
@@ -97,15 +97,6 @@
    ;; Conditions
    #:btree-error #:btree-search-error #:btree-insertion-error
    #:btree-key-already-present-error #:btree-type-error
-   #:btree-error-btree #:btree-error-key #:btree-error-value
-))
+   #:btree-error-btree #:btree-error-key #:btree-error-value))
 
 
-
-(defpackage :rucksack-test
-  (:nicknames :rs-test)
-  (:use :common-lisp :rucksack))
-
-(defpackage :rucksack-test-schema-update
-  (:nicknames :rs-tsu)
-  (:use :common-lisp :rucksack))

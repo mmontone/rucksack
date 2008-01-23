@@ -1,10 +1,23 @@
+* 2008-01-23 - version 0.1.13
+
+- Add Brad Beveridge's basic unit test suite (modified to work
+  with lisp-unit instead of 5am).
+
+- Add Chris Riesbeck's lisp-unit library to help with creating
+  unit test suites.
+
+- Move all tests to their own directory.
+
+- Add P-NREVERSE and P-POSITION for persistent lists.
+
+- Fix bugs in P-REPLACE and P-MAPCAR.
+
+
 * 2008-01-22 - version 0.1.12
 
 - Use (ARRAY-DIMENSION buffer 0) instead of LENGTH in
   LOAD-BUFFER, because we want to ignore the fill pointer
   here.  Thanks to Sean Ross.
-
-
 
 
 * 2008-01-22 - version 0.1.11

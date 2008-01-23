@@ -1,4 +1,4 @@
-;; $Id: objects.lisp,v 1.18 2007-01-20 18:17:55 alemmens Exp $
+;; $Id: objects.lisp,v 1.19 2008-01-23 15:43:42 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -119,7 +119,8 @@ functions like P-CAR instead."))
 (defmethod persistent-data-write (function (data persistent-data) value
                                            &rest args)
   (apply function value (contents data) args)
-  (cache-touch-object data (cache data)))
+  (cache-touch-object data (cache data))
+  value)
 
 (defun make-persistent-data (class contents
                                    &optional (rucksack (current-rucksack)))
@@ -231,7 +232,7 @@ functions like P-CAR instead."))
           (setq result (p-cons (funcall function (p-car list))
                                result)
                 list (p-cdr list)))
-    result))
+    (p-nreverse result)))
 
 (defun p-mapc (function list)
   ;; DO: Accept more than one list argument.
@@ -247,7 +248,7 @@ functions like P-CAR instead."))
     (loop while list do
           (setq result (p-cons (funcall function list) result)
                 list (p-cdr list)))
-    result))
+    (p-nreverse result)))
 
 (defun p-mapl (function list)
   ;; DO: Accept more than one list argument.
@@ -333,6 +334,25 @@ functions like P-CAR instead."))
   ;; Return nil if not found
   nil)
 
+
+(defmethod p-position (value (list persistent-cons)
+                             &key (key #'identity) (test #'p-eql)
+                             (start 0) (end nil))
+  ;; Move list to start position.
+  (loop repeat start
+        do (setq list (p-cdr list)))
+  ;; The real work.
+  (loop for i from start do
+        (if (or (p-endp list) (and end (= i end)))
+            (return-from p-position nil)
+          (let ((elt (funcall key (p-car list))))
+            (if (funcall test value elt)
+                (return-from p-position i)
+              (setq list (p-cdr list))))))
+  ;; Return nil if not found.
+  nil)
+
+
 (defmethod p-replace ((vector-1 persistent-array)
                       (vector-2 persistent-array)
                       &key (start1 0) end1 (start2 0) end2)
@@ -383,6 +403,23 @@ functions like P-CAR instead."))
             (setq tail (p-cdr tail)))))
   ;; Return the (possibly modified) list.
   list)
+
+
+(defmethod p-nreverse ((object (eql nil)))
+  nil)
+
+(defmethod p-nreverse ((object persistent-cons))
+  (let* ((previous object)
+         (current (p-cdr previous)))
+    (setf (p-cdr previous) '())
+    (loop until (p-endp current)
+          do (let ((next (p-cdr current)))
+               (setf (p-cdr current) previous
+                     previous current
+                     current next)))
+    previous))
+
+;; DO: Implement P-NREVERSE for persistent vectors.
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
