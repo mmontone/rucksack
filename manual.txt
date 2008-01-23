@@ -1,0 +1,18 @@
+
+* Getting started
+
+To compile and load Rucksack and make sure that the basics are working:
+
+1. Make sure you have ASDF (Another System Definition Facility) loaded.
+
+2. Compile and load rucksack.asd.
+
+3. Compile and load tests/rucksack-test.asd.
+
+4. (asdf:oos 'asdf:load-op :rucksack-test :force t)
+
+5. (in-package :rucksack-test)
+
+6. (run-tests)
+
+
