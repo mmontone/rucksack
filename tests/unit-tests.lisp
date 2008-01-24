@@ -244,5 +244,18 @@
       (abort)))
   (with-rucksack-and-transaction ()
     (let ((pc (car (rucksack-roots rs))))
+      (assert-equal 1 (p-car pc))))
+  ;; Test that transactions are also rolled back when we throw an
+  ;; error inside the body of a WITH-TRANSACTION form.
+  (assert-error 'error
+                (with-rucksack-and-transaction ()
+                  (let ((pc (first (rucksack-roots rs))))
+                    (setf (p-car pc) 5)
+                    ;; Abort the transaction by causing an error.
+                    (error "Something went wrong"))))
+  (with-rucksack-and-transaction ()
+    ;; Verify that the error caused a transaction rollback.
+    (let ((pc (car (rucksack-roots rs))))
       (assert-equal 1 (p-car pc)))))
+
 
