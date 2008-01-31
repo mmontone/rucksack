@@ -23,12 +23,15 @@
   (:documentation "Export all objects in a rucksack to a file.  The
 resulting file can be imported by newer versions of Rucksack."))
 
-(defgeneric import-rucksack (pathname directory-designator
-                             &rest args
-                             &key (if-exists :error)
-                             &allow-other-keys)
-  (:documentation "Creates a new rucksack in the directory specified by
+(defun import-rucksack (pathname directory-designator
+                        &rest args
+                        &key (if-exists :error)
+                        &allow-other-keys)
+  "Creates a new rucksack in the directory specified by
 DIRECTORY-DESIGNATOR, opens the new rucksack and imports all objects
-that were exported to the file specified by PATHNAME."))
+that were exported to the file specified by PATHNAME."
+  (declare (ignore pathname directory-designator if-exists args))
+  (error "Not implemented yet"))
+
 
 
