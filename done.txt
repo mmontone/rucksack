@@ -1,3 +1,14 @@
+* 2008-01-31 - version 0.1.14
+
+- Class and slot indexes now map directly to objects instead of
+  object-ids.  This fixes a bug where the garbage collector forgot
+  to add all indexed objects to the root set. (Suggested by Sean
+  Ross.)
+
+- Increase default cache size to 100,000 objects.
+
+
+
 * 2008-01-23 - version 0.1.13
 
 - Add Brad Beveridge's basic unit test suite (modified to work

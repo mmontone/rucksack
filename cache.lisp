@@ -1,4 +1,4 @@
-;; $Id: cache.lisp,v 1.12 2007-01-20 18:17:55 alemmens Exp $
+;; $Id: cache.lisp,v 1.13 2008-01-31 20:26:08 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -183,7 +183,7 @@ objects.")))
                                        (heap-options '())
                                        (if-exists :overwrite)
                                        (if-does-not-exist :create)
-                                       (size 10000)
+                                       (size 100000)
                                        &allow-other-keys)
   (ensure-directories-exist directory)
   (let ((object-table (open-object-table (merge-pathnames "objects" directory)
