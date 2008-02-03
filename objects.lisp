@@ -1,4 +1,4 @@
-;; $Id: objects.lisp,v 1.19 2008-01-23 15:43:42 alemmens Exp $
+;; $Id: objects.lisp,v 1.20 2008-02-03 12:32:16 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -96,9 +96,10 @@ functions like P-CAR instead."))
 
 (defmethod print-object ((object persistent-data) stream)
   (print-unreadable-object (object stream :type t :identity nil)
-    (format stream "#~D~@[ in ~A~]"
+    (format stream "#~D~@[ with transaction id ~D~]"
             (slot-value object 'object-id)
-            (cache object))))
+            (and (slot-boundp object 'transaction-id)
+                 (slot-value object 'transaction-id)))))
 
 (defmethod compute-persistent-slot-names ((class standard-class)
                                           (object persistent-data))
@@ -490,9 +491,10 @@ inherit from this class."))
 
 (defmethod print-object ((object persistent-object) stream)
   (print-unreadable-object (object stream :type t :identity nil)
-    (format stream "#~D~@[ in ~A~]"
+    (format stream "#~D~@[ with transaction id ~D~]"
             (slot-value object 'object-id)
-            (cache object))))
+            (transaction-id object))))
+
 
 ;; It's a bit stupid that we have to write the same code for three
 ;; P-EQL methods, but we don't seem to have much choice.

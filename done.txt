@@ -1,89 +1,98 @@
+* 2008-02-02 - version 0.1.15
+
+Fixed a garbage collector bug reported by Sean Ross. When the garbage
+collector deletes object ids from the object table (because the
+objects are dead and we may want to reuse their ids later for other
+objects), it should also remove that object from the cache.  If it
+doesn't, there's a possibility that the object id will be reused later
+for a new object and the cache wil still refer to the old in-memory
+object.
+
+
 * 2008-01-31 - version 0.1.14
 
-- Class and slot indexes now map directly to objects instead of
-  object-ids.  This fixes a bug where the garbage collector forgot
-  to add all indexed objects to the root set. (Suggested by Sean
-  Ross.)
+Class and slot indexes now map directly to objects instead of
+object-ids.  This fixes a bug where the garbage collector forgot to
+add all indexed objects to the root set. (Suggested by Sean Ross.)
 
-- Increase default cache size to 100,000 objects.
+Increase default cache size to 100,000 objects.
 
 
 
 * 2008-01-23 - version 0.1.13
 
-- Add Brad Beveridge's basic unit test suite (modified to work
-  with lisp-unit instead of 5am).
+Add Brad Beveridge's basic unit test suite (modified to work with
+lisp-unit instead of 5am).
 
-- Add Chris Riesbeck's lisp-unit library to help with creating
-  unit test suites.
+Add Chris Riesbeck's lisp-unit library to help with creating
+unit test suites.
 
-- Move all tests to their own directory.
+Move all tests to their own directory.
 
-- Add P-NREVERSE and P-POSITION for persistent lists.
+Add P-NREVERSE and P-POSITION for persistent lists.
 
-- Fix bugs in P-REPLACE and P-MAPCAR.
+Fix bugs in P-REPLACE and P-MAPCAR.
 
 
 * 2008-01-22 - version 0.1.12
 
-- Use (ARRAY-DIMENSION buffer 0) instead of LENGTH in
-  LOAD-BUFFER, because we want to ignore the fill pointer
-  here.  Thanks to Sean Ross.
+Use (ARRAY-DIMENSION buffer 0) instead of LENGTH in LOAD-BUFFER,
+because we want to ignore the fill pointer here.  Thanks to Sean Ross.
 
 
 * 2008-01-22 - version 0.1.11
 
-- Fix bug caused by LEAF-DELETE-KEY.  Reported and fixed by
-  Brad Beveridge.
+Fix bug caused by LEAF-DELETE-KEY.  Reported and fixed by Brad
+Beveridge.
 
-- Fix some typos (:VALUE should be :VALUE=) in index.lisp.
+Fix some typos (:VALUE should be :VALUE=) in index.lisp.
 
 
 * 2008-01-16 - version 0.1.10
 
-- When deleting a key from a btree, use the BTREE-KEY= function (not
-  P-EQL) to determine the position of the key.  Reported and fixed
-  by Leonid Novikov.
+When deleting a key from a btree, use the BTREE-KEY= function (not
+P-EQL) to determine the position of the key.  Reported and fixed
+by Leonid Novikov.
 
 
 * 2007-08-12 - version 0.1.9
 
-- Fix btree bug during btree-delete: if we're deleting the biggest key
-  from a leaf, we should update the parents so they'll use the key that
-  has now become the biggest.  (Henrik Hjelte.)
+Fix btree bug during btree-delete: if we're deleting the biggest key
+from a leaf, we should update the parents so they'll use the key that
+has now become the biggest.  (Henrik Hjelte.)
 
-- Try to signal an error when an incompatible value is given to
-  indexed slots, e.g. trying to put a string into a slot with a
-  :symbol-index. (Takehiko Abe)
+Try to signal an error when an incompatible value is given to indexed
+slots, e.g. trying to put a string into a slot with a :symbol-index.
+(Takehiko Abe)
 
-- Signal an error during when putting duplicate values into a slot for
-  which duplicate values are not allowed.  (Takehiko Abe)
+Signal an error during when putting duplicate values into a slot for
+which duplicate values are not allowed.  (Takehiko Abe)
 
-- Use BTREE-VALUE-TYPE, not BTREE-KEY-TYPE, when type checking a value
-  during BTREE-INSERT.  (Takehiko Abe)
+Use BTREE-VALUE-TYPE, not BTREE-KEY-TYPE, when type checking a value
+during BTREE-INSERT.  (Takehiko Abe)
 
-- Wrap COMPILE-FILE calls in a WITH-COMPILATION-UNIT to prevent
-  superfluous warnings about undefined functions.
+Wrap COMPILE-FILE calls in a WITH-COMPILATION-UNIT to prevent
+superfluous warnings about undefined functions.
 
 
 * 2007-03-13 - version 0.1.8
 
-- Fix a bug in LEAF-DELETE-KEY (thanks to Henrik Hjelte).
+Fix a bug in LEAF-DELETE-KEY (thanks to Henrik Hjelte).
 
-- Add RUCKSACK-DELETE-OBJECT, RUCKSACK-DELETE-OBJECTS and
-  RUCKSACK-ROOT-P (suggested by Henrik Hjelte).  I haven't
-  tested these functions yet.
+Add RUCKSACK-DELETE-OBJECT, RUCKSACK-DELETE-OBJECTS and
+RUCKSACK-ROOT-P (suggested by Henrik Hjelte).  I haven't tested these
+functions yet.
 
 
 * 2007-01-22 - version 0.1.7
 
-- Get rid of two SBCL compiler warnings. (Reported by Cyrus Harmon.)
+Get rid of two SBCL compiler warnings. (Reported by Cyrus Harmon.)
 
 
 * 2007-01-21 - version 0.1.6
 
-- Added serializing/deserializing of structures.  Only works on SBCL.
-  (Thanks to Levente Mészáros.)
+Added serializing/deserializing of structures.  Only works on SBCL.
+(Thanks to Levente Mészáros.)
 
 
 * 2006-11-30
@@ -127,9 +136,6 @@
 
 
 * 2006-08-31
-
-- Get rid of the Lispworks-specific PROCESS-A-CLASS-OPTION stuff and handle
-  the :INDEX class option in a way that's compatible with AMOP.
 
 - Write test cases for schema updates and user defined methods for
   UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS.

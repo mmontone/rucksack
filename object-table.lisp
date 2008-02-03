@@ -1,4 +1,4 @@
-;; $Id: object-table.lisp,v 1.4 2007-01-20 18:17:55 alemmens Exp $
+;; $Id: object-table.lisp,v 1.5 2008-02-03 12:32:16 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -58,7 +58,7 @@ the 'real' heap."))
   (let* ((block (allocate-block object-table :expand t))
          (id (block-to-object-id block object-table)))
     (setf (object-info object-table id) :reserved)
-    (block-to-object-id block object-table)))
+    id))
 
 (defun delete-object-id (object-table object-id)
   "Returns object-id's cell to the free-list."

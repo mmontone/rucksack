@@ -1,4 +1,4 @@
-;; $Id: garbage-collector.lisp,v 1.21 2007-01-20 18:17:55 alemmens Exp $
+;; $Id: garbage-collector.lisp,v 1.22 2008-02-03 12:32:16 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -104,8 +104,8 @@ the ratio of the new size to the old size.  (The actual size might be
 rounded up.)")))
 
 
-(defparameter *initial-heap-size* (* 1024 1024)
-  "The default initial heap size is 1 MB. ")
+(defparameter *initial-heap-size* (* 10 1024 1024)
+  "The default initial heap size is 10 MB. ")
 
 (defmethod initialize-instance :after ((heap mark-and-sweep-heap)
                                        &key size &allow-other-keys)
@@ -367,17 +367,16 @@ collector."
           (let* ((free-p (and (integerp block-start) (minusp block-start)))
                  (block-size (if free-p (- block-start) block-header)))
             ;; Reclaim dead blocks.
-            (when (and (not free-p) ; only non-free blocks
-                       (not (block-alive-p object-table
-                                           ;; read object ID
-                                           (let ((heap-stream (heap-stream heap)))
-                                             (deserialize heap-stream)
-                                             (deserialize heap-stream))
-                                           block)))
-              ;; The block is dead (either because the object is dead
-              ;; or because the block contains an old version): return
-              ;; the block to its free list.
-              (deallocate-block block heap))
+            (when (not free-p) ; only non-free blocks
+              (let* ((heap-stream (heap-stream heap))
+                     (object-id (progn
+                                  (deserialize heap-stream)
+                                  (deserialize heap-stream))))
+                (when (not (block-alive-p object-table object-id block))
+                  ;; The block is dead (either because the object is dead
+                  ;; or because the block contains an old version): return
+                  ;; the block to its free list.
+                  (deallocate-block block heap))))
             ;;
             (incf work-done block-size)
             ;; Move to next block (if there is one).
@@ -435,8 +434,10 @@ collector."
           do (progn
                ;; Hook dead object blocks back into the free list.
                (when (eql (object-info object-table object-id) :dead-object)
-                 (let ((block (object-id-to-block object-id object-table)))
-                   (deallocate-block block object-table)))
+                 (delete-object-id object-table object-id)
+                 ;; Don't forget to remove the id->object mapping from
+                 ;; the cache!  (This was a difficult bug to find.)
+                 (cache-delete-object object-id (rucksack-cache (rucksack heap))))
                (incf (nr-object-bytes-sweeped heap) object-block-size)))
     ;;
     (when (>= (nr-object-bytes-sweeped heap) (nr-object-bytes heap))

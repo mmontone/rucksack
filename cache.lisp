@@ -1,4 +1,4 @@
-;; $Id: cache.lisp,v 1.13 2008-01-31 20:26:08 alemmens Exp $
+;; $Id: cache.lisp,v 1.14 2008-02-03 12:32:15 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -35,6 +35,11 @@ Don't use this function twice for the same object."))
 (defgeneric cache-get-object (object-id cache)
   (:documentation "Retrieves the object with the given id from the
 cache and returns that object."))
+
+(defgeneric cache-delete-object (object-id cache)
+  (:documentation "Removes an object-id from the cache and from
+the object table, so the object-id can be reused for another object
+later."))
 
 (defgeneric cache-commit (cache)
   (:documentation "Makes sure that all changes to the cache are
@@ -84,14 +89,15 @@ integer greater than all previous IDs."))
    ;; Clean objects
    (objects :initarg :objects
             :reader objects
-            :documentation "A hash-table (from id to object)
+            :documentation "A hash-table \(from id to object)
 containing the youngest committed version of all objects that are
-currently kept in memory but are not dirty.  ('The youngest version'
+currently kept in memory but are not dirty.  \('The youngest version'
 means the version belonging to the youngest committed transaction.)")
    (queue :initform (make-instance 'queue) :reader queue
           :documentation "A queue of the ids of all non-dirty objects
 that are currently in the cache memory.  Whenever an object is
-retrieved (i.e. read), it's added to the queue.")
+retrieved (i.e. read), it's added to the queue.  If an object-id is
+in this queue, it is not necessarily in the OBJECTS hash-table.")
    (last-timestamp :initform (get-universal-time)
                    :accessor last-timestamp)
    (transaction-id-helper :initform -1
@@ -233,7 +239,7 @@ objects.")))
   (- (cache-size cache) (cache-count cache)))
 
 ;;
-;; Create/get/touch
+;; Create/get/touch/delete
 ;;
 
 (defmethod cache-create-object (object (cache standard-cache))
@@ -337,6 +343,9 @@ memory."
                          result object))
           result))))
 
+
+(defmethod cache-delete-object (object-id (cache standard-cache))
+  (remhash object-id (objects cache)))
 
 
 ;;
