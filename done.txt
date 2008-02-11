@@ -1,5 +1,7 @@
 * 2008-02-11 - version 0.1.16
 
+Created new doc directory and added tutorial by Brad Beveridge.
+
 Added P-PUSH and P-POP.
 
 Improved btree efficiency by switching to a different data structure
