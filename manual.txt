@@ -16,3 +16,7 @@ To compile and load Rucksack and make sure that the basics are working:
 6. (run-tests)
 
 
+* The tutorial
+
+The tutorial by Brad Beveridge (in doc/rucksack-tutorial.lisp) is a
+good next step.
