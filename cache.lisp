@@ -1,4 +1,4 @@
-;; $Id: cache.lisp,v 1.14 2008-02-03 12:32:15 alemmens Exp $
+;; $Id: cache.lisp,v 1.15 2008-02-11 12:47:52 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -120,6 +120,16 @@ in the queue, it will be shrunk by removing (1 - SHRINK-RATIO) * SIZE
 objects.")))
 
 
+(defclass lazy-cache (standard-cache)
+  ()
+  (:documentation "A lazy cache doesn't bother with fancy mechanisms
+for deciding which objects to remove from the cache.  It just fills
+the cache until maximum capacity (i.e. CACHE-SIZE) and then clears
+the entire cache at once.  Advantages of this could be that it uses
+less time and less memory to do its work.  Disadvantage is that it's
+very stupid about the objects it should try to keep in memory."))
+
+
 (defmethod print-object ((cache standard-cache) stream)
   (print-unreadable-object (cache stream :type t :identity nil)
     (format stream "of size ~D, heap ~S and ~D objects in memory."
@@ -147,8 +157,8 @@ objects.")))
 
 (defun sans (plist &rest keys)
   "Returns PLIST with keyword arguments from KEYS removed."
-  ;; stolen from Usenet posting <3247672165664225@naggum.no> by Erik
-  ;; Naggum
+  ;; From Usenet posting <3247672165664225@naggum.no> by Erik
+  ;; Naggum.
   (let ((sans ()))
     (loop
       (let ((tail (nth-value 2 (get-properties plist keys))))
@@ -369,12 +379,24 @@ memory."
                  (incf nr-objects-removed))))))
 
 
-(defun add-to-queue (object-id cache)
+(defmethod add-to-queue (object-id (cache standard-cache))
   ;; Add an object to the end of the queue.
   (let ((queue (queue cache)))
     (when (cache-full-p cache)
       (queue-remove queue))
     (queue-add queue object-id)))
+
+;;
+;; Queue operations for lazy caches
+;;
+
+(defmethod make-room-in-cache ((cache lazy-cache))
+  (clrhash (objects cache)))
+
+(defmethod add-to-queue (object-id (cache lazy-cache))
+  ;; We're not adding anything to the queue, because we're too lazy.
+  object-id)
+
 
 ;;
 ;; Open/close/map transactions

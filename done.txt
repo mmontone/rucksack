@@ -1,3 +1,34 @@
+* 2008-02-11 - version 0.1.16
+
+Added P-PUSH and P-POP.
+
+Improved btree efficiency by switching to a different data structure
+for the bindings.  Instead of using a persistent cons for each key/
+value pair, we now put the keys and values directly into the bnode
+vector.  This speeds up most btree operations because it reduces
+persistent consing when adding new values and it reduces indirections
+when searching for keys.
+
+Renamed BTREE-NODE to BNODE, BTREE-NODE-INDEX to BNODE-BINDINGS,
+BTREE-NODE-INDEX-COUNT to BNODE-NR-BINDINGS, FIND-BINDING-IN-NODE to
+FIND-KEY-IN-NODE.
+
+Fix a missing argument bug in REMOVE-CLASS-INDEX.
+
+Added a LAZY-CACHE which just clears the entire hash table whenever
+the cache gets full.  This improves memory usage, because the normal
+cache queue kept track of a lot of objects that for some reason
+couldn't be cleaned up by the implementation's garbage collector.
+
+Added the convenience macros RUCKSACK-DO-CLASS and RUCKSACK-DO-SLOT.
+
+Made RUCKSACK-DELETE-OBJECT an exported symbol of the RUCKSACK
+package.
+
+Fix a bug in TEST-NON-UNIQUE-BTREE: it should call
+CHECK-NON-UNIQUE-CONTENTS instead of CHECK-CONTENTS.
+
+
 * 2008-02-02 - version 0.1.15
 
 Fixed a garbage collector bug reported by Sean Ross. When the garbage

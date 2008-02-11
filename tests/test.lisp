@@ -1,4 +1,4 @@
-;; $Id: test.lisp,v 1.1 2008-01-23 15:49:07 alemmens Exp $
+;; $Id: test.lisp,v 1.2 2008-02-11 12:47:53 alemmens Exp $
 
 (in-package :rucksack-test)
 
@@ -363,7 +363,7 @@
             (check-order btree)
             (check-size btree (- n delete))
             (when check-contents
-              (check-contents btree))
+              (check-non-unique-contents btree))
             (format t "~&Reinserting~%")
             (shuffle array)
             (dotimes (i (floor delete nr-formats))
@@ -377,7 +377,7 @@
             (check-order btree)
             (check-size btree n)
             (when check-contents
-              (check-contents btree)))))))
+              (check-non-unique-contents btree)))))))
   :ok)
 
 (defun btree-stress-test (&key (n 1000))

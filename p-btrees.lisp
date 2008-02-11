@@ -1,4 +1,4 @@
-;; $Id: p-btrees.lisp,v 1.17 2008-01-22 15:59:24 alemmens Exp $
+;; $Id: p-btrees.lisp,v 1.18 2008-02-11 12:47:52 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -21,7 +21,7 @@
    #:btree-nr-keys #:btree-nr-values
 
    ;; Nodes
-   #:btree-node
+   #:bnode
 
    ;; Functions
    #:btree-search #:btree-insert #:btree-delete #:btree-delete-key
@@ -138,9 +138,10 @@ p-conses and persistent-objects.
 
 Basically, a B-tree is a balanced multi-way tree.
 
-The reason for using multi-way trees instead of binary trees is that the nodes
-are expected to be on disk; it would be inefficient to have to execute
-a disk operation for each tree node if it contains only 2 keys.
+The reason for using multi-way trees instead of binary trees is that
+the nodes are expected to be on disk; it would be inefficient to have
+to execute a disk operation for each tree node if it contains only 2
+keys.
 
 The key property of B-trees is that each possible search path has the same
 length, measured in terms of nodes.
@@ -202,10 +203,10 @@ predicate.")
    ;;
    (node-class :initarg :node-class
                :reader btree-node-class
-               :initform 'btree-node)
+               :initform 'bnode)
    (max-node-size :initarg :max-node-size
                   :reader btree-max-node-size
-                  :initform 32
+                  :initform 64
                   :documentation "An integer specifying the preferred
 maximum number of keys per btree node.")
    (unique-keys-p :initarg :unique-keys-p
@@ -251,20 +252,22 @@ can't be saved on disk.")))
   (let ((key< (slot-value btree 'key<))
         (key-key (btree-key-key btree)))
     (lambda (key1 key2)
-      (funcall key<
-               (funcall key-key key1)
-               (funcall key-key key2)))))
+      (and (not (eql key1 'key-irrelevant))
+           (not (eql key2 'key-irrelevant))
+           (funcall key<
+                    (funcall key-key key1)
+                    (funcall key-key key2))))))
 
 (defmethod btree-key= ((btree btree))
   (let ((key< (slot-value btree 'key<))
         (key-key (btree-key-key btree)))
     (lambda (key1 key2)
-      (let ((key1 (funcall key-key key1))
-            (key2 (funcall key-key key2)))
-        (and (not (eql key1 'key-irrelevant))
-             (not (eql key2 'key-irrelevant))
-             (not (funcall key< key1 key2))
-             (not (funcall key< key2 key1)))))))
+      (and (not (eql key1 'key-irrelevant))
+           (not (eql key2 'key-irrelevant))
+           (let ((key1 (funcall key-key key1))
+                 (key2 (funcall key-key key2)))
+             (and (not (funcall key< key1 key2))
+                  (not (funcall key< key2 key1))))))))
 
 (defmethod btree-key>= ((btree btree))
   (lambda (key1 key2)
@@ -299,24 +302,26 @@ can't be saved on disk.")))
 
   
 ;;
-;; The next two classes are for internal use only, so we don't bother
-;; with fancy long names.
+;; Btree nodes (= 'bnodes').
 ;;
 
-(defclass btree-node ()
-  ((index :initarg :index
-          :initform '()
-          :accessor btree-node-index
-          :documentation "A vector of key/value pairs.  The keys are
-sorted by KEY<. No two keys can be the same.  For leaf nodes of btrees
-with non-unique-keys, the value part is actually a list of values.
-For intermediate nodes, the value is a child node.  All keys in the
-child node will be KEY<= the child node's key in the parent node.")
-   (index-count :initform 0
-                :accessor btree-node-index-count
-                :documentation "The number of key/value pairs in the index vector.")
-   (leaf-p :initarg :leaf-p :initform nil :reader btree-node-leaf-p))
+(defclass bnode ()
+  ((bindings :initarg :bindings
+             :initform '()
+             :accessor bnode-bindings
+             :documentation "A vector of with alternating keys and
+values.  The keys are sorted by KEY<. No two keys can be the same.
+For leaf nodes of btrees with non-unique-keys, the value part is
+actually a list of values.  For intermediate nodes, the value is a
+child node.  All keys in the child node will be KEY<= the child node's
+key in the parent node.")
+   (nr-bindings :initform 0
+                :accessor bnode-nr-bindings
+                :documentation "The number of key/value bindings in
+the index vector.")
+   (leaf-p :initarg :leaf-p :initform nil :reader bnode-leaf-p))
   (:metaclass persistent-class))
+
 
 ;;
 ;; Info functions
@@ -324,14 +329,14 @@ child node will be KEY<= the child node's key in the parent node.")
 
 (defmethod btree-nr-keys ((btree btree))
   (if (slot-boundp btree 'root)
-      (btree-node-nr-keys (btree-root btree))
+      (bnode-nr-keys (btree-root btree))
     0))
 
-(defmethod btree-node-nr-keys ((node btree-node))
-  (if (btree-node-leaf-p node)
-      (btree-node-index-count node)
-    (loop for i below (btree-node-index-count node)
-          sum (btree-node-nr-keys (binding-value (node-binding node i))))))
+(defmethod bnode-nr-keys ((node bnode))
+  (if (bnode-leaf-p node)
+      (bnode-nr-bindings node)
+    (loop for i below (bnode-nr-bindings node)
+          sum (bnode-nr-keys (binding-value (node-binding node i))))))
 
 
 (defmethod btree-nr-values ((btree btree))
@@ -348,30 +353,43 @@ child node will be KEY<= the child node's key in the parent node.")
 ;; Bindings
 ;; 
 
+(defstruct binding
+  key
+  value)
+
 (defun node-binding (node i)
-  (let ((index (btree-node-index node)))
-    (p-aref index i)))
+  ;; A binding used to be a persistent cons, but we want to reduce
+  ;; persistent consing so now we use a small struct and try to
+  ;; make sure that we persist the relevant info when necessary.
+  (let ((vector (bnode-bindings node)))
+    (make-binding :key (p-aref vector (* 2 i))
+                  :value (p-aref vector (1+ (* 2 i))))))
+                          
+(defun node-binding-key (node i)
+  (p-aref (bnode-bindings node) (* 2 i)))
+
+(defun node-binding-value (node i)
+  (p-aref (bnode-bindings node) (1+ (* 2 i))))
 
 (defun (setf node-binding) (binding node i)
-  (setf (p-aref (btree-node-index node) i)
-        binding))
+  (update-node-binding node i
+                       (binding-key binding)
+                       (binding-value binding))
+  binding)
 
+(defun update-node-binding (node i key value)
+  (setf (node-binding-key node i) key
+        (node-binding-value node i) value))
 
-(defun make-binding (key value)
-  (p-cons key value))
+(defun (setf node-binding-key) (key node i)
+  (setf (p-aref (bnode-bindings node) (* 2 i))
+        key))
 
-(defun binding-key (binding)
-  (p-car binding))
+(defun (setf node-binding-value) (value node i)
+  (setf (p-aref (bnode-bindings node) (1+ (* 2 i)))
+        value))
 
-(defun (setf binding-key) (key binding)
-  (setf (p-car binding) key))
-
-(defun (setf binding-value) (value binding)
-  (setf (p-cdr binding) value))
-
-(defun binding-value (binding)
-  (p-cdr binding))
-
+;;
 
 (defun make-leaf-value (btree value)
   (if (btree-unique-keys-p btree)
@@ -381,16 +399,16 @@ child node will be KEY<= the child node's key in the parent node.")
 ;;
 ;;
 
-(defmethod initialize-instance :after ((node btree-node)
+(defmethod initialize-instance :after ((node bnode)
                                        &key btree &allow-other-keys)
-  (setf (btree-node-index node) (p-make-array (btree-max-node-size btree)
-                                              :initial-element nil)
-        (btree-node-index-count node) 0))
+  (setf (bnode-bindings node) (p-make-array (* 2 (btree-max-node-size btree))
+                                            :initial-element nil)
+        (bnode-nr-bindings node) 0))
 
 
-(defmethod print-object ((node btree-node) stream)
+(defmethod print-object ((node bnode) stream)
   (print-unreadable-object (node stream :type t :identity t)
-    (format stream "with ~D bindings" (btree-node-index-count node))))
+    (format stream "with ~D bindings" (bnode-nr-bindings node))))
 
 ;;
 ;; Debugging
@@ -400,16 +418,15 @@ child node will be KEY<= the child node's key in the parent node.")
   (pprint (node-as-cons node)))
 
 (defun node-as-cons (node &optional (unique-keys t))
-  (loop with index = (btree-node-index node)
-        with leaf-p = (btree-node-leaf-p node)
-        for i below (btree-node-index-count node)
-        for binding = (p-aref index i)
-        collect (list (binding-key binding)
+  (loop with leaf-p = (bnode-leaf-p node)
+        for i below (bnode-nr-bindings node)
+        for value = (node-binding-value node i)
+        collect (list (node-binding-key node i)
                       (if leaf-p
                           (if unique-keys
-                              (binding-value binding)
-                            (unwrap-persistent-list (binding-value binding)))
-                        (node-as-cons (binding-value binding))))))
+                              value
+                            (unwrap-persistent-list value))
+                        (node-as-cons value)))))
 
 (defun btree-as-cons (btree)
   (and (slot-value btree 'root)
@@ -420,17 +437,17 @@ child node will be KEY<= the child node's key in the parent node.")
 ;; Depth and balance
 ;;
 
-(defmethod node-max-depth ((node btree-node))
-  (if (btree-node-leaf-p node)
+(defmethod node-max-depth ((node bnode))
+  (if (bnode-leaf-p node)
       0
-    (loop for i below (btree-node-index-count node)
+    (loop for i below (bnode-nr-bindings node)
           for binding = (node-binding node i)
           maximize (1+ (node-max-depth (binding-value binding))))))
 
-(defmethod node-min-depth ((node btree-node))
-  (if (btree-node-leaf-p node)
+(defmethod node-min-depth ((node bnode))
+  (if (bnode-leaf-p node)
       0
-    (loop for i below (btree-node-index-count node)
+    (loop for i below (bnode-nr-bindings node)
           for binding = (node-binding node i)
           minimize (1+ (node-min-depth (binding-value binding))))))
 
@@ -444,6 +461,7 @@ child node will be KEY<= the child node's key in the parent node.")
   (multiple-value-bind (min max)
       (btree-depths btree)
     (<= (- max min) 1)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search
@@ -482,16 +500,23 @@ child node will be KEY<= the child node's key in the parent node.")
 ;;
 
 (defgeneric node-search (btree node key errorp default-value)
-  (:method ((btree btree) (node btree-node) key errorp default-value)
+  (:method ((btree btree) (node bnode) key errorp default-value)
    (let ((binding (node-search-binding btree node key)))
      (if binding
          (binding-value binding)
        (not-found btree key errorp default-value)))))
   
 (defgeneric node-search-binding (btree node key)
-  (:method ((btree btree) (node btree-node) key)
-   (if (btree-node-leaf-p node)
-       (find-binding-in-node key node btree)
+  (:documentation "Tries to find KEY in NODE or one of its subnodes.
+Returns three values if the key was found: the binding, the node
+containing the binding and the position of the binding in that node.
+Returns nil otherwise.")
+  (:method ((btree btree) (node bnode) key)
+   (if (bnode-leaf-p node)
+       (multiple-value-bind (binding position)
+           (find-key-in-node btree node key)
+         (and binding
+              (values binding node position)))
      (let ((subnode (find-subnode btree node key)))
        (node-search-binding btree subnode key)))))
 
@@ -500,44 +525,64 @@ child node will be KEY<= the child node's key in the parent node.")
   ;; Find the first binding with a key >= the given key and return
   ;; the corresponding subnode.
   (let ((btree-key< (btree-key< btree))
-        (last (1- (btree-node-index-count node))))
+        (last (1- (bnode-nr-bindings node))))
     (labels ((binary-search (start end)
-               (let* ((mid (+ start (ash (- end start) -1))))
-                 (cond ((= start mid)
-                        (let ((start-binding (node-binding node start)))
-                          (if (funcall btree-key< (binding-key start-binding) key)
-                              (binding-value (node-binding node end))
-                              (binding-value start-binding))))
-                       (t
-                        (let ((mid-binding (node-binding node mid)))
-                          (if (funcall btree-key< (binding-key mid-binding) key)
-                              (binary-search mid end)
-                              (binary-search start mid))))))))
-      (if (funcall btree-key< (binding-key (node-binding node (1- last))) key)
-          (binding-value (node-binding node last))
+               (let ((mid (+ start (ash (- end start) -1))))
+                 (if (= start mid)
+                     (if (funcall btree-key< (node-binding-key node start) key)
+                         (node-binding-value node end)
+                       (node-binding-value node start))
+                   (if (funcall btree-key< (node-binding-key node mid) key)
+                       (binary-search mid end)
+                     (binary-search start mid))))))
+      (if (funcall btree-key< (node-binding-key node (1- last)) key)
+          (node-binding-value node last)
           (binary-search 0 last)))))
 
-(defun find-binding-in-node (key node btree)
+(defun find-key-in-node (btree node key)
+  "Tries to find a binding with the given key in a bnode.  If it
+succeeds, it returns the binding (and, as a second value, the position
+of that binding).  Otherwise it returns NIL."
   (let ((btree-key< (btree-key< btree))
-        (array (btree-node-index node))
-        (index-count (btree-node-index-count node)))
+        (index-count (bnode-nr-bindings node)))
     (labels ((binary-search (start end)
-               (let* ((mid (+ start (ash (- end start) -1))))
-                 (cond ((= start mid)
-                        (let ((start-binding (p-aref array start)))
-                          (if (funcall btree-key< (binding-key start-binding) key)
-                              (when (< end index-count)
-                                (p-aref array end))
-                              start-binding)))
-                       (t (let ((mid-binding (p-aref array mid)))
-                            (if (funcall btree-key< (binding-key mid-binding) key)
-                                (binary-search mid end)
-                                (binary-search start mid))))))))
+               (let ((mid (+ start (ash (- end start) -1))))
+                 (if (= start mid)
+                     (let ((start-binding (node-binding node start)))
+                       (if (funcall btree-key< (node-binding-key node start) key)
+                           (when (< end index-count)
+                             (values (node-binding node end) end))
+                         (values start-binding start)))
+                   (if (funcall btree-key< (node-binding-key node mid) key)
+                       (binary-search mid end)
+                     (binary-search start mid))))))
       (when (plusp index-count)
-        (let ((candidate (binary-search 0 index-count)))
+        (multiple-value-bind (candidate position)
+            (binary-search 0 index-count)
           (when (and candidate
                      (funcall (btree-key= btree) (binding-key candidate) key))
-            candidate))))))
+            (values candidate position)))))))
+
+(defun key-position (btree node key)
+  "Tries to find a binding with the given key in a bnode.  If it
+succeeds, it returns the position of that binding.  Otherwise, it
+returns NIL."
+  (nth-value 1 (find-key-in-node btree node key)))
+
+
+(defun find-value-in-node (btree node value &key (test (btree-value= btree)))
+  "Tries to find a binding with the given value in a bnode.  If it
+succeeds, it returns the binding (and, as a second value, the position
+of that binding).  Otherwise it returns NIL."
+  ;; The bindings aren't sorted by value, so we have to do
+  ;; a plain linear search.
+  (loop for i below (bnode-nr-bindings node)
+        when (funcall test (node-binding-value node i) value)
+        do (return-from find-value-in-node
+             (values (node-binding node i) i)))
+  ;; Not found: return nil.
+  nil)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Debugging
@@ -563,16 +608,12 @@ child node will be KEY<= the child node's key in the parent node.")
 for debugging."
   (car
    (last
-    (loop with index = (btree-node-index node)
-          with leaf-p = (btree-node-leaf-p node)
-          for i below (btree-node-index-count node)
-          for binding = (p-aref index i)
+    (loop with leaf-p = (bnode-leaf-p node)
+          for i below (bnode-nr-bindings node)
+          for binding = (node-binding node i)
           collect
           (if leaf-p
-              (if (btree-unique-keys-p tree)
-                  (binding-key binding)
-                (binding-key (node-binding node
-                                           i)))
+              (binding-key binding)
             (progn
               (let ((x (check-bnode-keys tree
                                          (binding-value binding))))
@@ -612,7 +653,7 @@ for debugging."
            :expected-type (btree-value-type btree)))
   ;; Do the real work.
   (if (slot-boundp btree 'root)
-      (btree-node-insert btree (btree-root btree) (list nil) key value if-exists)
+      (bnode-insert btree (btree-root btree) (list nil) key value if-exists)
     ;; Create a root.
     (let ((leaf (make-instance (btree-node-class btree)
                                :btree btree
@@ -628,10 +669,10 @@ for debugging."
 
 
 (defun make-root (btree left-key left-subnode right-key right-subnode)
-  (let* ((root (make-instance (btree-node-class btree) :btree btree)))
-    (setf (node-binding root 0) (make-binding left-key left-subnode)
-          (node-binding root 1) (make-binding right-key right-subnode)
-          (btree-node-index-count root) 2)
+  (let ((root (make-instance (btree-node-class btree) :btree btree)))
+    (update-node-binding root 0 left-key left-subnode)
+    (update-node-binding root 1 right-key right-subnode)
+    (setf (bnode-nr-bindings root) 2)
     root))
 
 
@@ -639,46 +680,51 @@ for debugging."
 ;; Node insert
 ;;
 
-(defgeneric btree-node-insert (btree node parent-stack key value if-exists))
+(defgeneric bnode-insert (btree node parent-stack key value if-exists))
 
-(defmethod btree-node-insert ((btree btree) (node btree-node)
+(defmethod bnode-insert ((btree btree) (node bnode)
                               parent-stack key value if-exists)
-  (cond ((btree-node-leaf-p node)
-         (leaf-insert btree node parent-stack key value if-exists))
-        (t (let ((subnode (find-subnode btree node key)))
-             (btree-node-insert btree subnode (cons node parent-stack)
-                                key value if-exists)))))
+  (if (bnode-leaf-p node)
+      (leaf-insert btree node parent-stack key value if-exists)
+    (let ((subnode (find-subnode btree node key)))
+      (bnode-insert btree subnode (cons node parent-stack)
+                         key value if-exists))))
 
 (defun smallest-key (node)
-  (if (btree-node-leaf-p node)
-      (binding-key (node-binding node 0))
-    (smallest-key (binding-value (node-binding node 0)))))
+  "Returns the smallest key in this node or any of its subnodes."
+  ;; Walk recursively along the 'left edge' of the tree to find
+  ;; the smallest key.
+  (if (bnode-leaf-p node)
+      (node-binding-key node 0)
+    (smallest-key (node-binding-value node 0))))
 
 (defun biggest-key (node)
-  (let ((end (1- (btree-node-index-count node))))
-    (if (btree-node-leaf-p node)
-        (binding-key (node-binding node end))
-      (biggest-key (binding-value (node-binding node end))))))
+  "Returns the biggest key in this node or any of its subnodes."
+  ;; Walk recursively along the 'right edge' of the tree to find
+  ;; the biggest key.
+  (let ((end (1- (bnode-nr-bindings node))))
+    (if (bnode-leaf-p node)
+        (node-binding-key node end)
+      (biggest-key (node-binding-value node end)))))
 
 
-(defun split-btree-node (btree node parent-stack key)
-  ;; The node is (almost) full.
-  ;; Create two new nodes and divide the current node-index over
-  ;; these two new nodes.
-  (let* ((split-pos (floor (btree-node-index-count node) 2))
+(defun split-bnode (btree node parent-stack key)
+  "The node is (almost) full. Create two new nodes and divide the
+current node-index over these two new nodes."
+  (let* ((split-pos (floor (bnode-nr-bindings node) 2))
          (left (make-instance (btree-node-class btree)
                               :btree btree
-                              :leaf-p (btree-node-leaf-p node)))
+                              :leaf-p (bnode-leaf-p node)))
          (right (make-instance (btree-node-class btree)
                                :btree btree
-                               :leaf-p (btree-node-leaf-p node))))
+                               :leaf-p (bnode-leaf-p node))))
     ;; Divide the node over the two new nodes.
-    (p-replace (btree-node-index left) (btree-node-index node)
-               :end2 split-pos)
-    (p-replace (btree-node-index right) (btree-node-index node)
-               :start2 split-pos)
-    (setf (btree-node-index-count left) split-pos
-          (btree-node-index-count right) (- (btree-node-index-count node) split-pos))
+    (replace-bindings (bnode-bindings left) (bnode-bindings node)
+                      :end2 split-pos)
+    (replace-bindings (bnode-bindings right) (bnode-bindings node)
+                      :start2 split-pos)
+    (setf (bnode-nr-bindings left) split-pos
+          (bnode-nr-bindings right) (- (bnode-nr-bindings node) split-pos))
     ;;
     (let ((left-key
            ;; The key that splits the two new nodes.
@@ -689,24 +735,23 @@ for debugging."
                    (make-root btree left-key left 'key-irrelevant right)))
             (t
              (let* ((parent (first parent-stack))
-                    (node-pos (node-position node parent))
+                    (node-pos (node-position node parent btree))
                     (parent-binding (node-binding parent node-pos))
                     (old-key (binding-key parent-binding)))
                (when (node-full-p btree parent)
                  (multiple-value-bind (parent1 parent2)
-                     (split-btree-node btree parent (rest parent-stack) old-key)
-                   (setq node-pos (node-position node parent1)
+                     (split-bnode btree parent (rest parent-stack) old-key)
+                   (setq node-pos (node-position node parent1 btree)
                          parent parent1)
                    (when (null node-pos)
-                     (setq node-pos (node-position node parent2)
+                     (setq node-pos (node-position node parent2 btree)
                            parent parent2))
                    (assert (not (null node-pos)))
                    (setq parent-binding (node-binding parent node-pos)
                          old-key (binding-key parent-binding))))
                ;; Replace the original subnode by the left-child and
                ;; add a new-binding with new-key & right-child.
-               (setf (binding-key parent-binding) left-key
-                     (binding-value parent-binding) left)
+               (update-node-binding parent node-pos left-key left)
                ;; Insert a new binding for the right node.
                (insert-new-binding parent (1+ node-pos) old-key right))))
       ;; Return the node that's relevant for KEY.
@@ -718,25 +763,34 @@ for debugging."
         (values left right)))))
 
 
-(defun node-position (node parent)
-  (p-position node (btree-node-index parent)
-                   :key #'binding-value
-                   :end (btree-node-index-count parent)))
+(defun node-position (node parent btree)
+  "Returns the position of NODE (as a binding value) in a parent
+node."
+  (nth-value 1 (find-value-in-node btree parent node :test 'p-eql)))
 
 
 (defun insert-new-binding (node position key value)
-  ;; This function must only be called if we know that the index isn't
-  ;; full already
-  (unless (>= position (btree-node-index-count node))
+  ;; This function must only be called if we know that the bindings
+  ;; vector isn't full already.
+  (unless (>= position (bnode-nr-bindings node))
     ;; Make room by moving bindings to the right.
-    (let ((node-index (btree-node-index node))
-          (length (btree-node-index-count node)))
-      (p-replace node-index node-index
-                 :start1 (1+ position) :end1 (1+ length)
-                 :start2 position :end2 length)))
+    (let ((bindings (bnode-bindings node))
+          (length (bnode-nr-bindings node)))
+      (replace-bindings bindings bindings
+                        :start1 (1+ position) :end1 (1+ length)
+                        :start2 position :end2 length)))
   ;; Insert new binding.
-  (setf (node-binding node position) (make-binding key value))
-  (incf (btree-node-index-count node)))
+  (update-node-binding node position key value)
+  (incf (bnode-nr-bindings node)))
+
+(defun replace-bindings (vector-1 vector-2 &key (start1 0) end1 (start2 0) end2)
+  "Like P-REPLACE, but for vectors with bindings instead of
+plain vectors (so all indexes must be multiplied by 2)."
+  (p-replace vector-1 vector-2
+             :start1 (* 2 start1)
+             :end1 (and end1 (* 2 end1))
+             :start2 (* 2 start2)
+             :end2 (and end2 (* 2 end2))))
 
 
 ;;
@@ -744,9 +798,9 @@ for debugging."
 ;;
 
 (defun check-node (btree node)
-  (loop for i below (1- (btree-node-index-count node))
-        for left-key = (binding-key (node-binding node i))
-        for right-key = (binding-key (node-binding node (1+ i)))
+  (loop for i below (1- (bnode-nr-bindings node))
+        for left-key = (node-binding-key node i)
+        for right-key = (node-binding-key node (1+ i))
         do (unless (or (eql right-key 'key-irrelevant)
                        (funcall (btree-key< btree) left-key right-key))
              (display-node node)
@@ -758,13 +812,14 @@ for debugging."
 ;;
 
 (defun leaf-insert (btree leaf parent-stack key value if-exists)
-  (let ((binding (find-binding-in-node key leaf btree)))
+  (multiple-value-bind (binding position)
+      (find-key-in-node btree leaf key)
     (if binding
         ;; Key already exists.
         (if (btree-unique-keys-p btree)
             (ecase if-exists
               (:overwrite
-               (setf (binding-value binding) value))
+               (setf (node-binding-value leaf position) value))
               (:error
                ;; Signal an error unless the old value happens to be
                ;; the same as the new value.
@@ -776,25 +831,33 @@ for debugging."
           ;; For non-unique keys, we ignore the :IF-EXISTS option and
           ;; just add value to the list of values (unless value is already
           ;; there).
-          (unless (p-find value (binding-value binding) :test (btree-value= btree))
-            (setf (binding-value binding)
-                  (p-cons value (binding-value binding)))))
+          (unless (p-find value (node-binding-value leaf position)
+                          :test (btree-value= btree))
+            (setf (node-binding-value leaf position)
+                  (p-cons value (node-binding-value leaf position)))))
        ;; The key doesn't exist yet. Create a new binding and add it to the
        ;; leaf index in the right position.
        (progn
-        (when (node-full-p btree leaf)
-          (setq leaf (split-btree-node btree leaf parent-stack key)))
-        (let ((new-position (p-position key (btree-node-index leaf)
-                                        :test (btree-key< btree)
-                                        :key #'binding-key
-                                        :end (btree-node-index-count leaf))))
-          (insert-new-binding leaf
-                              (or new-position (btree-node-index-count leaf))
-                              key
-                              (make-leaf-value btree value)))))))
+         (when (node-full-p btree leaf)
+           (setq leaf (split-bnode btree leaf parent-stack key)))
+         (let ((new-position (position-of-binding-with-greater-key btree leaf key)))
+           (insert-new-binding leaf
+                               (or new-position (bnode-nr-bindings leaf))
+                               key
+                               (make-leaf-value btree value)))))))
+
+(defun position-of-binding-with-greater-key (btree node key)
+  "Returns the position of the first binding in NODE with a key
+greater than KEY.  Returns nil if there is no such binding."
+  (loop for position below (bnode-nr-bindings node)
+        when (funcall (btree-key< btree) key (node-binding-key node position))
+        do (return-from position-of-binding-with-greater-key position))
+  ;; No such binding: return nil.
+  nil)
+
   
 (defun node-full-p (btree node)
-  (>= (btree-node-index-count node) (btree-max-node-size btree)))
+  (>= (bnode-nr-bindings node) (btree-max-node-size btree)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Delete
@@ -810,8 +873,9 @@ for debugging."
                             :btree btree
                             :key key
                             :value value)))))
-    (let ((binding (and (slot-boundp btree 'root)
-                        (node-search-binding btree (btree-root btree) key))))
+    (multiple-value-bind (binding node position)
+        (and (slot-boundp btree 'root)
+             (node-search-binding btree (btree-root btree) key))
       (cond ((not binding)
              ;; The binding doesn't exist: forget it.
              (forget-it))
@@ -838,7 +902,7 @@ for debugging."
                          (btree-delete-key btree key)
                        ;; There's more than one value in the list: delete the
                        ;; value that must be deleted and keep the other values.
-                       (setf (binding-value binding)
+                       (setf (node-binding-value node position)
                              (p-delete-if #'check (binding-value binding)
                                           :count 1)))
                    ;; The value is not in the list: forget it.
@@ -849,30 +913,30 @@ for debugging."
  
 (defmethod btree-delete-key ((btree btree) key &key (if-does-not-exist :ignore))
   (if (slot-boundp btree 'root)
-      (btree-node-delete-key btree (btree-root btree) (list nil) key if-does-not-exist)
+      (bnode-delete-key btree (btree-root btree) (list nil) key if-does-not-exist)
     (ecase if-does-not-exist
       (:ignore)
       (:error (error 'btree-search-error :btree btree :key key)))))
 
-(defgeneric btree-node-delete-key (btree node parent-stack key if-does-not-exist))
+(defgeneric bnode-delete-key (btree node parent-stack key if-does-not-exist))
 
-(defmethod btree-node-delete-key ((btree btree) (node btree-node)
+(defmethod bnode-delete-key ((btree btree) (node bnode)
                                   parent-stack key if-does-not-exist)
-  (if (btree-node-leaf-p node)
+  (if (bnode-leaf-p node)
       (leaf-delete-key btree node parent-stack key if-does-not-exist)
     (let ((subnode (find-subnode btree node key)))
-      (btree-node-delete-key btree subnode (cons node parent-stack)
+      (bnode-delete-key btree subnode (cons node parent-stack)
                              key if-does-not-exist))))
  
 (defun leaf-delete-key (btree leaf parent-stack key if-does-not-exist)
-  (let ((binding (find-binding-in-node key leaf btree)))
+  (let ((binding (find-key-in-node btree leaf key)))
     (unless binding
       (ecase if-does-not-exist
         (:ignore (return-from leaf-delete-key))
         (:error (error 'btree-search-error :btree btree :key key))))
 
-    (let* ((position (key-position btree key leaf))
-           (length (btree-node-index-count leaf))
+    (let* ((position (key-position btree leaf key))
+           (length (bnode-nr-bindings leaf))
            (was-biggest-key-p (= position (1- length))))
       
       (remove-key btree leaf (binding-key binding))
@@ -882,7 +946,7 @@ for debugging."
         ;; their child nodes.  So if we just deleted the biggest
         ;; key from this leaf, the parent node needs to be updated
         ;; with the key that is now the biggest of this leaf.
-        (unless (= 0 (btree-node-index-count leaf))
+        (unless (= 0 (bnode-nr-bindings leaf))
           (let ((biggest-key (biggest-key leaf)))
             (update-parents-for-deleted-key btree parent-stack key biggest-key))))
       
@@ -898,20 +962,20 @@ for debugging."
     ;; Don't enlarge root node.
     (when (null parent)
       (return-from enlarge-node))
-    (let ((node-pos (node-position node parent))
+    (let ((node-pos (node-position node parent btree))
           left-sibling)
       (when (plusp node-pos)
         ;; There is a left sibling.
-        (setq left-sibling (binding-value (node-binding parent (1- node-pos))))
+        (setq left-sibling (node-binding-value parent (1- node-pos)))
         (unless (node-has-min-size-p btree left-sibling)
-          (distribute-elements left-sibling node parent)
+          (distribute-elements btree left-sibling node parent)
           (return-from enlarge-node)))
-      (when (< (1+ node-pos) (btree-node-index-count parent))
+      (when (< (1+ node-pos) (bnode-nr-bindings parent))
         ;; There is a right sibling.
-        (let ((right-sibling (binding-value (node-binding parent (1+ node-pos)))))
+        (let ((right-sibling (node-binding-value parent (1+ node-pos))))
           (if (node-has-min-size-p btree right-sibling)
               (join-nodes btree node right-sibling parent-stack)
-            (distribute-elements node right-sibling parent))
+            (distribute-elements btree node right-sibling parent))
           (return-from enlarge-node)))
       (when left-sibling
         (join-nodes btree left-sibling node parent-stack)
@@ -923,10 +987,9 @@ for debugging."
   (when parent-stack
     (let ((node (first parent-stack)))
       (when node
-        (let ((position (key-position btree old-key node)))
+        (let ((position (key-position btree node old-key)))
           (when position
-            (setf (binding-key (node-binding node position))
-                  new-key)
+            (setf (node-binding-key node position) new-key)
             (update-parents-for-deleted-key btree (rest parent-stack) old-key new-key)))))))
 
  
@@ -936,62 +999,61 @@ for debugging."
 ;; deletes one key in the parent, and finally checks the parent to see
 ;; if it has to be enlarged as well.
 
-(defun distribute-elements (left-node right-node parent)
+(defun distribute-elements (btree left-node right-node parent)
   "One of LEFT-NODE and RIGHT-NODE doesn't have enough elements, but
 the union of both has enough elements for two nodes, so we
 redistribute the elements between the two nodes."
-  (let* ((left-index (btree-node-index left-node))
-         (left-length (btree-node-index-count left-node))
-         (right-index (btree-node-index right-node))
-         (right-length (btree-node-index-count right-node))
+  (let* ((left-bindings (bnode-bindings left-node))
+         (left-length (bnode-nr-bindings left-node))
+         (right-bindings (bnode-bindings right-node))
+         (right-length (bnode-nr-bindings right-node))
          (sum (+ left-length right-length))
          (median (floor sum 2)))
     ;; LEFT-NODE will have MEDIAN elements, RIGHT-NODE will have
     ;; (- SUM MEDIAN) elements.
     (cond ((< left-length median)
            ;; Case 1: move some elements to the left.
-           (p-replace left-index right-index
-                      :start1 left-length
-                      :start2 0 :end2 (- median left-length))
-           (p-replace right-index right-index
-                      :start1 0
-                      :start2 (- median left-length) :end2 right-length))
+           (replace-bindings left-bindings right-bindings
+                             :start1 left-length
+                             :start2 0 :end2 (- median left-length))
+           (replace-bindings right-bindings right-bindings
+                             :start1 0
+                             :start2 (- median left-length) :end2 right-length))
           ((> left-length median)
            ;; Case 2: move some elements to the right.
-           (p-replace right-index right-index
-                      :start1 (- left-length median)
-                      :start2 0 :end2 right-length)
-           (p-replace right-index left-index
-                      :start1 0
-                      :start2 median :end2 left-length)))
+           (replace-bindings right-bindings right-bindings
+                             :start1 (- left-length median)
+                             :start2 0 :end2 right-length)
+           (replace-bindings right-bindings left-bindings
+                             :start1 0
+                             :start2 median :end2 left-length)))
     ;; Set new lengths for both nodes.
     (shorten left-node median)
     (shorten right-node (- sum median))
     ;; Select new separator key.
-    (setf (binding-key (node-binding parent (node-position left-node parent)))
+    (setf (node-binding-key parent (node-position left-node parent btree))
           (biggest-key left-node))))
+
+
 
 (defun join-nodes (btree left-node right-node parent-stack)
   "Create one node which contains the elements of both LEFT-NODE and
 RIGHT-NODE."
   (let* ((parent (first parent-stack))
-         (left-index (btree-node-index left-node))
-         (left-length (btree-node-index-count left-node))
-         (right-index (btree-node-index right-node))
-         (right-length (btree-node-index-count right-node))
-         (left-position (node-position left-node parent))
-         (left-binding (node-binding parent left-position))
-         (right-binding (node-binding parent (1+ left-position))))
+         (left-length (bnode-nr-bindings left-node))
+         (right-length (bnode-nr-bindings right-node))
+         (left-position (node-position left-node parent btree)))
     ;; Move all elements into LEFT-NODE.
-    (p-replace left-index right-index
-               :start1 left-length
-               :start2 0 :end2 right-length)
-    ;; Remove key which pointed to LEFT-NODE.
-    (remove-key btree parent (binding-key left-binding))
+    (replace-bindings (bnode-bindings left-node)
+                      (bnode-bindings right-node)
+                      :start1 left-length
+                      :start2 0 :end2 right-length)
     ;; Make binding which pointed to RIGHT-NODE point to LEFT-NODE.
-    (setf (binding-value right-binding) left-node)
+    (setf (node-binding-value parent (1+ left-position)) left-node)
+    ;; Remove key which pointed to LEFT-NODE.
+    (remove-key btree parent (node-binding-key parent left-position))
     ;; Set new length of LEFT-NODE.
-    (setf (btree-node-index-count left-node) (+ right-length left-length))
+    (setf (bnode-nr-bindings left-node) (+ right-length left-length))
     ;; Check if we have to enlarge the parent as well because we
     ;; removed one key.
     (unless (node-full-enough-p btree parent)
@@ -999,41 +1061,37 @@ RIGHT-NODE."
     ;; If the parent node is the root node and it has only 1 child,
     ;; make that child the root.
     (when (and (p-eql parent (btree-root btree))
-               (= 1 (btree-node-index-count parent)))
+               (= 1 (bnode-nr-bindings parent)))
       (setf (btree-root btree)
-            (binding-value (node-binding parent 0))))))
+            (node-binding-value parent 0)))))
 
+
+(defun remove-key (btree node key)
+  (let ((position (key-position btree node key))
+        (length (bnode-nr-bindings node)))
+    (unless (>= position (1- length))
+      ;; Move bindings to the left.
+      (let ((bindings (bnode-bindings node)))
+        (replace-bindings bindings bindings
+                          :start1 position :end1 (1- length)
+                          :start2 (1+ position) :end2 length)))
+    (shorten node (1- length))))
 
 (defun shorten (node new-length)
   ;; Set length of NODE to NEW-LENGTH, set bindings behind NEW-LENGTH
   ;; to NIL, so the GC can throw them away.
-  (loop for i from new-length below (btree-node-index-count node)
-        do (setf (node-binding node i) nil))
-  (setf (btree-node-index-count node) new-length))
-
-(defun remove-key (btree node key)
-  (let ((position (key-position btree key node))
-        (length (btree-node-index-count node)))
-    (unless (>= position (1- length))
-      ;; Move bindings to the left.
-      (let ((node-index (btree-node-index node)))
-        (p-replace node-index node-index
-                   :start1 position :end1 (1- length)
-                   :start2 (1+ position) :end2 length)))
-    (shorten node (1- length))))
+  (loop for i from new-length below (bnode-nr-bindings node)
+        do (update-node-binding node i nil nil))
+  (setf (bnode-nr-bindings node) new-length))
     
-(defun key-position (btree key node)
-  (p-position key (btree-node-index node)
-              :key #'binding-key
-              :test (btree-key= btree)
-              :end (btree-node-index-count node)))
+
 
 (defun node-full-enough-p (btree node)
-  (>= (btree-node-index-count node)
+  (>= (bnode-nr-bindings node)
       (floor (btree-max-node-size btree) 2)))
 
 (defun node-has-min-size-p (btree node)
-  (<= (btree-node-index-count node)
+  (<= (bnode-nr-bindings node)
       (floor (btree-max-node-size btree) 2)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1065,10 +1123,10 @@ RIGHT-NODE."
 (defgeneric map-btree-keys-for-node (btree node function
                                      min max include-min include-max
                                      order)
-  (:method ((btree btree) (node btree-node) function
+  (:method ((btree btree) (node bnode) function
             min max include-min include-max
             order)
-     (if (btree-node-leaf-p node)
+     (if (bnode-leaf-p node)
          ;; Leaf node.
          (let ((too-small-p
                 (if min
@@ -1084,29 +1142,26 @@ RIGHT-NODE."
                   (constantly nil))))
            (ecase order
              (:ascending
-              (loop for i below (btree-node-index-count node)
-                    for binding = (node-binding node i)
-                    for key = (binding-key binding)
+              (loop for i below (bnode-nr-bindings node)
+                    for key = (node-binding-key node i)
                     ;; If the current key is too big, all remaining keys
                     ;; will also be too big.
                     while (not (funcall too-big-p key))
                     do (unless (funcall too-small-p key)
-                         (funcall function key (binding-value binding)))))
+                         (funcall function key (node-binding-value node i)))))
              (:descending
-              (loop for i from (1- (btree-node-index-count node)) downto 0
-                    for binding = (node-binding node i)
-                    for key = (binding-key binding)
+              (loop for i from (1- (bnode-nr-bindings node)) downto 0
+                    for key = (node-binding-key node i)
                     ;; If the current key is too small, all remaining keys
                     ;; will also be too small.
                     while (not (funcall too-small-p key))
                     do (unless (funcall too-big-p key)
-                         (funcall function key (binding-value binding)))))))
+                         (funcall function key (node-binding-value node i)))))))
        ;; Intermediate node.
        (ecase order
          (:ascending
-          (loop for i below (btree-node-index-count node)
-                for binding = (node-binding node i)
-                for key = (binding-key binding)
+          (loop for i below (bnode-nr-bindings node)
+                for key = (node-binding-key node i)
                 ;; All child keys will be less than or equal to the current key
                 ;; and greater than the key to the left (if there is one).
                 ;; So if MAX is less than the left neighbour key, we're done.
@@ -1114,19 +1169,18 @@ RIGHT-NODE."
                            (plusp i)
                            (funcall (btree-key< btree)
                                     max
-                                    (binding-key (node-binding node (1- i)))))
+                                    (node-binding-key node (1- i))))
                 ;; And if MIN is greater than the current key, we can skip this
                 ;; child.
                 unless (and min
                             (not (eql key 'key-irrelevant))
                             (funcall (btree-key> btree) min key))
-                do (map-btree-keys-for-node btree (binding-value binding)
+                do (map-btree-keys-for-node btree (node-binding-value node i)
                                             function min max include-min include-max
                                             order)))
          (:descending
-          (loop for i from (1- (btree-node-index-count node)) downto 0
-                for binding = (node-binding node i)
-                for key = (binding-key binding)
+          (loop for i from (1- (bnode-nr-bindings node)) downto 0
+                for key = (node-binding-key node i)
                 ;; All child keys will be less than or equal to the current key
                 ;; and greater than the key to the left (if there is one).
                 ;; So if MIN is greater than the current key, we're done.
@@ -1139,8 +1193,8 @@ RIGHT-NODE."
                             (plusp i)
                             (funcall (btree-key< btree)
                                      max
-                                     (binding-key (node-binding node (1- i)))))
-                do (map-btree-keys-for-node btree (binding-value binding)
+                                     (node-binding-key node (1- i))))
+                do (map-btree-keys-for-node btree (node-binding-value node i)
                                             function min max include-min include-max
                                             order)))))))
 

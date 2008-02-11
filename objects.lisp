@@ -1,4 +1,4 @@
-;; $Id: objects.lisp,v 1.20 2008-02-03 12:32:16 alemmens Exp $
+;; $Id: objects.lisp,v 1.21 2008-02-11 12:47:52 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -269,6 +269,29 @@ functions like P-CAR instead."))
   nil)
 
 
+(defmacro p-pop (place &environment env)
+  "Pop an item from the persistent list specified by PLACE."
+  (multiple-value-bind (dummies vals new setter getter)
+      (get-setf-expansion place env)
+    `(let* (,@(mapcar #'list dummies vals) (,(car new) ,getter))
+       (prog1 (p-car ,(car new))
+         (setq ,(car new) (p-cdr ,(car new)))
+         ,setter))))
+
+
+(defmacro p-push (item place &environment env)
+  "Push ITEM onto the persistent list specified by PLACE.  Return the
+modified persistent list. ITEM is evaluated before place."
+  (multiple-value-bind (dummies vals newval setter getter)
+      (get-setf-expansion place env)
+    (let ((item-var (gensym "ITEM")))
+      `(let* ((,item-var ,item)
+              ,@(mapcar #'list dummies vals)
+              (,(car newval) (p-cons ,item-var ,getter)))
+         ,setter))))
+
+
+        
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Persistent sequence functions
 ;; (Just a start...)

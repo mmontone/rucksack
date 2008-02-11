@@ -1,4 +1,4 @@
-;; $Id: package.lisp,v 1.12 2008-01-23 15:43:42 alemmens Exp $
+;; $Id: package.lisp,v 1.13 2008-02-11 12:47:52 alemmens Exp $
 
 #-(or allegro lispworks sbcl openmcl)
   (error "Unsupported implementation: ~A" (lisp-implementation-type))
@@ -35,7 +35,8 @@
    #:p-car #:p-cdr #:p-list
    #:unwrap-persistent-list
    #:p-mapcar #:p-mapc #:p-maplist #:p-mapl
-   #:p-member-if 
+   #:p-member-if
+   #:p-pop #:p-push
    #:p-make-array #:p-aref #:p-array-dimensions
    #:p-length #:p-find #:p-replace #:p-delete-if #:p-position
 
@@ -65,9 +66,12 @@
    #:rucksack-map-class-indexes #:rucksack-map-slot-indexes
    #:rucksack-maybe-index-changed-slot #:rucksack-maybe-index-new-object
    #:rucksack-map-class #:rucksack-map-slot
+   #:rucksack-do-class #:rucksack-do-slot
+   #:rucksack-delete-object
 
    ;; Transactions
    #:current-transaction
+
    #:transaction-start #:transaction-commit #:transaction-rollback
    #:with-transaction #:*transaction*
    #:transaction #:standard-transaction

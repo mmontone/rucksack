@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.23 2008-01-31 20:26:08 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.24 2008-02-11 12:47:52 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -154,6 +154,22 @@ object ids instead of 'real' objects.  This can be handy if you want to
 do more filtering before actually loading objects from disk.
   INCLUDE-SUBCLASSES defaults to T."))
 
+(defmacro rucksack-do-class ((instance-var class
+                              &key
+                              (rucksack '*rucksack*)
+                              id-only
+                              (include-subclasses t))
+                             &body body)
+  "Evaluate BODY for each instance of CLASS, with INSTANCE-VAR
+successively bound to each instance.  See the documentation of
+RUCKSACK-MAP-CLASS for more details."
+  (check-type instance-var symbol)
+  `(rucksack-map-class ,rucksack ,class
+                       (lambda (,instance-var) ,@body)
+                       :id-only ,id-only
+                       :include-subclasses ,include-subclasses))
+                                 
+                                          
 (defgeneric rucksack-map-slot (rucksack class slot function
                               &key equal min max include-min include-max order
                               include-subclasses)
@@ -169,6 +185,27 @@ not across subclasses.
 object ids instead of 'real' objects.  This can be handy if you want to
 do more filtering before actually loading objects from disk.
   INCLUDE-SUBCLASSES defaults to T."))
+
+(defmacro rucksack-do-slot ((instance-var class slot
+                             &key (rucksack '*rucksack*)
+                             equal min max include-min include-max
+                             order include-subclasses)
+                            &body body)
+  "Evaluate BODY for each instance of CLASS where SLOT has the
+specified value. INSTANCE-VAR will be bound successively to each
+instance.  See the documentation of RUCKSACK-MAP-SLOT for more
+details."
+  (check-type instance-var symbol)
+  `(rucksack-map-slot ,rucksack ,class ,slot
+                      (lambda (,instance-var) ,@body)
+                      :equal ,equal
+                      :min ,min
+                      :max ,max
+                      :include-min ,include-min
+                      :include-max ,include-max
+                      :order ,order
+                      :include-subclasses ,include-subclasses))
+
 
 
 #+later
@@ -369,7 +406,7 @@ indexes.  Each slot index maps slot values to objects.")))
 
 (defmethod initialize-instance :after ((rucksack standard-rucksack)
                                        &key
-                                       (cache-class 'standard-cache)
+                                       (cache-class 'lazy-cache)
                                        (cache-args '())
                                        &allow-other-keys)
   ;; Open cache.
@@ -455,7 +492,7 @@ indexes.  Each slot index maps slot values to objects.")))
                       (class 'serial-transaction-rucksack)
                       (if-exists :overwrite)
                       (if-does-not-exist :create)
-                      (cache-class 'standard-cache)
+                      (cache-class 'lazy-cache)
                       (cache-args '())
                       &allow-other-keys)
   "Opens the rucksack in the directory designated by DIRECTORY-DESIGNATOR.
@@ -729,7 +766,7 @@ file is missing."
                     (simple-rucksack-error "Class index for ~S doesn't exist in ~A."
                                            class
                                            rucksack))))
-    (btree-delete-key class
+    (btree-delete-key (class-index-table rucksack) class
                       :if-does-not-exist (if errorp :error :ignore))))
 
 
@@ -877,18 +914,20 @@ index for slot ~S of class ~S in ~S."
                                               class object slot
                                               old-value new-value
                                               old-boundp new-boundp)
-  (let ((index (rucksack-slot-index rucksack class slot
-                                    :errorp nil
-                                    :include-superclasses t)))
-    (when index
-      (when old-boundp
-        (index-delete index old-value object
-                      :if-does-not-exist :ignore))
-      (when new-boundp
-        (index-insert index new-value object
-                      :if-exists (if (slot-unique slot)
-                                     :error
-                                   :overwrite))))))
+  ;; SLOT is a slot-definition, not a slot name.
+  (when (slot-index slot)
+    (let ((index (rucksack-slot-index rucksack class slot
+                                      :errorp nil
+                                      :include-superclasses t)))
+      (when index
+        (when old-boundp
+          (index-delete index old-value object
+                        :if-does-not-exist :ignore))
+        (when new-boundp
+          (index-insert index new-value object
+                        :if-exists (if (slot-unique slot)
+                                       :error
+                                     :overwrite)))))))
 
 
 (defmethod rucksack-slot-index ((rucksack standard-rucksack) class slot
