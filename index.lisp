@@ -1,4 +1,4 @@
-;; $Id: index.lisp,v 1.11 2008-01-22 15:59:24 alemmens Exp $
+;; $Id: index.lisp,v 1.12 2008-02-19 22:44:05 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -104,8 +104,13 @@ either :IGNORE (default) or :ERROR."))
               (funcall function equal value)
             ;; We have a persistent list of values: call FUNCTION for
             ;; each element of that list.
-            (p-mapc (lambda (elt) (funcall function equal elt))
-                    value))))
+            (etypecase value
+              ((or null persistent-cons)
+               (p-mapc (lambda (elt) (funcall function equal elt))
+                       value))
+              (persistent-object-set
+               (map-set-btree value
+                              (lambda (elt) (funcall function equal elt))))))))
     (apply #'map-btree index function :order order args)))
 
 
@@ -193,16 +198,27 @@ either :OVERWRITE (default) or :ERROR."
 (eval-when (:compile-toplevel :load-toplevel :execute)
 
   (define-index-spec :number-index
-                     '(btree :key< < :value= p-eql))
+                     '(btree :key< <
+                             :value= p-eql
+                             :value-type persistent-object))
 
   (define-index-spec :string-index
-                     '(btree :key< string< :value= p-eql :key-type string))
+                     '(btree :key< string<
+                             :value= p-eql
+                             :value-type persistent-object
+                             :key-type string))
 
   (define-index-spec :symbol-index
-                     '(btree :key< string< :value= p-eql :key-type symbol))
+                     '(btree :key< string<
+                             :value= p-eql
+                             :value-type persistent-object
+                             :key-type symbol))
 
   (define-index-spec :case-insensitive-string-index
-                     '(btree :key< string-lessp :value= p-eql :key-type string))
+                     '(btree :key< string-lessp
+                             :value= p-eql
+                             :value-type persistent-object
+                             :key-type string))
 
   (define-index-spec :trimmed-string-index
                      ;; Like :STRING-INDEX, but with whitespace trimmed left
@@ -210,4 +226,5 @@ either :OVERWRITE (default) or :ERROR."
                      '(btree :key< string<
                              :key-key trim-whitespace
                              :value= p-eql
+                             :value-type persistent-object
                              :key-type string)))

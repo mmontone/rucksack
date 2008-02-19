@@ -1,4 +1,4 @@
-;; $Id: package.lisp,v 1.13 2008-02-11 12:47:52 alemmens Exp $
+;; $Id: package.lisp,v 1.14 2008-02-19 22:44:06 alemmens Exp $
 
 #-(or allegro lispworks sbcl openmcl)
   (error "Unsupported implementation: ~A" (lisp-implementation-type))
@@ -32,7 +32,9 @@
    #:object-id
    #:p-cons #:p-array
    #:p-eql
-   #:p-car #:p-cdr #:p-list
+   #:p-car #:p-cdr #:p-list #:p-last
+   #:p-endp #:p-consp
+   #:p-caar #:p-cadr #:p-cdar #:p-cddr
    #:unwrap-persistent-list
    #:p-mapcar #:p-mapc #:p-maplist #:p-mapl
    #:p-member-if

@@ -1,4 +1,4 @@
-;; $Id: p-btrees.lisp,v 1.18 2008-02-11 12:47:52 alemmens Exp $
+;; $Id: p-btrees.lisp,v 1.19 2008-02-19 22:44:06 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -9,6 +9,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Btrees: API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+#|
+
+This is a modified version of the in-memory btrees.  We use p-arrays,
+p-conses and persistent-objects.
+
+Basically, a B-tree is a balanced multi-way tree.
+
+The reason for using multi-way trees instead of binary trees is that
+the nodes are expected to be on disk; it would be inefficient to have
+to execute a disk operation for each tree node if it contains only 2
+keys.
+
+The key property of B-trees is that each possible search path has the same
+length, measured in terms of nodes.
+|#
 
 #|
    ;; Btrees
@@ -127,25 +143,41 @@ right if INCLUDE-MAX is true (and exclusive on the right otherwise).
 ORDER is either :ASCENDING (default) or :DESCENDING."))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; B-trees
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Set btrees
+;;
+;; A 'set btree' is a special kind of btree that's used to implement sets.
+;; With set btrees, the 'value' part of a btree binding is irrelevant, because
+;; all information is in the keys themselves.
+;;
 
-#|
+(defgeneric set-btree-insert (set value)
+  (:documentation "Add a value to a set-btree.  This will modify the
+set-btree."))
 
-This is a modified version of the in-memory btrees.  We use p-arrays,
-p-conses and persistent-objects.
+(defgeneric set-btree-delete (set value &key if-does-not-exist)
+  (:documentation "Removes a value from a set-btree and returns the
+modified set-btree.  If the value is not present in the set, this
+function signals an error if IF-DOES-NOT-EXIST is :ERROR (if
+IF-DOES-NOT-EXIST is :IGNORE, it returns nil)."))
 
-Basically, a B-tree is a balanced multi-way tree.
+(defgeneric set-btree-search (set value &key errorp default-value)
+  (:documentation
+   "Returns VALUE if it is present in the btree-set SET.  Otherwise
+the result depends on the ERRORP option: if ERRORP is true, a
+btree-search-error is signalled; otherwise, DEFAULT-VALUE is
+returned."))
 
-The reason for using multi-way trees instead of binary trees is that
-the nodes are expected to be on disk; it would be inefficient to have
-to execute a disk operation for each tree node if it contains only 2
-keys.
+(defgeneric map-set-btree (set function)
+  (:documentation
+   "Calls a unary function for each value in a btree-set."))
 
-The key property of B-trees is that each possible search path has the same
-length, measured in terms of nodes.
-|#
+(defgeneric set-btree-empty-p (set)
+  (:documentation "Returns true iff a btree-set is empty."))
+
+(defgeneric set-count (set)
+  (:documentation "Returns the number of values in a btree-set."))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Conditions
@@ -213,7 +245,9 @@ maximum number of keys per btree node.")
                   :reader btree-unique-keys-p
                   :initform t
                   :documentation
-                  "If false, one key can correspond to more than one value.")
+                  "If false, one key can correspond to more than one value.
+In that case, the values are assumed to be objects for which the function
+OBJECT-ID is defined (and returns a unique integer).")
    (key-type :initarg :key-type
              :reader btree-key-type
              :initform t
@@ -323,8 +357,65 @@ the index vector.")
   (:metaclass persistent-class))
 
 
+(defmethod initialize-instance :after ((node bnode)
+                                       &key btree &allow-other-keys)
+  (setf (bnode-bindings node) (p-make-array (* 2 (btree-max-node-size btree))
+                                            :initial-element nil)
+        (bnode-nr-bindings node) 0))
+
+
+(defmethod print-object ((node bnode) stream)
+  (print-unreadable-object (node stream :type t :identity t)
+    (format stream "with ~D bindings" (bnode-nr-bindings node))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Set btrees
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defclass set-btree (btree)
+  ()
+  (:default-initargs
+   ;; We use a special bnode class because we don't care about the binding
+   ;; values (so we can optimize them away later).
+   :node-class 'set-bnode
+   ;; We use small nodes, because we expect relatively many sets
+   ;; with only a few elements.
+   :max-node-size 8
+   ;; The keys of a set-btree are unique (otherwise it wouldn't be a set
+   ;; but a bag).
+   :unique-keys-p t)
+  (:metaclass persistent-class)
+  (:documentation "A persistent set of objects, implemented as a btree."))
+
+(defclass set-bnode (bnode)
+  ()
+  (:metaclass persistent-class)
+  (:documentation "A special kind of btree node, used to implement set btrees."))
+
+
+;; Sets of persistent objects are implemented as set-btrees.  They're
+;; used to represent the values of a btree that maps slot values to
+;; one or more persistent objects (i.e. they're used for non-unique
+;; slot indexes). They can also be used separately.
+
+(defclass persistent-object-set (set-btree)
+  ()
+  (:default-initargs
+   ;; For sets of persistent-objects we store the objects as keys,
+   ;; but we use the object-ids to compare keys.
+   :key-key 'object-id)
+  (:metaclass persistent-class)
+  (:documentation "A persistent set of persistent-objects, implemented
+as a btree."))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Some info functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;;
-;; Info functions
+;; Counting keys or values
 ;;
 
 (defmethod btree-nr-keys ((btree btree))
@@ -344,14 +435,71 @@ the index vector.")
       (btree-nr-keys btree)
     (let ((result 0))
       (map-btree-keys btree
-                      (lambda (key p-values)
+                      (lambda (key set)
                         (declare (ignore key))
-                        (incf result (p-length p-values))))
+                        (incf result
+                              (etypecase set
+                                (persistent-object-set (set-count set))
+                                (persistent-cons (p-length set))
+                                (null 0)))))
       result)))
 
 ;;
+;; Depth and balance
+;;
+
+(defmethod node-max-depth ((node bnode))
+  (if (bnode-leaf-p node)
+      0
+    (loop for i below (bnode-nr-bindings node)
+          for binding = (node-binding node i)
+          maximize (1+ (node-max-depth (binding-value binding))))))
+
+(defmethod node-min-depth ((node bnode))
+  (if (bnode-leaf-p node)
+      0
+    (loop for i below (bnode-nr-bindings node)
+          for binding = (node-binding node i)
+          minimize (1+ (node-min-depth (binding-value binding))))))
+
+(defmethod btree-depths ((btree btree))
+  (if (slot-value btree 'root)
+      (values (node-min-depth (btree-root btree))
+              (node-max-depth (btree-root btree)))
+    (values 0 0)))
+
+(defmethod btree-balanced-p ((btree btree))
+  (multiple-value-bind (min max)
+      (btree-depths btree)
+    (<= (- max min) 1)))
+
+
+;;
+;; Debugging
+;;
+
+(defun display-node (node)
+  (pprint (node-as-cons node)))
+
+(defun node-as-cons (node &optional (unique-keys t))
+  (loop with leaf-p = (bnode-leaf-p node)
+        for i below (bnode-nr-bindings node)
+        for value = (node-binding-value node i)
+        collect (list (node-binding-key node i)
+                      (if leaf-p
+                          (if unique-keys
+                              value
+                            (unwrap-persistent-list value))
+                        (node-as-cons value)))))
+
+(defun btree-as-cons (btree)
+  (and (slot-value btree 'root)
+       (node-as-cons (btree-root btree) (btree-unique-keys-p btree))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Bindings
-;; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defstruct binding
   key
@@ -396,72 +544,39 @@ the index vector.")
       value
     (p-cons value '())))
 
-;;
-;;
 
-(defmethod initialize-instance :after ((node bnode)
-                                       &key btree &allow-other-keys)
-  (setf (bnode-bindings node) (p-make-array (* 2 (btree-max-node-size btree))
-                                            :initial-element nil)
-        (bnode-nr-bindings node) 0))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Set btrees and persistent object sets: implementation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defmethod set-btree-insert ((set set-btree) value)
+  (btree-insert set value nil :if-exists :overwrite))
 
-(defmethod print-object ((node bnode) stream)
-  (print-unreadable-object (node stream :type t :identity t)
-    (format stream "with ~D bindings" (bnode-nr-bindings node))))
+(defmethod set-btree-delete ((set set-btree) value &key (if-does-not-exist nil))
+  (btree-delete-key set value :if-does-not-exist if-does-not-exist))
 
-;;
-;; Debugging
-;;
+(defmethod set-btree-search ((set set-btree) value &key errorp default-value)
+  (btree-search set value
+                :errorp errorp
+                :default-value default-value))
 
-(defun display-node (node)
-  (pprint (node-as-cons node)))
+(defmethod map-set-btree ((set set-btree) function)
+  (map-btree-keys set
+                  (lambda (key value)
+                    (declare (ignore value))
+                    (funcall function key))))
 
-(defun node-as-cons (node &optional (unique-keys t))
-  (loop with leaf-p = (bnode-leaf-p node)
-        for i below (bnode-nr-bindings node)
-        for value = (node-binding-value node i)
-        collect (list (node-binding-key node i)
-                      (if leaf-p
-                          (if unique-keys
-                              value
-                            (unwrap-persistent-list value))
-                        (node-as-cons value)))))
+(defmethod set-btree-empty-p ((set set-btree))
+  (or (not (slot-boundp set 'root))
+      (let ((root (slot-value set 'root)))
+        (and (bnode-leaf-p root)
+             (= 0 (bnode-nr-bindings root))))))
 
-(defun btree-as-cons (btree)
-  (and (slot-value btree 'root)
-       (node-as-cons (btree-root btree) (btree-unique-keys-p btree))))
+(defmethod set-count ((set set-btree))
+  (btree-nr-values set))
 
-
-;;
-;; Depth and balance
-;;
-
-(defmethod node-max-depth ((node bnode))
-  (if (bnode-leaf-p node)
-      0
-    (loop for i below (bnode-nr-bindings node)
-          for binding = (node-binding node i)
-          maximize (1+ (node-max-depth (binding-value binding))))))
-
-(defmethod node-min-depth ((node bnode))
-  (if (bnode-leaf-p node)
-      0
-    (loop for i below (bnode-nr-bindings node)
-          for binding = (node-binding node i)
-          minimize (1+ (node-min-depth (binding-value binding))))))
-
-(defmethod btree-depths ((btree btree))
-  (if (slot-value btree 'root)
-      (values (node-min-depth (btree-root btree))
-              (node-max-depth (btree-root btree)))
-    (values 0 0)))
-
-(defmethod btree-balanced-p ((btree btree))
-  (multiple-value-bind (min max)
-      (btree-depths btree)
-    (<= (- max min) 1)))
-
+;; DO: Change the binding functions for SET-BTREES to optimize the values
+;; away.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search
@@ -829,12 +944,32 @@ plain vectors (so all indexes must be multiplied by 2)."
                         :key key
                         :value value))))
           ;; For non-unique keys, we ignore the :IF-EXISTS option and
-          ;; just add value to the list of values (unless value is already
+          ;; just add value to the set of values (unless value is already
           ;; there).
-          (unless (p-find value (node-binding-value leaf position)
-                          :test (btree-value= btree))
-            (setf (node-binding-value leaf position)
-                  (p-cons value (node-binding-value leaf position)))))
+          (let ((set (node-binding-value leaf position)))
+            (etypecase set
+              (persistent-object-set
+               (set-btree-insert set value))
+              (persistent-cons
+               (if (eql (btree-value-type btree) 'persistent-object)
+                   ;; The values are persistent objects, so we know we
+                   ;; can put them in a persistent-object-set.  Let's
+                   ;; do that, now we know that there are at least two
+                   ;; objects in the set.
+                   (let ((new-set (make-instance 'persistent-object-set)))
+                     (set-btree-insert new-set (p-car set))
+                     (set-btree-insert new-set value)
+                     (setf (node-binding-value leaf position) new-set))
+                 ;; We don't know anything about the values, so we have to
+                 ;; resort to a persistent list to store the values.  This
+                 ;; will lead to bad performance if few keys map to many
+                 ;; values, but we don't have much choice.
+                 ;; DO: Use set-btrees for other types for which we can come
+                 ;; up with some kind of ordering (like strings, numbers,
+                 ;; etcetera).
+                 (unless (p-find value set :test (btree-value= btree))
+                   (setf (node-binding-value leaf position)
+                         (p-cons value (node-binding-value leaf position)))))))))
        ;; The key doesn't exist yet. Create a new binding and add it to the
        ;; leaf index in the right position.
        (progn
@@ -891,22 +1026,26 @@ greater than KEY.  Returns nil if there is no such binding."
              ;; just delete the value from the list of values (unless it's
              ;; not there).
              (flet ((check (x) (funcall (btree-value= btree) x value)))
-               (let ((values (binding-value binding)))
-                 ;; EFFICIENCY: We walk the list twice now, which is not
-                 ;; necessary.  Write a special purpose function for this
-                 ;; instead of just using P-FIND and P-DELETE.
-                 (if (p-find value values :test (btree-value= btree))
-                     (if (null (p-cdr values))
-                         ;; This is the last value in the list: remove the
-                         ;; key.
-                         (btree-delete-key btree key)
-                       ;; There's more than one value in the list: delete the
-                       ;; value that must be deleted and keep the other values.
-                       (setf (node-binding-value node position)
-                             (p-delete-if #'check (binding-value binding)
-                                          :count 1)))
-                   ;; The value is not in the list: forget it.
-                   (forget-it)))))))))
+               (let ((set (binding-value binding)))
+                 (etypecase set
+                   (persistent-object-set
+                    (set-btree-delete set value :if-does-not-exist :ignore)
+                    (when (set-btree-empty-p set)
+                      ;; This was the last value in the set: remove the key.
+                      (btree-delete-key btree key)))
+                   ((or null persistent-cons)
+                    (if (p-find value set :test (btree-value= btree))
+                        (if (null (p-cdr set))
+                            ;; This is the last value in the list: remove the
+                            ;; key.
+                            (btree-delete-key btree key)
+                          ;; There's more than one value in the list: delete the
+                          ;; value that must be deleted and keep the other values.
+                          (setf (node-binding-value node position)
+                                (p-delete-if #'check (binding-value binding)
+                                             :count 1)))
+                      ;; The value is not in the list: forget it.
+                      (forget-it)))))))))))
 
 
 
@@ -1102,10 +1241,16 @@ RIGHT-NODE."
                       &key min max include-min include-max (order :ascending))
   (let ((fn (if (btree-unique-keys-p btree)
                 function
-              (lambda (key p-values)
+              (lambda (key set)
                 ;; Call FUNCTION once for each value associated with KEY.
-                (p-mapc (lambda (value) (funcall function key value))
-                        p-values)))))
+                (etypecase set
+                  (persistent-object-set
+                   (map-set-btree set
+                                  (lambda (value) (funcall function key value))))
+                  (persistent-cons
+                   (p-mapc (lambda (value) (funcall function key value))
+                           set))
+                  (null 'ignore))))))
     (map-btree-keys btree fn
                     :min min
                     :max max

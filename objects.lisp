@@ -1,4 +1,4 @@
-;; $Id: objects.lisp,v 1.21 2008-02-11 12:47:52 alemmens Exp $
+;; $Id: objects.lisp,v 1.22 2008-02-19 22:44:06 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -181,6 +181,9 @@ functions like P-CAR instead."))
 (defmethod p-car ((cons persistent-cons))
   (persistent-data-read #'car cons))
 
+(defmethod p-car ((x (eql nil)))
+  nil)
+
 (defmethod (setf p-car) (value (cons persistent-cons))
   (persistent-data-write (lambda (new-value contents)
                            (setf (car contents) new-value))
@@ -189,6 +192,9 @@ functions like P-CAR instead."))
 
 (defmethod p-cdr ((cons persistent-cons))
   (persistent-data-read #'cdr cons))
+
+(defmethod p-cdr ((x (eql nil)))
+  nil)
 
 (defmethod (setf p-cdr) (value (cons persistent-cons))
   (persistent-data-write (lambda (new-value contents)
@@ -212,6 +218,30 @@ functions like P-CAR instead."))
 ;; Other functions from chapter 14 of the spec.
 ;;
 
+(defun p-caar (object)
+  "The persistent equivalent of CAAR."
+  (p-car (p-car object)))
+
+(defun p-cadr (object)
+  "The persistent equivalenet of CADR."
+  (p-car (p-cdr object)))
+
+(defun p-cdar (object)
+  "The persistent equivalent of CDAR."
+  (p-cdr (p-car object)))
+
+(defun p-cddr (object)
+  "The persistent equivalent of CDDR."
+  (p-cdr (p-cdr object)))
+
+
+(defmethod p-consp ((object persistent-cons))
+  t)
+
+(defmethod p-consp ((object t))
+  nil)
+
+
 (defmethod p-endp ((object (eql nil)))
   t)
 
@@ -223,8 +253,19 @@ functions like P-CAR instead."))
          :datum object
          :expected-type '(or null persistent-cons)))
 
-(defmethod p-cddr ((cons persistent-cons))
-  (p-cdr (p-cdr cons)))
+
+(defun p-last (list &optional (n 1))
+  "Returns the last persistent cons cell of a persistent list (or
+NIL if the list is empty)."
+  (unless (= n 1)
+    ;; DO: Implement this case.
+    (error "The optional argument for P-LAST isn't implemented yet."))
+  (let ((result list)
+        (tail (p-cdr list)))
+    (loop until (p-endp tail)
+          do (shiftf result tail (p-cdr tail)))
+    result))
+
 
 (defun p-mapcar (function list)
   ;; DO: Accept more than one list argument.
