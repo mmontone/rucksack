@@ -1,3 +1,9 @@
+* 2008-03-02 - version 0.1.18
+
+Fix a bug in RUCKSACK-DO-SLOT: it didn't work correctly when
+the EQUAL argument wasn't supplied.
+
+
 * 2008-02-11 - version 0.1.16
 
 Created new doc directory and added tutorial by Brad Beveridge.
