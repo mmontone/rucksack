@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.24 2008-02-11 12:47:52 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.25 2008-03-02 22:29:05 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -187,6 +187,7 @@ do more filtering before actually loading objects from disk.
   INCLUDE-SUBCLASSES defaults to T."))
 
 (defmacro rucksack-do-slot ((instance-var class slot
+                             &rest args
                              &key (rucksack '*rucksack*)
                              equal min max include-min include-max
                              order include-subclasses)
@@ -195,17 +196,12 @@ do more filtering before actually loading objects from disk.
 specified value. INSTANCE-VAR will be bound successively to each
 instance.  See the documentation of RUCKSACK-MAP-SLOT for more
 details."
+  (declare (ignorable equal min max include-min include-max order
+                      include-subclasses))
   (check-type instance-var symbol)
   `(rucksack-map-slot ,rucksack ,class ,slot
                       (lambda (,instance-var) ,@body)
-                      :equal ,equal
-                      :min ,min
-                      :max ,max
-                      :include-min ,include-min
-                      :include-max ,include-max
-                      :order ,order
-                      :include-subclasses ,include-subclasses))
-
+                      ,@(sans args ':rucksack)))
 
 
 #+later
