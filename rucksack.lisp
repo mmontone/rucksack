@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.25 2008-03-02 22:29:05 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.26 2008-03-31 18:51:50 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -516,13 +516,9 @@ already seems to contain a rucksack."
                           directory))
                   (:supersede
                    ;; Remove all rucksack files from the directory.
- 		   ;; DO: Only delete the files that Rucksack actually
-                   ;; uses.
- 		   (mapc #'delete-file
- 			 (directory (make-pathname :name :wild
- 						   :type :wild
- 						   :version :wild
- 						   :defaults directory)))
+                   (loop for file in (rucksack-files-in-directory directory)
+                         do (delete-file file))
+                   ;; And create a fresh rucksack.
  		   (apply #'make-instance class :directory directory args))
                   (:overwrite
                    ;; This is the normal case.
@@ -536,6 +532,15 @@ file is missing."
                 (:create
                  (ensure-directories-exist directory)
                  (apply #'make-instance class :directory directory args))))))))
+
+
+(defun rucksack-files-in-directory (directory-pathname)
+  "Returns a list with the pathnames of all Rucksack files
+in the specified directory."
+  (list (merge-pathnames "roots" directory-pathname)
+        (merge-pathnames "objects" directory-pathname)
+        (merge-pathnames "heap" directory-pathname)
+        (merge-pathnames "schemas" directory-pathname)))
 
 
 (defun close-rucksack (rucksack &key (commit t))
