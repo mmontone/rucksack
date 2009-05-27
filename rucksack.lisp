@@ -1,4 +1,4 @@
-;; $Id: rucksack.lisp,v 1.26 2008-03-31 18:51:50 alemmens Exp $
+;; $Id: rucksack.lisp,v 1.27 2009-05-27 14:26:25 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -319,6 +319,9 @@ in which it appears."))
             ;; Normal exit from the above block -- we selected the RETRY restart.
             ))))
 
+
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Rucksacks
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -331,19 +334,25 @@ in which it appears."))
   ((cache :reader rucksack-cache)
    (directory :initarg :directory :reader rucksack-directory)
    (roots :initform '()
-          :documentation
- "A list with the object ids of all root objects, i.e.  the objects
-from which the garbage collector can reach all live objects.")
+          :documentation "A list with the object ids of all root
+objects, i.e.  the objects from which the garbage collector can reach
+all live objects.")
    (roots-changed-p :initform nil :accessor roots-changed-p)
+   (highest-transaction-id :initform 0
+                           :accessor highest-transaction-id
+                           :type integer
+                           :documentation "The highest transaction ID
+in the entire rucksack.  This is saved together with the roots.")
    ;; Indexes
-   (class-index-table :documentation
- "The object id of a btree mapping class names to class indexes.  Each
-class index contains the ids of all instances from a class; it maps
-object ids to objects.")
-   (slot-index-tables :documentation
- "The object id of a btree mapping class names to slot index tables,
-where each slot index table is a btree mapping slot names to slot
-indexes.  Each slot index maps slot values to objects.")))
+   (class-index-table
+    :documentation "The object id of a btree mapping class names to
+class indexes.  Each class index contains the ids of all instances
+from a class; it maps object ids to objects.")
+   (slot-index-tables
+    :documentation "The object id of a btree mapping class names to
+slot index tables, where each slot index table is a btree mapping slot
+names to slot indexes.  Each slot index maps slot values to
+objects.")))
 
 (defmethod print-object ((rucksack rucksack) stream)
   (print-unreadable-object (rucksack stream :type t :identity t)
@@ -416,19 +425,25 @@ indexes.  Each slot index maps slot values to objects.")))
 
 
 (defun load-roots (rucksack)
-  ;; Read roots (i.e. object ids) from the roots file (if there is one).
-  ;; Also load the (object ids of the) class and slot index tables.
+  ;; Read roots (i.e. object ids) from the roots file (if there is
+  ;; one).  Also load the highest transaction id and the (object ids
+  ;; of the) class and slot index tables.
   (let ((roots-file (rucksack-roots-pathname rucksack)))
     (when (probe-file roots-file)
-      (destructuring-bind (root-list class-index slot-index)
+      (destructuring-bind (root-list class-index slot-index
+                                     &optional
+                                     ;; Added in version 0.1.20.
+                                     highest-transaction)
           (load-objects roots-file)
-        (with-slots (roots class-index-table slot-index-tables)
+        (with-slots (roots class-index-table slot-index-tables highest-transaction-id)
             rucksack
           (setf roots root-list)
           (when class-index
             (setf class-index-table class-index))
           (when slot-index
-            (setf slot-index-tables slot-index))))))
+            (setf slot-index-tables slot-index))
+          (when highest-transaction
+            (setf highest-transaction-id highest-transaction))))))
   rucksack)
 
 
@@ -437,7 +452,8 @@ indexes.  Each slot index maps slot values to objects.")))
                       (and (slot-boundp rucksack 'class-index-table)
                            (slot-value rucksack 'class-index-table))
                       (and (slot-boundp rucksack 'slot-index-tables)
-                           (slot-value rucksack 'slot-index-tables)))
+                           (slot-value rucksack 'slot-index-tables))
+                      (slot-value rucksack 'highest-transaction-id))
                 (rucksack-roots-pathname rucksack))
   (setf (roots-changed-p rucksack) nil))
 
@@ -577,6 +593,10 @@ in the specified directory."
   ;; Rollback the roots by loading them back from file.
   (load-roots rucksack)
   (setf (roots-changed-p rucksack) nil))
+
+;;
+;; Some small stuff
+;;
 
 (defmacro with-rucksack ((rucksack directory &rest args) &body body)
    `(let* ((*rucksack* *rucksack*)

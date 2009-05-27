@@ -1,4 +1,4 @@
-;; $Id: transactions.lisp,v 1.14 2008-01-16 15:08:21 alemmens Exp $
+;; $Id: transactions.lisp,v 1.15 2009-05-27 14:26:25 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -133,7 +133,7 @@ returns nil."))
                                 (rucksack standard-rucksack)
                                 &key &allow-other-keys)
   ;; Create new transaction.
-  (let* ((id (make-transaction-id cache))
+  (let* ((id (incf (highest-transaction-id rucksack)))
          (transaction (make-instance 'standard-transaction :id id)))
     ;; Add to open transactions.
     (open-transaction cache transaction)
@@ -234,10 +234,11 @@ at a time."))
   (let ((cache (rucksack-cache rucksack)))
     (finish-heap-output (heap cache))
     (finish-heap-output (object-table (heap cache)))
-    ;; NOTE: I'm not totally sure that saving the roots and schema table
-    ;; for each transaction commit is necessary, but it probably is.  So
-    ;; let's play safe for now.
-    (save-roots-if-necessary rucksack)
+    ;; NOTE: I'm not totally sure that saving the schema table for
+    ;; each transaction commit is necessary, but it probably is.  So
+    ;; let's play safe for now.  We definitely need to save the roots,
+    ;; because the highest transaction-id is part of the roots file.
+    (save-roots rucksack)
     (save-schema-table-if-necessary (schema-table cache))))
 
                                         

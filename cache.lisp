@@ -1,4 +1,4 @@
-;; $Id: cache.lisp,v 1.15 2008-02-11 12:47:52 alemmens Exp $
+;; $Id: cache.lisp,v 1.16 2009-05-27 14:26:25 alemmens Exp $
 
 (in-package :rucksack)
 
@@ -67,9 +67,7 @@ transactions."))
 cache."))
 
 
-(defgeneric make-transaction-id (cache)
-  (:documentation "Returns a new transaction ID.  The result is an
-integer greater than all previous IDs."))
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -137,17 +135,7 @@ very stupid about the objects it should try to keep in memory."))
             (pathname (heap-stream (heap cache)))
             (cache-count cache))))
 
- 
-(defmethod make-transaction-id ((cache standard-cache))
-  ;; This would allow for up to 100 transactions per millisecond
-  ;; The result is a bignum but it at least fits in 8 octets and
-  ;; can thus be serialized with SERIALIZE-BYTE-64.
-  (let ((timestamp (get-universal-time)))
-    (when (> timestamp (last-timestamp cache))
-      (setf (last-timestamp cache) timestamp
-            (transaction-id-helper cache) -1))
-    (+ (* timestamp 100000)
-       (mod (incf (transaction-id-helper cache)) 1000000))))
+
 
 ;;
 ;; Open/close/initialize
