@@ -1,10 +1,10 @@
-= Rucksack: a flexible, light weight, open source persistence library
-
 :author: Arthur Lemmens
 :email: alemmens@xs4all.nl
 :date: 2006-04-30
 
-(talk given at the ECLM 2006 in Hamburg)
+= Rucksack: a flexible, light weight, open source persistence library
+
+This is Arthur Lemmens' talk given at the ECLM 2006 in Hamburg
 
 :toc:
 
@@ -31,8 +31,6 @@ Rucksack is a persistence library for Common Lisp.  It's a bit similar
 to systems like AllegroCache or PLOB, but it's also different in some
 important respects.  Here are some of its features:
 
-=== PICTURE
-
  - Common Lisp only
  - 99% portable 
  - persistent conses, vectors, CLOS objects, ...
@@ -45,6 +43,7 @@ important respects.  Here are some of its features:
  - flexible architecture
  - not finished
 
+Also:
 
  - it's all written in Common Lisp
  - it's almost all portable, except for process locks and some MOP magic
@@ -70,8 +69,6 @@ important respects.  Here are some of its features:
 
 
 === THIS TALK
-
-==== PICTURE
 
  - serialization
    How do I get it on disk?
