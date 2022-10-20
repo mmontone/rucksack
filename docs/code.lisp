@@ -1,4 +1,7 @@
 (require :qbook)
 (require :rucksack)
 
-(qbook:publish-system-qbook :rucksack 'qbook:html-generator :output-directory #p"./rucksack-code/" :title "Rucksack code")
+(qbook:publish-system-qbook :rucksack 'qbook:html-generator
+			    :output-directory #p"./rucksack-code/"
+			    :title "Rucksack code"
+			    :highlight-syntax t)
