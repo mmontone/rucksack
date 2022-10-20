@@ -1,0 +1,46 @@
+<html
+  ><head
+    ><title
+      >Method (EXPAND-HEAP HEAP T)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (EXPAND-HEAP HEAP T)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod expand-heap ((heap heap) block-size)
+  ;; Creates (and initializes) a block of the specified size by expanding
+  ;; the heap.  The block is not hooked into the free list yet.  Returns
+  ;; the new block (but signals a continuable error if expanding the heap
+  ;; would make it exceed its maximum size.
+  (let ((new-block (heap-end heap))
+        (max-size (max-heap-size heap)))
+    (when (and max-size (&gt; (+ new-block block-size) max-size))
+      (cerror &quot;Ignore the maximum heap size and expand the heap anyway.&quot;
+              (format nil
+                      &quot;Can't expand the heap with ~D octets: it would grow beyond
+the specified maximum heap size of ~D octets.&quot;
+                      block-size
+                      max-size)))
+    ;;
+    (incf (heap-end heap) block-size)
+    ;; Initialize and return the new block.
+    (initialize-block new-block block-size heap)
+    new-block))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028EXPAND-HEAP_0020HEAP_0020T_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

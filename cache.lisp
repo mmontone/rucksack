@@ -66,13 +66,7 @@ transactions."))
   (:documentation "Applies a function to each open transaction in a
 cache."))
 
-
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; The cache
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;*** The cache
 
 (defclass cache ()
   ())
@@ -137,9 +131,7 @@ very stupid about the objects it should try to keep in memory."))
 
 
 
-;;
-;; Open/close/initialize
-;;
+;;;; **** Open/close/initialize
 
 (defvar *cache* nil)
 
@@ -220,9 +212,7 @@ very stupid about the objects it should try to keep in memory."))
                    (pathname (heap-stream (heap cache)))))
 
 
-;;
-;; Cache info
-;;
+;;;; **** Cache info
 
 (defmethod cache-count ((cache standard-cache))
   (+ (hash-table-count (objects cache))
@@ -236,9 +226,7 @@ very stupid about the objects it should try to keep in memory."))
 (defmethod cache-room ((cache cache))
   (- (cache-size cache) (cache-count cache)))
 
-;;
-;; Create/get/touch/delete
-;;
+;;;; **** Create/get/touch/delete
 
 (defmethod cache-create-object (object (cache standard-cache))
   ;; This is called by a before method on SHARED-INITIALIZE and
@@ -346,9 +334,7 @@ memory."
   (remhash object-id (objects cache)))
 
 
-;;
-;; Queue operations
-;;
+;;;; **** Queue operations
 
 (defmethod make-room-in-cache ((cache standard-cache))
   ;; We need to remove some objects from the in-memory cache (both
@@ -374,9 +360,7 @@ memory."
       (queue-remove queue))
     (queue-add queue object-id)))
 
-;;
-;; Queue operations for lazy caches
-;;
+;;;;***** Queue operations for lazy caches
 
 (defmethod make-room-in-cache ((cache lazy-cache))
   (clrhash (objects cache)))
@@ -386,9 +370,7 @@ memory."
   object-id)
 
 
-;;
-;; Open/close/map transactions
-;;
+;;;;**** Open/close/map transactions
 
 (defmethod open-transaction ((cache standard-cache) transaction)
   ;; Add to open transactions.
@@ -409,9 +391,7 @@ memory."
     (mapc function transactions)))
 
 
-;;
-;; Commit/rollback
-;;
+;;;;**** Commit/rollback
 
 (defmethod cache-rollback ((cache standard-cache))
   ;; Roll back by rolling back all transactions and removing
@@ -430,9 +410,7 @@ memory."
   ;; Save the schema table.
   (save-schema-table (schema-table cache)))
 
-;;
-;; Recovery
-;;
+;;;;**** Recovery
 
 (defmethod cache-recover ((cache standard-cache))
   ;; NOTE: This code assumes there's at most one partial commit
@@ -501,7 +479,3 @@ T if the object was already comitted, otherwise nil."))
                   ;; Keep trying older versions.
                   (setq younger block
                         block older)))))))))
-
-
-
-

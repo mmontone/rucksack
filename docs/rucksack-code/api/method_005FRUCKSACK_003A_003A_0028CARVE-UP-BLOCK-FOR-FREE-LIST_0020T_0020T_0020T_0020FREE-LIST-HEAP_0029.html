@@ -1,0 +1,53 @@
+<html
+  ><head
+    ><title
+      >Method (CARVE-UP-BLOCK-FOR-FREE-LIST T T T FREE-LIST-HEAP)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (CARVE-UP-BLOCK-FOR-FREE-LIST T T T FREE-LIST-HEAP)</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Carves up a block of the given size to build a free list for the
+specified size-class.  Returns the first block of the created free
+list.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod carve-up-block-for-free-list (size-class block size
+                                                    (heap free-list-heap))
+  &quot;Carves up a block of the given size to build a free list for the
+specified size-class.  Returns the first block of the created free
+list.&quot;
+  (let* ((sub-block-size (size-class-block-size size-class heap))
+         (nr-sub-blocks (floor size sub-block-size)))
+    ;; Create sub-blocks, each pointing to the next.
+    (loop for i below (1- nr-sub-blocks)
+          for sub-block from block by sub-block-size
+          do (let ((next-sub-block (+ sub-block sub-block-size)))
+               ;; Let the sub-block point to its neighbour.
+               (setf (block-header sub-block heap) next-sub-block)
+               (initialize-block sub-block sub-block-size heap)))
+    ;; Let the last sub-block point to the start of the free list.
+    (let ((last-block (+ block (* sub-block-size (1- nr-sub-blocks)))))
+      (setf (block-header last-block heap) (free-list-pointer size-class))
+      (initialize-block last-block sub-block-size heap))
+    ;;
+    block))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028CARVE-UP-BLOCK-FOR-FREE-LIST_0020T_0020T_0020T_0020FREE-LIST-HEAP_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

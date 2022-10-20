@@ -22,6 +22,34 @@
     >ADD-TO-QUEUE</a
   ></dt
 ><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028ALLOCATE-BLOCK_0020APPENDING-HEAP_0029.html"
+    >ALLOCATE-BLOCK</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028BLOCK-HEADER_0020T_0020FREE-LIST-HEAP_0029.html"
+    >BLOCK-HEADER</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028_0028SETF_0020BLOCK-HEADER_0029_0020T_0020T_0020FREE-LIST-HEAP_0029.html"
+    >SETF BLOCK-HEADER</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028BLOCK-HEADER-SIZE_0020FREE-LIST-HEAP_0029.html"
+    >BLOCK-HEADER-SIZE</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028_0028SETF_0020BLOCK-SIZE_0029_0020T_0020T_0020FREE-LIST-HEAP_0029.html"
+    >SETF BLOCK-SIZE</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028BLOCK-SIZE_0020T_0020SIMPLE-FREE-LIST-HEAP_0029.html"
+    >BLOCK-SIZE</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028BUFFER-COUNT_0020BUFFER_0029.html"
+    >BUFFER-COUNT</a
+  ></dt
+><dt
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028CACHE-COMMIT_0020STANDARD-CACHE_0029.html"
     >CACHE-COMMIT</a
   ></dt
@@ -65,6 +93,13 @@
   >Checks for transaction conflicts and signals a transaction conflict
 if necessary.</dd
 ><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028CARVE-UP-BLOCK-FOR-FREE-LIST_0020T_0020T_0020T_0020FREE-LIST-HEAP_0029.html"
+    >CARVE-UP-BLOCK-FOR-FREE-LIST</a
+  ></dt
+><dd
+  >Carves up a block of the given size to build a free list for the
+specified size-class.</dd
+><dt
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028CLASS-INDEX-TABLE_0020STANDARD-RUCKSACK_0029.html"
     >CLASS-INDEX-TABLE</a
   ></dt
@@ -73,12 +108,36 @@ if necessary.</dd
     >CLOSE-CACHE</a
   ></dt
 ><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028CLOSE-HEAP_0020HEAP_0029.html"
+    >CLOSE-HEAP</a
+  ></dt
+><dt
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028CLOSE-TRANSACTION_0020STANDARD-CACHE_0020T_0029.html"
     >CLOSE-TRANSACTION</a
   ></dt
 ><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028DEALLOCATE-BLOCK_0020T_0020FREE-LIST-HEAP_0029.html"
+    >DEALLOCATE-BLOCK</a
+  ></dt
+><dt
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028DELETE-RUCKSACK-ROOT_0020T_0020STANDARD-RUCKSACK_0029.html"
     >DELETE-RUCKSACK-ROOT</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028DESERIALIZE-BYTE_0020SERIALIZATION-BUFFER_0029.html"
+    >DESERIALIZE-BYTE</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028EXPAND-FREE-LIST_0020T_0020FREE-LIST-HEAP_0029.html"
+    >EXPAND-FREE-LIST</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028EXPAND-HEAP_0020HEAP_0020T_0029.html"
+    >EXPAND-HEAP</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028FIND-BLOCK_0020T_0020FREE-LIST-HEAP_0029.html"
+    >FIND-BLOCK</a
   ></dt
 ><dt
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028FIND-CONFLICTING-TRANSACTION_0020T_0020STANDARD-CACHE_0020STANDARD-TRANSACTION_0029.html"
@@ -89,8 +148,58 @@ if necessary.</dd
     >FINISH-ALL-OUTPUT</a
   ></dt
 ><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028FINISH-HEAP-OUTPUT_0020HEAP_0029.html"
+    >FINISH-HEAP-OUTPUT</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028FREE-LIST-EMPTY-P_0020T_0020FREE-LIST-HEAP_0029.html"
+    >FREE-LIST-EMPTY-P</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028FREE-LIST-INFO_0020T_0020FREE-LIST-HEAP_0029.html"
+    >FREE-LIST-INFO</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028FREE-LIST-START_0020FREE-LIST-HEAP_0029.html"
+    >FREE-LIST-START</a
+  ></dt
+><dd
+  >Returns the first block on the free list of the specified size class.</dd
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028_0028SETF_0020FREE-LIST-START_0029_0020T_0020FREE-LIST-HEAP_0029.html"
+    >SETF FREE-LIST-START</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028_0028SETF_0020HEAP-END_0029_0020AFTER_0020T_0020FREE-LIST-HEAP_0029.html"
+    >SETF HEAP-END</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028_0028SETF_0020HEAP-END_0029_0020AFTER_0020T_0020APPENDING-HEAP_0029.html"
+    >SETF HEAP-END</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028HEAP-INFO_0020FREE-LIST-HEAP_0029.html"
+    >HEAP-INFO</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028HEAP-SIZE_0020HEAP_0029.html"
+    >HEAP-SIZE</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028HEAP-START_0020APPENDING-HEAP_0029.html"
+    >HEAP-START</a
+  ></dt
+><dt
   ><a href="../api/method_005FCOMMON-LISP_003A_003A_0028INITIALIZE-INSTANCE_0020AFTER_0020STANDARD-CACHE_0029.html"
     >INITIALIZE-INSTANCE</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028LOAD-BUFFER_0020AFTER_0020SERIALIZATION-BUFFER_0020T_0020T_0029.html"
+    >LOAD-BUFFER</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028LOAD-HEAP-END_0020APPENDING-HEAP_0029.html"
+    >LOAD-HEAP-END</a
   ></dt
 ><dt
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028MAKE-ROOM-IN-CACHE_0020LAZY-CACHE_0029.html"
@@ -111,6 +220,14 @@ if necessary.</dd
 ><dt
   ><a href="../api/method_005FCOMMON-LISP_003A_003A_0028PRINT-OBJECT_0020STANDARD-CACHE_0020T_0029.html"
     >PRINT-OBJECT</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028RESET-ALLOCATION-COUNTER_0020HEAP_0029.html"
+    >RESET-ALLOCATION-COUNTER</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028RESET-BUFFER_0020BUFFER_0029.html"
+    >RESET-BUFFER</a
   ></dt
 ><dt
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-ADD-CLASS-INDEX_0020STANDARD-RUCKSACK_0020T_0029.html"
@@ -197,8 +314,31 @@ if necessary.</dd
     >RUCKSACK-UPDATE-SLOT-INDEXES</a
   ></dt
 ><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028SAVE-BUFFER_0020BUFFER_0020T_0029.html"
+    >SAVE-BUFFER</a
+  ></dt
+><dt
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028SAVE-DIRTY-OBJECT_0020T_0020STANDARD-CACHE_0020STANDARD-TRANSACTION_0020T_0029.html"
     >SAVE-DIRTY-OBJECT</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028SCAN-BYTE_0020SERIALIZATION-BUFFER_0029.html"
+    >SCAN-BYTE</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028SERIALIZE-BYTE_0020T_0020SERIALIZATION-BUFFER_0029.html"
+    >SERIALIZE-BYTE</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028SIZE-CLASS_0020T_0020FREE-LIST-HEAP_0029.html"
+    >SIZE-CLASS</a
+  ></dt
+><dd
+  >Returns the (zero-indexed) number of a free-list that has blocks
+with sizes at least as big as the specified size.</dd
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028SIZE-CLASS-BLOCK-SIZE_0020T_0020FREE-LIST-HEAP_0029.html"
+    >SIZE-CLASS-BLOCK-SIZE</a
   ></dt
 ><dt
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028SLOT-INDEX-TABLES_0020STANDARD-RUCKSACK_0029.html"

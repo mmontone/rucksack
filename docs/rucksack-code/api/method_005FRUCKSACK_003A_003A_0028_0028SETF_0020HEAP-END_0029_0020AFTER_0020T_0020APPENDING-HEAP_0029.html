@@ -1,0 +1,33 @@
+<html
+  ><head
+    ><title
+      >Method ((SETF HEAP-END) AFTER T APPENDING-HEAP)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: ((SETF HEAP-END) AFTER T APPENDING-HEAP)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod (setf heap-end) :after (end (heap appending-heap))
+  (let ((stream (heap-stream heap)))
+    (file-position stream end)
+    ;; Write new end to the end of the file.
+    (serialize-marker +positive-byte-48+ stream)
+    (serialize-byte-48 end stream)))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028_0028SETF_0020HEAP-END_0029_0020AFTER_0020T_0020APPENDING-HEAP_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

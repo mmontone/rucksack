@@ -1,0 +1,31 @@
+<html
+  ><head
+    ><title
+      >Method (BLOCK-SIZE T SIMPLE-FREE-LIST-HEAP)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (BLOCK-SIZE T SIMPLE-FREE-LIST-HEAP)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod block-size (block (heap simple-free-list-heap))
+  ;; Don't bother to actually read it.  All blocks have the same size anyway.
+  (declare (ignore block))
+  (min-block-size heap))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028BLOCK-SIZE_0020T_0020SIMPLE-FREE-LIST-HEAP_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

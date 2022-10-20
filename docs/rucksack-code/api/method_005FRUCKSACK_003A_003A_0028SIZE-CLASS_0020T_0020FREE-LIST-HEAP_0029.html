@@ -1,0 +1,44 @@
+<html
+  ><head
+    ><title
+      >Method (SIZE-CLASS T FREE-LIST-HEAP)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (SIZE-CLASS T FREE-LIST-HEAP)</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Returns the (zero-indexed) number of a free-list that has blocks
+with sizes at least as big as the specified size.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod size-class (size (heap free-list-heap))
+  &quot;Returns the (zero-indexed) number of a free-list that has blocks
+with sizes at least as big as the specified size.&quot;
+  ;; Assuming a min-block-size of 16, we want:
+  ;; - class 0 for blocks of 1..16
+  ;; - class 1 for blocks of 17..32
+  ;; - class 2 for blocks of 33..64
+  ;; - etc.
+  ;; So we subtract 1, shift right by 3 and then look at the most
+  ;; significant 1 bit.
+  (integer-length (ash (1- size)
+                       (- 1 (integer-length (min-block-size heap))))))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028SIZE-CLASS_0020T_0020FREE-LIST-HEAP_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

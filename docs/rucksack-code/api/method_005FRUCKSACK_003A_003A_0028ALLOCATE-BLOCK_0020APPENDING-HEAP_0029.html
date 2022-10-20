@@ -1,0 +1,34 @@
+<html
+  ><head
+    ><title
+      >Method (ALLOCATE-BLOCK APPENDING-HEAP)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (ALLOCATE-BLOCK APPENDING-HEAP)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod allocate-block ((heap appending-heap) &amp;key size &amp;allow-other-keys)
+  (let ((block (heap-end heap)))
+    ;; Put block size (including the size of header) into header.
+    (setf (block-size block heap) size)
+    ;;
+    (incf (heap-end heap) size)
+    (values block size)))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028ALLOCATE-BLOCK_0020APPENDING-HEAP_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

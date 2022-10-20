@@ -1,0 +1,31 @@
+<html
+  ><head
+    ><title
+      >Method (HEAP-START FREE-LIST-HEAP)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (HEAP-START FREE-LIST-HEAP)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod heap-start ((heap free-list-heap))
+  ;; A free-list-heap starts with an array of pointers to the first element
+  ;; of each free list; the heap blocks start after that array.
+  (free-list-pointer (nr-free-lists heap)))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028HEAP-START_0020FREE-LIST-HEAP_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

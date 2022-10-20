@@ -1,0 +1,37 @@
+<html
+  ><head
+    ><title
+      >Method (FIND-BLOCK T FREE-LIST-HEAP)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (FIND-BLOCK T FREE-LIST-HEAP)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod find-block (min-size (heap free-list-heap))
+  ;; Tries to find a block of a size that's at least the specified
+  ;; minimum size.  If there is such a block, the block and the
+  ;; block's size are returned.  Otherwise it returns nil.
+  (let ((size-class (size-class min-size heap)))
+    (loop for size-class from size-class below (nr-free-lists heap)
+          do (let ((block (allocate-block heap :size min-size :expand nil)))
+               (when block
+                 (return (values block
+                                 (size-class-block-size size-class heap))))))))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028FIND-BLOCK_0020T_0020FREE-LIST-HEAP_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

@@ -1,0 +1,50 @@
+<html
+  ><head
+    ><title
+      >Method (LOAD-BUFFER BUFFER T T)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (LOAD-BUFFER BUFFER T T)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod load-buffer ((buffer buffer) stream nr-octets
+                        &amp;key file-position eof-error-p)
+  (with-slots (contents)
+      buffer
+    ;; If the buffer isn't big enough, make a bigger buffer.
+    ;; We can't use LENGTH instead of ARRAY-DIMENSION, because
+    ;; LENGTH looks at the fill pointer instead of the entire
+    ;; buffer.
+    (when (&lt; (array-dimension contents 0) nr-octets)
+      (setf contents
+            (make-array nr-octets
+                        :adjustable t
+                        :fill-pointer 0
+                        :element-type '(unsigned-byte 8))))
+    ;;
+    (when file-position
+      (file-position stream file-position))
+    (setf (fill-pointer contents) nr-octets)
+    (when (and (&lt; (read-sequence contents stream :end nr-octets) nr-octets)
+               eof-error-p)
+      (error &quot;Unexpected end of file while loading a buffer of ~D octets.&quot;
+             nr-octets)))
+  buffer)</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028LOAD-BUFFER_0020BUFFER_0020T_0020T_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

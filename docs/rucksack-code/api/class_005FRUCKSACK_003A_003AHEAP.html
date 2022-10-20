@@ -1,0 +1,101 @@
+<html
+  ><head
+    ><title
+      >Class HEAP</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Class: HEAP</h1
+        ><div class="contents"
+          ><h2
+  >Slots</h2
+><ul class="slots"
+  ><li
+  ><em
+    >STREAM</em
+  ></li
+><li
+  ><em
+    >CELL-BUFFER</em
+  ></li
+><li
+  ><em
+    >END</em
+  ><p class="slot-description"
+  >The end of the heap.  For free-list heaps, this number
+is stored in the first heap cell. For appending heaps, it's stored in the
+end of the file.</p
+></li
+><li
+  ><em
+    >MAX-SIZE</em
+  ><p class="slot-description"
+  >The maximum size (in octets) for the heap.
+If nil, the heap is allowed to expand indefinitely.</p
+></li
+><li
+  ><em
+    >NR-ALLOCATED-OCTETS</em
+  ><p class="slot-description"
+  >The number of octets that have been
+allocated by ALLOCATE-BLOCK since the last time that RESET-ALLOCATION-COUNTER
+was called.</p
+></li
+></ul
+><h2
+  >Hierachy</h2
+><h3
+  >Precedence List</h3
+><ul
+  ><li
+  >STANDARD-OBJECT</li
+></ul
+><h3
+  >Sub Classes</h3
+><ul
+  ><li
+  ><a href="../api/class_005FRUCKSACK_003A_003AAPPENDING-HEAP.html"
+  >APPENDING-HEAP</a
+></li
+><li
+  ><a href="../api/class_005FRUCKSACK_003A_003AFREE-LIST-HEAP.html"
+  >FREE-LIST-HEAP</a
+></li
+></ul
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defclass heap ()
+  ((stream :initarg :stream :accessor heap-stream)
+   (cell-buffer :initform (make-array +pointer-size+
+                                      :element-type '(unsigned-byte 8))
+                ;; Just a buffer for 1 cell.
+                :reader cell-buffer)
+   (end :accessor heap-end
+        :documentation &quot;The end of the heap.  For free-list heaps, this number
+is stored in the first heap cell. For appending heaps, it's stored in the
+end of the file.&quot;)
+   (max-size :initarg :max-size
+             :initform nil :accessor max-heap-size
+             :documentation &quot;The maximum size (in octets) for the heap.
+If nil, the heap is allowed to expand indefinitely.&quot;)
+   (nr-allocated-octets :initform 0
+                        :accessor nr-allocated-octets
+                        :documentation &quot;The number of octets that have been
+allocated by ALLOCATE-BLOCK since the last time that RESET-ALLOCATION-COUNTER
+was called.&quot;)))</code
+            ></pre
+          ><a href="../Rucksack.html#class_005FRUCKSACK_003A_003AHEAP"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

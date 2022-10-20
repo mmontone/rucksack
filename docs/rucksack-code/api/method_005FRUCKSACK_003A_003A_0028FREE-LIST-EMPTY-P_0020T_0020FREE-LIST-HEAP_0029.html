@@ -1,0 +1,31 @@
+<html
+  ><head
+    ><title
+      >Method (FREE-LIST-EMPTY-P T FREE-LIST-HEAP)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (FREE-LIST-EMPTY-P T FREE-LIST-HEAP)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod free-list-empty-p (size-class (heap free-list-heap))
+  ;; A free list is empty when the start points to itself.
+  (let ((start (free-list-start heap size-class)))
+    (= start (free-list-pointer size-class))))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028FREE-LIST-EMPTY-P_0020T_0020FREE-LIST-HEAP_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

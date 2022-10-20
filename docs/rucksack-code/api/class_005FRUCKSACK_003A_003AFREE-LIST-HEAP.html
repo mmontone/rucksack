@@ -1,0 +1,108 @@
+<html
+  ><head
+    ><title
+      >Class FREE-LIST-HEAP</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Class: FREE-LIST-HEAP</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >This heap uses a 'segregated free list' system: the
+first list contains 16-octet blocks (including the header), the second
+list contains 32-octet blocks, the third has 64-octet blocks, etc.  When
+there are N free lists, the last is for blocks of 16*2^(N-1) octets.
+
+Each block starts with an 8-octet header.  If a block is in use, the
+header contains the block's size.  If a block is still free, the header
+contains a pointer to the next block on the same free list.</blockquote
+><h2
+  >Slots</h2
+><ul class="slots"
+  ><li
+  ><em
+    >NR-FREE-LISTS</em
+  ></li
+><li
+  ><em
+    >STARTS</em
+  ><p class="slot-description"
+  >An array with the starts of each free-list.  This
+is an in-memory version of the array that's in the beginning of the heap.</p
+></li
+><li
+  ><em
+    >MIN-BLOCK-SIZE</em
+  ><p class="slot-description"
+  >The size of the smallest blocks.  This must
+be a power of 2.</p
+></li
+><li
+  ><em
+    >EXPANSION-SIZE</em
+  ><p class="slot-description"
+  >The minimum number of bytes that will be
+used to expand a free-list.</p
+></li
+></ul
+><h2
+  >Hierachy</h2
+><h3
+  >Precedence List</h3
+><ul
+  ><li
+  ><a href="../api/class_005FRUCKSACK_003A_003AHEAP.html"
+  >HEAP</a
+></li
+></ul
+><h3
+  >Sub Classes</h3
+><ul
+  ><li
+  >MARK-AND-SWEEP-HEAP</li
+><li
+  ><a href="../api/class_005FRUCKSACK_003A_003ASIMPLE-FREE-LIST-HEAP.html"
+  >SIMPLE-FREE-LIST-HEAP</a
+></li
+></ul
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defclass free-list-heap (heap)
+  ((nr-free-lists :initarg :nr-free-lists :initform 32 :reader nr-free-lists)
+   (starts :documentation &quot;An array with the starts of each free-list.  This
+is an in-memory version of the array that's in the beginning of the heap.&quot;)
+   (min-block-size :initarg :min-block-size
+                   :initform 16 :reader min-block-size
+                   :documentation &quot;The size of the smallest blocks.  This must
+be a power of 2.&quot;)
+   (expansion-size :initarg :expansion-size
+                   :initform (* 32 1024) :reader expansion-size
+                   :documentation &quot;The minimum number of bytes that will be
+used to expand a free-list.&quot;))
+
+  (:documentation &quot;This heap uses a 'segregated free list' system: the
+first list contains 16-octet blocks (including the header), the second
+list contains 32-octet blocks, the third has 64-octet blocks, etc.  When
+there are N free lists, the last is for blocks of 16*2^(N-1) octets.
+
+Each block starts with an 8-octet header.  If a block is in use, the
+header contains the block's size.  If a block is still free, the header
+contains a pointer to the next block on the same free list.&quot;))</code
+            ></pre
+          ><a href="../Rucksack.html#class_005FRUCKSACK_003A_003AFREE-LIST-HEAP"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

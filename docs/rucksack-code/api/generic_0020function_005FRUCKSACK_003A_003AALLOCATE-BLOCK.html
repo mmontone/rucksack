@@ -1,0 +1,47 @@
+<html
+  ><head
+    ><title
+      >Generic Function ALLOCATE-BLOCK</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Generic Function: ALLOCATE-BLOCK</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Allocates a block of the requested size and returns
+the heap position of that block.  If the free list is full and EXPAND
+is true, the system will try to expand the free list; otherwise it
+returns nil.
+  As a second value, ALLOCATE-BLOCK returns the number of octets that
+were allocated.
+Note: both the requested size and the returned heap position include
+the block's header.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defgeneric allocate-block (heap &amp;key size expand)
+  (:documentation &quot;Allocates a block of the requested size and returns
+the heap position of that block.  If the free list is full and EXPAND
+is true, the system will try to expand the free list; otherwise it
+returns nil.
+  As a second value, ALLOCATE-BLOCK returns the number of octets that
+were allocated.
+Note: both the requested size and the returned heap position include
+the block's header.&quot;))</code
+            ></pre
+          ><a href="../Rucksack.html#generic_0020function_005FRUCKSACK_003A_003AALLOCATE-BLOCK"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

@@ -1,0 +1,38 @@
+<html
+  ><head
+    ><title
+      >Method (DESERIALIZE-BYTE SERIALIZATION-BUFFER)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (DESERIALIZE-BYTE SERIALIZATION-BUFFER)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod deserialize-byte ((stream serialization-buffer)
+                             &amp;optional (eof-error-p t))
+  (with-slots (contents scan-pointer)
+      stream
+    (if (&lt; scan-pointer (length contents))
+        (let ((result (aref contents scan-pointer)))
+          (incf scan-pointer)
+          result)
+      (and eof-error-p
+           (error &quot;Unexpected end of serialization buffer at ~D.&quot;
+                  scan-pointer)))))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028DESERIALIZE-BYTE_0020SERIALIZATION-BUFFER_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

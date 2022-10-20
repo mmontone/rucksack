@@ -1,0 +1,39 @@
+<html
+  ><head
+    ><title
+      >Method (FREE-LIST-INFO T FREE-LIST-HEAP)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (FREE-LIST-INFO T FREE-LIST-HEAP)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod free-list-info (size-class (heap free-list-heap))
+  (let ((start (free-list-pointer size-class))
+        (block-size (size-class-block-size size-class heap)))
+    #+debug (format t &quot;~%~%Block size ~D: &quot; block-size)
+    (loop for block = start then (block-header block heap)
+          #+debug do #+debug (format t &quot;#x~X &quot; block)
+          until (eql (block-header block heap) start)
+          sum 1 into nr-blocks
+          sum block-size into total-block-size
+          finally (return (list :block-size block-size
+                                :nr-free-blocks nr-blocks
+                                :nr-free-octets total-block-size)))))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028FREE-LIST-INFO_0020T_0020FREE-LIST-HEAP_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

@@ -1,0 +1,41 @@
+<html
+  ><head
+    ><title
+      >Function OPEN-HEAP</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: OPEN-HEAP</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun open-heap (pathname
+                  &amp;key (class 'heap) rucksack (options '())
+                  (if-exists :overwrite) (if-does-not-exist :create))
+  (let ((stream (open pathname
+                      :element-type '(unsigned-byte 8)
+                      :direction :io
+                      :if-exists if-exists
+                      :if-does-not-exist if-does-not-exist
+                      #+openmcl :sharing #+openmcl :external)))
+    (apply #'make-instance
+           class
+           :stream stream
+           :rucksack rucksack
+           options)))</code
+            ></pre
+          ><a href="../Rucksack.html#function_005FRUCKSACK_003A_003AOPEN-HEAP"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

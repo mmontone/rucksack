@@ -1,0 +1,37 @@
+<html
+  ><head
+    ><title
+      >Method (HEAP-INFO FREE-LIST-HEAP)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (HEAP-INFO FREE-LIST-HEAP)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod heap-info ((heap free-list-heap))
+  ;; Returns the total number of free octets in the heap.
+  ;; As a second value it returns a list with, for each free list
+  ;; that is not empty, a plist with info about that free list.
+  (let* ((info (loop for size-class below (nr-free-lists heap)
+                     unless (free-list-empty-p size-class heap)
+                     collect (free-list-info size-class heap)))
+         (total (loop for plist in info
+                      sum (or (getf plist :nr-free-octets) 0))))
+    (values total info)))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028HEAP-INFO_0020FREE-LIST-HEAP_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

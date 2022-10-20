@@ -1,0 +1,42 @@
+<html
+  ><head
+    ><title
+      >Method (DEALLOCATE-BLOCK T FREE-LIST-HEAP)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (DEALLOCATE-BLOCK T FREE-LIST-HEAP)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod deallocate-block (block (heap free-list-heap))
+  ;; Push the block on the front of its free list.
+  (let* ((size (block-size block heap))
+         (size-class (size-class size heap)))
+    (if (free-list-empty-p size-class heap)
+        ;; Let free list start point to the block and vice versa.
+        (setf (block-header block heap) (free-list-pointer size-class)
+              (free-list-start heap size-class) block)
+      ;; Normal case: let free list start point to the block,
+      ;; the block to the old block that the free list start pointed to.
+      (let ((old-first-block (free-list-start heap size-class)))
+        (setf (block-header block heap) old-first-block
+              (free-list-start heap size-class) block)))
+    ;;
+    (initialize-block block size heap)))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028DEALLOCATE-BLOCK_0020T_0020FREE-LIST-HEAP_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

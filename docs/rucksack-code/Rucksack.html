@@ -967,7 +967,7 @@ in the specified directory.</p
   >prev</a
 > | <a class="nav-link" href="Rucksack.html"
   >up</a
-> | <a href="Rucksack.html#Transactions"
+> | <a href="Rucksack.html#Heaps"
   >next</a
 > | <a href="index.html"
     >toc</a
@@ -993,15 +993,744 @@ in the specified directory.</p
 
 
 <h3
-  ><a name="Transactions"
-  >Transactions</a
+  ><a name="Heaps"
+  >Heaps</a
 >&nbsp;</h3
 ><div class="nav-links"
   ><a class="nav-link" href="Rucksack.html#Deleting_0020objects"
   >prev</a
 > | <a class="nav-link" href="Rucksack.html"
   >up</a
+> | <a href="Rucksack.html#API"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<h4
+  ><a name="API"
+  >API</a
+>&nbsp;</h4
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Heaps"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Heaps"
+  >up</a
+> | <a href="Rucksack.html#Implementation"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003AHEAP-STREAM.html" name="generic_0020function_005FRUCKSACK_003A_003AHEAP-STREAM"
+      >Generic Function HEAP-STREAM</a
+    > Returns the heap's stream.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003AHEAP-START.html" name="generic_0020function_005FRUCKSACK_003A_003AHEAP-START"
+      >Generic Function HEAP-START</a
+    > Returns the position of the first block in the heap.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003AHEAP-END.html" name="generic_0020function_005FRUCKSACK_003A_003AHEAP-END"
+      >Generic Function HEAP-END</a
+    > Returns the end of the heap.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003A_0028SETF_0020HEAP-END_0029.html" name="generic_0020function_005FRUCKSACK_003A_003A_0028SETF_0020HEAP-END_0029"
+      >Generic Function SETF HEAP-END</a
+    > Modifies the end of the heap.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003AALLOCATE-BLOCK.html" name="generic_0020function_005FRUCKSACK_003A_003AALLOCATE-BLOCK"
+      >Generic Function ALLOCATE-BLOCK</a
+    > Allocates a block of the requested size and returns
+the heap position of that block.</p
+  ></div
+>
+
+
+<h4
+  ><a name="Implementation"
+  >Implementation</a
+>&nbsp;</h4
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#API"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Heaps"
+  >up</a
+> | <a href="Rucksack.html#Open_002Fclose_002Finitialize"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-constant"
+  ><p
+    ><a class="descriptor constant" href="api/constant_005FRUCKSACK_003A_003A_002BPOINTER-SIZE_002B.html" name="constant_005FRUCKSACK_003A_003A_002BPOINTER-SIZE_002B"
+      >Constant +POINTER-SIZE+</a
+    > The number of octets for a heap pointer.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003AHEAP.html" name="class_005FRUCKSACK_003A_003AHEAP"
+      >Class HEAP</a
+    > </p
+  ></div
+>
+                        
+
+
+<h6
+  ><a name="Open_002Fclose_002Finitialize"
+  >Open/close/initialize</a
+>&nbsp;</h6
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Implementation"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Implementation"
+  >up</a
+> | <a href="Rucksack.html#Pointers"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AOPEN-HEAP.html" name="function_005FRUCKSACK_003A_003AOPEN-HEAP"
+      >Function OPEN-HEAP</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CLOSE-HEAP_0020HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028CLOSE-HEAP_0020HEAP_0029"
+      >Method (CLOSE-HEAP HEAP)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028FINISH-HEAP-OUTPUT_0020HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028FINISH-HEAP-OUTPUT_0020HEAP_0029"
+      >Method (FINISH-HEAP-OUTPUT HEAP)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028HEAP-SIZE_0020HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028HEAP-SIZE_0020HEAP_0029"
+      >Method (HEAP-SIZE HEAP)</a
+    > </p
+  ></div
+>
+
+<h6
+  ><a name="Pointers"
+  >Pointers</a
+>&nbsp;</h6
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Open_002Fclose_002Finitialize"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Implementation"
+  >up</a
+> | <a href="Rucksack.html#Heap_0020expansion"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003APOINTER-VALUE.html" name="function_005FRUCKSACK_003A_003APOINTER-VALUE"
+      >Function POINTER-VALUE</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003A_0028SETF_0020POINTER-VALUE_0029.html" name="function_005FRUCKSACK_003A_003A_0028SETF_0020POINTER-VALUE_0029"
+      >Function SETF POINTER-VALUE</a
+    > </p
+  ></div
+>
+
+<h6
+  ><a name="Heap_0020expansion"
+  >Heap expansion</a
+>&nbsp;</h6
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Pointers"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Implementation"
+  >up</a
+> | <a href="Rucksack.html#Tracking_0020of_0020allocations"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028EXPAND-HEAP_0020HEAP_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028EXPAND-HEAP_0020HEAP_0020T_0029"
+      >Method (EXPAND-HEAP HEAP T)</a
+    > </p
+  ></div
+>
+
+<h6
+  ><a name="Tracking_0020of_0020allocations"
+  >Tracking of allocations</a
+>&nbsp;</h6
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Heap_0020expansion"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Implementation"
+  >up</a
+> | <a href="Rucksack.html#Free_0020list_0020heap"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028ALLOCATE-BLOCK_0020AROUND_0020HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028ALLOCATE-BLOCK_0020AROUND_0020HEAP_0029"
+      >Method (ALLOCATE-BLOCK AROUND HEAP)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RESET-ALLOCATION-COUNTER_0020HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028RESET-ALLOCATION-COUNTER_0020HEAP_0029"
+      >Method (RESET-ALLOCATION-COUNTER HEAP)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-macro"
+  ><p
+    ><a class="descriptor macro" href="api/macro_005FRUCKSACK_003A_003AWITH-ALLOCATION-COUNTER.html" name="macro_005FRUCKSACK_003A_003AWITH-ALLOCATION-COUNTER"
+      >Macro WITH-ALLOCATION-COUNTER</a
+    > </p
+  ></div
+>
+
+<h5
+  ><a name="Free_0020list_0020heap"
+  >Free list heap</a
+>&nbsp;</h5
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Tracking_0020of_0020allocations"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Implementation"
+  >up</a
+> | <a href="Rucksack.html#Allocation"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003AFREE-LIST-HEAP.html" name="class_005FRUCKSACK_003A_003AFREE-LIST-HEAP"
+      >Class FREE-LIST-HEAP</a
+    > This heap uses a 'segregated free list' system: the
+first list contains 16-octet blocks (including the header), the second
+list contains 32-octet blocks, the third has 64-octet blo</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FCOMMON-LISP_003A_003A_0028INITIALIZE-INSTANCE_0020AFTER_0020FREE-LIST-HEAP_0029.html" name="method_005FCOMMON-LISP_003A_003A_0028INITIALIZE-INSTANCE_0020AFTER_0020FREE-LIST-HEAP_0029"
+      >Method (INITIALIZE-INSTANCE AFTER FREE-LIST-HEAP)</a
+    > </p
+  ></div
+>
+           
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AFREE-LIST-POINTER.html" name="function_005FRUCKSACK_003A_003AFREE-LIST-POINTER"
+      >Function FREE-LIST-POINTER</a
+    > Returns a pointer to the cell containing the free list start.</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028HEAP-START_0020FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028HEAP-START_0020FREE-LIST-HEAP_0029"
+      >Method (HEAP-START FREE-LIST-HEAP)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028_0028SETF_0020HEAP-END_0029_0020AFTER_0020T_0020FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028_0028SETF_0020HEAP-END_0029_0020AFTER_0020T_0020FREE-LIST-HEAP_0029"
+      >Method ((SETF HEAP-END) AFTER T FREE-LIST-HEAP)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028SIZE-CLASS_0020T_0020FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028SIZE-CLASS_0020T_0020FREE-LIST-HEAP_0029"
+      >Method (SIZE-CLASS T FREE-LIST-HEAP)</a
+    > Returns the (zero-indexed) number of a free-list that has blocks
+with sizes at least as big as the specified size.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028SIZE-CLASS-BLOCK-SIZE_0020T_0020FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028SIZE-CLASS-BLOCK-SIZE_0020T_0020FREE-LIST-HEAP_0029"
+      >Method (SIZE-CLASS-BLOCK-SIZE T FREE-LIST-HEAP)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028FREE-LIST-START_0020FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028FREE-LIST-START_0020FREE-LIST-HEAP_0029"
+      >Method (FREE-LIST-START FREE-LIST-HEAP)</a
+    > Returns the first block on the free list of the specified size class.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028_0028SETF_0020FREE-LIST-START_0029_0020T_0020FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028_0028SETF_0020FREE-LIST-START_0029_0020T_0020FREE-LIST-HEAP_0029"
+      >Method ((SETF FREE-LIST-START) T FREE-LIST-HEAP)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028FREE-LIST-EMPTY-P_0020T_0020FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028FREE-LIST-EMPTY-P_0020T_0020FREE-LIST-HEAP_0029"
+      >Method (FREE-LIST-EMPTY-P T FREE-LIST-HEAP)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028BLOCK-HEADER-SIZE_0020FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028BLOCK-HEADER-SIZE_0020FREE-LIST-HEAP_0029"
+      >Method (BLOCK-HEADER-SIZE FREE-LIST-HEAP)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028BLOCK-HEADER_0020T_0020FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028BLOCK-HEADER_0020T_0020FREE-LIST-HEAP_0029"
+      >Method (BLOCK-HEADER T FREE-LIST-HEAP)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028_0028SETF_0020BLOCK-HEADER_0029_0020T_0020T_0020FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028_0028SETF_0020BLOCK-HEADER_0029_0020T_0020T_0020FREE-LIST-HEAP_0029"
+      >Method ((SETF BLOCK-HEADER) T T FREE-LIST-HEAP)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028_0028SETF_0020BLOCK-SIZE_0029_0020T_0020T_0020FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028_0028SETF_0020BLOCK-SIZE_0029_0020T_0020T_0020FREE-LIST-HEAP_0029"
+      >Method ((SETF BLOCK-SIZE) T T FREE-LIST-HEAP)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ABLOCK-SIZE.html" name="generic_0020function_005FRUCKSACK_003A_003ABLOCK-SIZE"
+      >Generic Function BLOCK-SIZE</a
+    > Returns the size of the block starting at the
+specified position.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028BLOCK-SIZE_0020T_0020FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028BLOCK-SIZE_0020T_0020FREE-LIST-HEAP_0029"
+      >Method (BLOCK-SIZE T FREE-LIST-HEAP)</a
+    > </p
+  ></div
+>
+
+
+<h6
+  ><a name="Allocation"
+  >Allocation</a
+>&nbsp;</h6
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Free_0020list_0020heap"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Free_0020list_0020heap"
+  >up</a
+> | <a href="Rucksack.html#Expansion"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028ALLOCATE-BLOCK_0020FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028ALLOCATE-BLOCK_0020FREE-LIST-HEAP_0029"
+      >Method (ALLOCATE-BLOCK FREE-LIST-HEAP)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028DEALLOCATE-BLOCK_0020T_0020FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028DEALLOCATE-BLOCK_0020T_0020FREE-LIST-HEAP_0029"
+      >Method (DEALLOCATE-BLOCK T FREE-LIST-HEAP)</a
+    > </p
+  ></div
+>
+
+
+<h6
+  ><a name="Expansion"
+  >Expansion</a
+>&nbsp;</h6
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Allocation"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Free_0020list_0020heap"
+  >up</a
+> | <a href="Rucksack.html#Simple_0020free_0020list_0020heap_0020with_0020fixed_0020size_0020blocks"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028EXPAND-FREE-LIST_0020T_0020FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028EXPAND-FREE-LIST_0020T_0020FREE-LIST-HEAP_0029"
+      >Method (EXPAND-FREE-LIST T FREE-LIST-HEAP)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028FIND-BLOCK_0020T_0020FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028FIND-BLOCK_0020T_0020FREE-LIST-HEAP_0029"
+      >Method (FIND-BLOCK T FREE-LIST-HEAP)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CARVE-UP-BLOCK-FOR-FREE-LIST_0020T_0020T_0020T_0020FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028CARVE-UP-BLOCK-FOR-FREE-LIST_0020T_0020T_0020T_0020FREE-LIST-HEAP_0029"
+      >Method (CARVE-UP-BLOCK-FOR-FREE-LIST T T T FREE-LIST-HEAP)</a
+    > Carves up a block of the given size to build a free list for the
+specified size-class.</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003AINITIALIZE-BLOCK.html" name="generic_0020function_005FRUCKSACK_003A_003AINITIALIZE-BLOCK"
+      >Generic Function INITIALIZE-BLOCK</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028HEAP-INFO_0020FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028HEAP-INFO_0020FREE-LIST-HEAP_0029"
+      >Method (HEAP-INFO FREE-LIST-HEAP)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028FREE-LIST-INFO_0020T_0020FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028FREE-LIST-INFO_0020T_0020FREE-LIST-HEAP_0029"
+      >Method (FREE-LIST-INFO T FREE-LIST-HEAP)</a
+    > </p
+  ></div
+>
+
+
+<h5
+  ><a name="Simple_0020free_0020list_0020heap_0020with_0020fixed_0020size_0020blocks"
+  >Simple free list heap with fixed size blocks</a
+>&nbsp;</h5
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Expansion"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Implementation"
+  >up</a
+> | <a href="Rucksack.html#Appending_0020heap_0020_0028as_0020used_0020by_0020copying_0020garbage_0020collector_0029"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003ASIMPLE-FREE-LIST-HEAP.html" name="class_005FRUCKSACK_003A_003ASIMPLE-FREE-LIST-HEAP"
+      >Class SIMPLE-FREE-LIST-HEAP</a
+    > All blocks in a simple free list heap have the same size.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028BLOCK-SIZE_0020T_0020SIMPLE-FREE-LIST-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028BLOCK-SIZE_0020T_0020SIMPLE-FREE-LIST-HEAP_0029"
+      >Method (BLOCK-SIZE T SIMPLE-FREE-LIST-HEAP)</a
+    > </p
+  ></div
+>
+
+
+<h5
+  ><a name="Appending_0020heap_0020_0028as_0020used_0020by_0020copying_0020garbage_0020collector_0029"
+  >Appending heap (as used by copying garbage collector)</a
+>&nbsp;</h5
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Simple_0020free_0020list_0020heap_0020with_0020fixed_0020size_0020blocks"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Implementation"
+  >up</a
+> | <a href="Rucksack.html#Little_0020utility_0020functions"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003AAPPENDING-HEAP.html" name="class_005FRUCKSACK_003A_003AAPPENDING-HEAP"
+      >Class APPENDING-HEAP</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028ALLOCATE-BLOCK_0020APPENDING-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028ALLOCATE-BLOCK_0020APPENDING-HEAP_0029"
+      >Method (ALLOCATE-BLOCK APPENDING-HEAP)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028_0028SETF_0020HEAP-END_0029_0020AFTER_0020T_0020APPENDING-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028_0028SETF_0020HEAP-END_0029_0020AFTER_0020T_0020APPENDING-HEAP_0029"
+      >Method ((SETF HEAP-END) AFTER T APPENDING-HEAP)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028HEAP-START_0020APPENDING-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028HEAP-START_0020APPENDING-HEAP_0029"
+      >Method (HEAP-START APPENDING-HEAP)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028LOAD-HEAP-END_0020APPENDING-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028LOAD-HEAP-END_0020APPENDING-HEAP_0029"
+      >Method (LOAD-HEAP-END APPENDING-HEAP)</a
+    > </p
+  ></div
+>
+
+
+<h5
+  ><a name="Little_0020utility_0020functions"
+  >Little utility functions</a
+>&nbsp;</h5
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Appending_0020heap_0020_0028as_0020used_0020by_0020copying_0020garbage_0020collector_0029"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Implementation"
+  >up</a
+> | <a href="Rucksack.html#Buffers"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>  
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AWRITE-UNSIGNED-BYTES.html" name="function_005FRUCKSACK_003A_003AWRITE-UNSIGNED-BYTES"
+      >Function WRITE-UNSIGNED-BYTES</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AREAD-UNSIGNED-BYTES.html" name="function_005FRUCKSACK_003A_003AREAD-UNSIGNED-BYTES"
+      >Function READ-UNSIGNED-BYTES</a
+    > </p
+  ></div
+>
+
+
+<h5
+  ><a name="Buffers"
+  >Buffers</a
+>&nbsp;</h5
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Little_0020utility_0020functions"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Implementation"
+  >up</a
 > | <a href="Rucksack.html#Transactions"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-variable"
+  ><p
+    ><a class="descriptor variable" href="api/variable_005FRUCKSACK_003A_003A_002ADEFAULT-BUFFER-SIZE_002A.html" name="variable_005FRUCKSACK_003A_003A_002ADEFAULT-BUFFER-SIZE_002A"
+      >Variable *DEFAULT-BUFFER-SIZE*</a
+    > The number of octets that are allocated initially for a buffer.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003ABUFFER.html" name="class_005FRUCKSACK_003A_003ABUFFER"
+      >Class BUFFER</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028BUFFER-COUNT_0020BUFFER_0029.html" name="method_005FRUCKSACK_003A_003A_0028BUFFER-COUNT_0020BUFFER_0029"
+      >Method (BUFFER-COUNT BUFFER)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RESET-BUFFER_0020BUFFER_0029.html" name="method_005FRUCKSACK_003A_003A_0028RESET-BUFFER_0020BUFFER_0029"
+      >Method (RESET-BUFFER BUFFER)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003ASERIALIZATION-BUFFER.html" name="class_005FRUCKSACK_003A_003ASERIALIZATION-BUFFER"
+      >Class SERIALIZATION-BUFFER</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028SERIALIZE-BYTE_0020T_0020SERIALIZATION-BUFFER_0029.html" name="method_005FRUCKSACK_003A_003A_0028SERIALIZE-BYTE_0020T_0020SERIALIZATION-BUFFER_0029"
+      >Method (SERIALIZE-BYTE T SERIALIZATION-BUFFER)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028DESERIALIZE-BYTE_0020SERIALIZATION-BUFFER_0029.html" name="method_005FRUCKSACK_003A_003A_0028DESERIALIZE-BYTE_0020SERIALIZATION-BUFFER_0029"
+      >Method (DESERIALIZE-BYTE SERIALIZATION-BUFFER)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028SCAN-BYTE_0020SERIALIZATION-BUFFER_0029.html" name="method_005FRUCKSACK_003A_003A_0028SCAN-BYTE_0020SERIALIZATION-BUFFER_0029"
+      >Method (SCAN-BYTE SERIALIZATION-BUFFER)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028SAVE-BUFFER_0020BUFFER_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028SAVE-BUFFER_0020BUFFER_0020T_0029"
+      >Method (SAVE-BUFFER BUFFER T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028LOAD-BUFFER_0020BUFFER_0020T_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028LOAD-BUFFER_0020BUFFER_0020T_0020T_0029"
+      >Method (LOAD-BUFFER BUFFER T T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028LOAD-BUFFER_0020AFTER_0020SERIALIZATION-BUFFER_0020T_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028LOAD-BUFFER_0020AFTER_0020SERIALIZATION-BUFFER_0020T_0020T_0029"
+      >Method (LOAD-BUFFER AFTER SERIALIZATION-BUFFER T T)</a
+    > </p
+  ></div
+>
+
+
+<h3
+  ><a name="Transactions"
+  >Transactions</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Buffers"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html"
+  >up</a
+> | <a href="Rucksack.html#Transaction_0020classes"
   >next</a
 > | <a href="index.html"
     >toc</a
@@ -1033,8 +1762,8 @@ in the specified directory.</p
 >
 
 <h4
-  ><a name="Transactions"
-  >Transactions</a
+  ><a name="Transaction_0020classes"
+  >Transaction classes</a
 >&nbsp;</h4
 ><div class="nav-links"
   ><a class="nav-link" href="Rucksack.html#Transactions"
@@ -1086,11 +1815,11 @@ in the specified directory.</p
   >Modifying objects and checking for conflicts</a
 >&nbsp;</h4
 ><div class="nav-links"
-  ><a class="nav-link" href="Rucksack.html#Transactions"
+  ><a class="nav-link" href="Rucksack.html#Transaction_0020classes"
   >prev</a
 > | <a class="nav-link" href="Rucksack.html#Transactions"
   >up</a
-> | <a href="Rucksack.html#Cache"
+> | <a href="Rucksack.html#Starting_0020a_0020new_0020transaction"
   >next</a
 > | <a href="index.html"
     >toc</a
@@ -1166,9 +1895,21 @@ with the given object-id and is older than the given transaction.</p
 >
 
 
-<p>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+<h4
+  ><a name="Starting_0020a_0020new_0020transaction"
+  >Starting a new transaction</a
+>&nbsp;</h4
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Modifying_0020objects_0020and_0020checking_0020for_0020conflicts"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Transactions"
+  >up</a
+> | <a href="Rucksack.html#Rucksacks_0020with_0020serial_0020transactions"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
 <div class="computational-element-link computational-element-link-function"
   ><p
     ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ATRANSACTION-START.html" name="function_005FRUCKSACK_003A_003ATRANSACTION-START"
@@ -1186,9 +1927,21 @@ with the given object-id and is older than the given transaction.</p
   ></div
 >
 
-<p>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+<h4
+  ><a name="Rucksacks_0020with_0020serial_0020transactions"
+  >Rucksacks with serial transactions</a
+>&nbsp;</h4
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Starting_0020a_0020new_0020transaction"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Transactions"
+  >up</a
+> | <a href="Rucksack.html#Committing_0020a_0020transaction"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
 <div class="computational-element-link computational-element-link-class"
   ><p
     ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003ASERIAL-TRANSACTION-RUCKSACK.html" name="class_005FRUCKSACK_003A_003ASERIAL-TRANSACTION-RUCKSACK"
@@ -1223,9 +1976,21 @@ at a time.</p
 >
 
 
-<p>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+<h4
+  ><a name="Committing_0020a_0020transaction"
+  >Committing a transaction</a
+>&nbsp;</h4
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Rucksacks_0020with_0020serial_0020transactions"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Transactions"
+  >up</a
+> | <a href="Rucksack.html#Commit_0020file"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
 <div class="computational-element-link computational-element-link-macro"
   ><p
     ><a class="descriptor macro" href="api/macro_005FRUCKSACK_003A_003AWITHOUT-RUCKSACK-GCING.html" name="macro_005FRUCKSACK_003A_003AWITHOUT-RUCKSACK-GCING"
@@ -1259,7 +2024,21 @@ at a time.</p
 >
 
                                         
-
+<h4
+  ><a name="Commit_0020file"
+  >Commit file</a
+>&nbsp;</h4
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Committing_0020a_0020transaction"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Transactions"
+  >up</a
+> | <a href="Rucksack.html#Saving_0020objects"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
 <div class="computational-element-link computational-element-link-function"
   ><p
     ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ACREATE-COMMIT-FILE.html" name="function_005FRUCKSACK_003A_003ACREATE-COMMIT-FILE"
@@ -1286,7 +2065,21 @@ recovery can do its job if this transaction never completes.</p
   ></div
 >
 
-
+<h4
+  ><a name="Saving_0020objects"
+  >Saving objects</a
+>&nbsp;</h4
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Commit_0020file"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Transactions"
+  >up</a
+> | <a href="Rucksack.html#Rolling_0020back"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
 <div class="computational-element-link computational-element-link-method"
   ><p
     ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028SAVE-DIRTY-OBJECT_0020T_0020STANDARD-CACHE_0020STANDARD-TRANSACTION_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028SAVE-DIRTY-OBJECT_0020T_0020STANDARD-CACHE_0020STANDARD-TRANSACTION_0020T_0029"
@@ -1312,9 +2105,21 @@ OLD-BLOCK.</p
   ></div
 >
 
-<p>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+<h4
+  ><a name="Rolling_0020back"
+  >Rolling back</a
+>&nbsp;</h4
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Saving_0020objects"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Transactions"
+  >up</a
+> | <a href="Rucksack.html#Cache"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
 <div class="computational-element-link computational-element-link-function"
   ><p
     ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ATRANSACTION-ROLLBACK.html" name="function_005FRUCKSACK_003A_003ATRANSACTION-ROLLBACK"
@@ -1329,13 +2134,7 @@ OLD-BLOCK.</p
       >Method (TRANSACTION-ROLLBACK-1 STANDARD-TRANSACTION STANDARD-CACHE STANDARD-RUCKSACK)</a
     > </p
   ></div
->
-
-
- 
-
-
-        
+> 
 
 
 <h3
@@ -1343,7 +2142,7 @@ OLD-BLOCK.</p
   >Cache</a
 >&nbsp;</h3
 ><div class="nav-links"
-  ><a class="nav-link" href="Rucksack.html#Modifying_0020objects_0020and_0020checking_0020for_0020conflicts"
+  ><a class="nav-link" href="Rucksack.html#Rolling_0020back"
   >prev</a
 > | <a class="nav-link" href="Rucksack.html"
   >up</a
@@ -1363,8 +2162,8 @@ OLD-BLOCK.</p
   >prev</a
 > | <a class="nav-link" href="Rucksack.html#Cache"
   >up</a
-> | <span class="nav-link"
-  >next</span
+> | <a href="Rucksack.html#The_0020cache"
+  >next</a
 > | <a href="index.html"
     >toc</a
   ></div
@@ -1478,13 +2277,21 @@ cache.</p
   ></div
 >
 
-
-
-
-
-<p>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+<h4
+  ><a name="The_0020cache"
+  >The cache</a
+>&nbsp;</h4
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#API"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Cache"
+  >up</a
+> | <a href="Rucksack.html#Open_002Fclose_002Finitialize"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
 <div class="computational-element-link computational-element-link-class"
   ><p
     ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003ACACHE.html" name="class_005FRUCKSACK_003A_003ACACHE"
@@ -1522,7 +2329,21 @@ for deciding which objects to remove from the cache.</p
 
 
 
-
+<h5
+  ><a name="Open_002Fclose_002Finitialize"
+  >Open/close/initialize</a
+>&nbsp;</h5
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#The_0020cache"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#The_0020cache"
+  >up</a
+> | <a href="Rucksack.html#Cache_0020info"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
 <div class="computational-element-link computational-element-link-variable"
   ><p
     ><a class="descriptor variable" href="api/variable_005FRUCKSACK_003A_003A_002ACACHE_002A.html" name="variable_005FRUCKSACK_003A_003A_002ACACHE_002A"
@@ -1583,7 +2404,21 @@ for deciding which objects to remove from the cache.</p
 >
 
 
-
+<h5
+  ><a name="Cache_0020info"
+  >Cache info</a
+>&nbsp;</h5
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Open_002Fclose_002Finitialize"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#The_0020cache"
+  >up</a
+> | <a href="Rucksack.html#Create_002Fget_002Ftouch_002Fdelete"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
 <div class="computational-element-link computational-element-link-method"
   ><p
     ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-COUNT_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-COUNT_0020STANDARD-CACHE_0029"
@@ -1608,7 +2443,21 @@ for deciding which objects to remove from the cache.</p
   ></div
 >
 
-
+<h5
+  ><a name="Create_002Fget_002Ftouch_002Fdelete"
+  >Create/get/touch/delete</a
+>&nbsp;</h5
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Cache_0020info"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#The_0020cache"
+  >up</a
+> | <a href="Rucksack.html#Queue_0020operations"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
 <div class="computational-element-link computational-element-link-method"
   ><p
     ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-CREATE-OBJECT_0020T_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-CREATE-OBJECT_0020T_0020STANDARD-CACHE_0029"
@@ -1658,7 +2507,21 @@ memory.</p
 >
 
 
-
+<h5
+  ><a name="Queue_0020operations"
+  >Queue operations</a
+>&nbsp;</h5
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Create_002Fget_002Ftouch_002Fdelete"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#The_0020cache"
+  >up</a
+> | <a href="Rucksack.html#Queue_0020operations_0020for_0020lazy_0020caches"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
 <div class="computational-element-link computational-element-link-method"
   ><p
     ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028MAKE-ROOM-IN-CACHE_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028MAKE-ROOM-IN-CACHE_0020STANDARD-CACHE_0029"
@@ -1676,7 +2539,21 @@ memory.</p
   ></div
 >
 
-
+<h6
+  ><a name="Queue_0020operations_0020for_0020lazy_0020caches"
+  >Queue operations for lazy caches</a
+>&nbsp;</h6
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Queue_0020operations"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Queue_0020operations"
+  >up</a
+> | <a href="Rucksack.html#Open_002Fclose_002Fmap_0020transactions"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
 <div class="computational-element-link computational-element-link-method"
   ><p
     ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028MAKE-ROOM-IN-CACHE_0020LAZY-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028MAKE-ROOM-IN-CACHE_0020LAZY-CACHE_0029"
@@ -1694,7 +2571,21 @@ memory.</p
 >
 
 
-
+<h5
+  ><a name="Open_002Fclose_002Fmap_0020transactions"
+  >Open/close/map transactions</a
+>&nbsp;</h5
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Queue_0020operations_0020for_0020lazy_0020caches"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#The_0020cache"
+  >up</a
+> | <a href="Rucksack.html#Commit_002Frollback"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
 <div class="computational-element-link computational-element-link-method"
   ><p
     ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028OPEN-TRANSACTION_0020STANDARD-CACHE_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028OPEN-TRANSACTION_0020STANDARD-CACHE_0020T_0029"
@@ -1720,7 +2611,21 @@ memory.</p
 >
 
 
-
+<h5
+  ><a name="Commit_002Frollback"
+  >Commit/rollback</a
+>&nbsp;</h5
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Open_002Fclose_002Fmap_0020transactions"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#The_0020cache"
+  >up</a
+> | <a href="Rucksack.html#Recovery"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
 <div class="computational-element-link computational-element-link-method"
   ><p
     ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-ROLLBACK_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-ROLLBACK_0020STANDARD-CACHE_0029"
@@ -1738,7 +2643,21 @@ memory.</p
   ></div
 >
 
-
+<h5
+  ><a name="Recovery"
+  >Recovery</a
+>&nbsp;</h5
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Commit_002Frollback"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#The_0020cache"
+  >up</a
+> | <span class="nav-link"
+  >next</span
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
 <div class="computational-element-link computational-element-link-method"
   ><p
     ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-RECOVER_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-RECOVER_0020STANDARD-CACHE_0029"
@@ -1763,10 +2682,6 @@ the given transaction-id, unhook that version from the list.</p
     > </p
   ></div
 >
-
-
-
-
 
 
 </div

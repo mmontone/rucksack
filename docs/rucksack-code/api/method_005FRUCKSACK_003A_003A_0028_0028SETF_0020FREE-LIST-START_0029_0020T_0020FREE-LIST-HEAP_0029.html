@@ -1,0 +1,32 @@
+<html
+  ><head
+    ><title
+      >Method ((SETF FREE-LIST-START) T FREE-LIST-HEAP)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: ((SETF FREE-LIST-START) T FREE-LIST-HEAP)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod (setf free-list-start) (pointer (heap free-list-heap)
+                                           &amp;optional (size-class 0))
+  (setf (pointer-value (free-list-pointer size-class) heap) pointer
+        ;; Keep copy in memory
+        (aref (slot-value heap 'starts) size-class) pointer))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028_0028SETF_0020FREE-LIST-START_0029_0020T_0020FREE-LIST-HEAP_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>
