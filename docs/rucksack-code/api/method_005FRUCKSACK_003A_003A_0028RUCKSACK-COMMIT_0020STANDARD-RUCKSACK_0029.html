@@ -1,0 +1,33 @@
+<html
+  ><head
+    ><title
+      >Method (RUCKSACK-COMMIT STANDARD-RUCKSACK)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (RUCKSACK-COMMIT STANDARD-RUCKSACK)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod rucksack-commit ((rucksack standard-rucksack))
+  (when (or (roots-changed-p rucksack)
+            (not (slot-boundp rucksack 'class-index-table))
+            (not (slot-boundp rucksack 'slot-index-tables)))
+    (save-roots rucksack))
+  (cache-commit (rucksack-cache rucksack)))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028RUCKSACK-COMMIT_0020STANDARD-RUCKSACK_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

@@ -1,0 +1,82 @@
+<html
+  ><head
+    ><title
+      >Class STANDARD-TRANSACTION</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Class: STANDARD-TRANSACTION</h1
+        ><div class="contents"
+          ><h2
+  >Slots</h2
+><ul class="slots"
+  ><li
+  ><em
+    >ID</em
+  ></li
+><li
+  ><em
+    >DIRTY-OBJECTS</em
+  ><p class="slot-description"
+  >A hash-table (from id to object)
+containing all objects of which the slot changes have not been written
+to disk yet.</p
+></li
+><li
+  ><em
+    >DIRTY-QUEUE</em
+  ><p class="slot-description"
+  >A queue with the ids of all objects
+that have been created or modified since the last commit.  The queue
+is in least-recently-dirtied-first order.  During a commit, the
+objects are written to disk in the same order (this is necessary to
+guarantee that the garbage collector never sees an id of an object
+that doesn't exist on disk yet.</p
+></li
+></ul
+><h2
+  >Hierachy</h2
+><h3
+  >Precedence List</h3
+><ul
+  ><li
+  ><a href="../api/class_005FCOMMON-LISP-USER_003A_003ATRANSACTION.html"
+  >TRANSACTION</a
+></li
+></ul
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defclass standard-transaction (transaction)
+  ((id :initarg :id :reader transaction-id)
+   ;; Dirty objects
+   (dirty-objects :initarg :dirty-objects
+                  :initform (make-hash-table)
+                  :reader dirty-objects
+                  :documentation &quot;A hash-table \(from id to object)
+containing all objects of which the slot changes have not been written
+to disk yet.&quot;)
+   (dirty-queue :initarg :dirty-queue
+                :initform (make-instance 'queue)
+                :reader dirty-queue
+                :documentation &quot;A queue with the ids of all objects
+that have been created or modified since the last commit.  The queue
+is in least-recently-dirtied-first order.  During a commit, the
+objects are written to disk in the same order \(this is necessary to
+guarantee that the garbage collector never sees an id of an object
+that doesn't exist on disk yet.&quot;)))</code
+            ></pre
+          ><a href="../Rucksack.html#class_005FCOMMON-LISP-USER_003A_003ASTANDARD-TRANSACTION"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

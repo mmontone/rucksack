@@ -1,0 +1,50 @@
+<html
+  ><head
+    ><title
+      >Macro RUCKSACK-DO-SLOT</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Macro: RUCKSACK-DO-SLOT</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Evaluate BODY for each instance of CLASS where SLOT has the
+specified value. INSTANCE-VAR will be bound successively to each
+instance.  See the documentation of RUCKSACK-MAP-SLOT for more
+details.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmacro rucksack-do-slot ((instance-var class slot
+                             &amp;rest args
+                             &amp;key (rucksack '*rucksack*)
+                             equal min max include-min include-max
+                             order include-subclasses)
+                            &amp;body body)
+  &quot;Evaluate BODY for each instance of CLASS where SLOT has the
+specified value. INSTANCE-VAR will be bound successively to each
+instance.  See the documentation of RUCKSACK-MAP-SLOT for more
+details.&quot;
+  (declare (ignorable equal min max include-min include-max order
+                      include-subclasses))
+  (check-type instance-var symbol)
+  `(rucksack-map-slot ,rucksack ,class ,slot
+                      (lambda (,instance-var) ,@body)
+                      ,@(sans args ':rucksack)))</code
+            ></pre
+          ><a href="../Rucksack.html#macro_005FRUCKSACK_003A_003ARUCKSACK-DO-SLOT"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

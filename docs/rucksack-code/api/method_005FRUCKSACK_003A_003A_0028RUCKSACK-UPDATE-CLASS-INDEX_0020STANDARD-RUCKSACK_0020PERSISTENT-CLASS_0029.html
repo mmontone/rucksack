@@ -1,0 +1,47 @@
+<html
+  ><head
+    ><title
+      >Method (RUCKSACK-UPDATE-CLASS-INDEX STANDARD-RUCKSACK PERSISTENT-CLASS)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (RUCKSACK-UPDATE-CLASS-INDEX STANDARD-RUCKSACK PERSISTENT-CLASS)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod rucksack-update-class-index ((rucksack standard-rucksack)
+                                        (class persistent-class))
+  (let ((old-index (rucksack-class-index rucksack class :errorp nil))
+        (needs-index-p (class-index class)))
+    (cond ((and old-index (not needs-index-p))
+           (rucksack-remove-class-index rucksack class :errorp t))
+          ((and (not old-index) needs-index-p)
+           ;; Create a class index now.
+           ;; NOTE: If there are existing instances of this class,
+           ;; they're *not* automatically indexed at this point.
+           ;; (In fact, the only way to do this would be to iterate
+           ;; over *all* objects in the rucksack, which would be rather
+           ;; expensive.  Then again, it's exactly what the garbage
+           ;; collector does anyway, so it may be an option to have the
+           ;; garbage collector index them automatically.  But I'm not
+           ;; sure if that's a good idea.)
+           (rucksack-add-class-index rucksack class :errorp t))
+          (t
+           ;; We don't need to change anything
+           :no-change))))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028RUCKSACK-UPDATE-CLASS-INDEX_0020STANDARD-RUCKSACK_0020PERSISTENT-CLASS_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

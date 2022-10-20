@@ -1,0 +1,61 @@
+<html
+  ><head
+    ><title
+      >Function FIND-OBJECT-VERSION</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: FIND-OBJECT-VERSION</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Returns the object version for OBJECT-ID that's compatible with
+CURRENT-TRANSACTION, or NIL if there's no such version in the cache
+memory.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun find-object-version (object-id current-transaction cache)
+  &quot;Returns the object version for OBJECT-ID that's compatible with
+CURRENT-TRANSACTION, or NIL if there's no such version in the cache
+memory.&quot;
+  ;; The compatible object version for a transaction T is the version that
+  ;; was modified by the youngest open transaction that's older than or
+  ;; equal to T; if there is no such transaction, the compatible object
+  ;; version is the most recent (committed) version on disk.
+  ;; EFFICIENCY: Maybe we should use another data structure than a
+  ;; hash table for faster searching in the potentially relevant
+  ;; transactions?  An in-memory btree might be good...
+  (and current-transaction
+       (or 
+        ;; Modified by the current-transaction itself?  Then use that version.
+        (transaction-changed-object current-transaction object-id)
+        ;; Otherwise iterate over all open transactions, keeping track
+        ;; of the best candidate.
+        (let ((result-transaction nil)
+              (result nil))
+          (loop for transaction being the hash-value of (transactions cache)
+                for object = (transaction-changed-object transaction object-id)
+                when (and object
+                          (transaction-older-p transaction current-transaction)
+                          (or (null result-transaction)
+                              (transaction-older-p result-transaction transaction)))
+                do (setf result-transaction transaction
+                         result object))
+          result))))</code
+            ></pre
+          ><a href="../Rucksack.html#function_005FRUCKSACK_003A_003AFIND-OBJECT-VERSION"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

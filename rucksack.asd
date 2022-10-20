@@ -22,3 +22,12 @@
                (:file "transactions")
                (:file "import-export")))
 
+;;;; * Rucksack
+
+;;;;@include "rucksack.lisp"
+
+;;;;@include "transactions.lisp"
+
+;;;;@include "cache.lisp"
+
+

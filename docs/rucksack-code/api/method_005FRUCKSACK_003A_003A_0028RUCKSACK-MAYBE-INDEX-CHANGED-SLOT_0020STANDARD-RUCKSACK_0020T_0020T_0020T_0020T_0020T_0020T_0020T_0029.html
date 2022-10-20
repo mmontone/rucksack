@@ -1,0 +1,45 @@
+<html
+  ><head
+    ><title
+      >Method (RUCKSACK-MAYBE-INDEX-CHANGED-SLOT STANDARD-RUCKSACK T T T T T T T)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (RUCKSACK-MAYBE-INDEX-CHANGED-SLOT STANDARD-RUCKSACK T T T T T T T)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod rucksack-maybe-index-changed-slot ((rucksack standard-rucksack)
+                                              class object slot
+                                              old-value new-value
+                                              old-boundp new-boundp)
+  ;; SLOT is a slot-definition, not a slot name.
+  (when (slot-index slot)
+    (let ((index (rucksack-slot-index rucksack class slot
+                                      :errorp nil
+                                      :include-superclasses t)))
+      (when index
+        (when old-boundp
+          (index-delete index old-value object
+                        :if-does-not-exist :ignore))
+        (when new-boundp
+          (index-insert index new-value object
+                        :if-exists (if (slot-unique slot)
+                                       :error
+                                     :overwrite)))))))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028RUCKSACK-MAYBE-INDEX-CHANGED-SLOT_0020STANDARD-RUCKSACK_0020T_0020T_0020T_0020T_0020T_0020T_0020T_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

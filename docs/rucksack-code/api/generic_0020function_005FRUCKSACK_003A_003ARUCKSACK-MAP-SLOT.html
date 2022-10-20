@@ -1,0 +1,56 @@
+<html
+  ><head
+    ><title
+      >Generic Function RUCKSACK-MAP-SLOT</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Generic Function: RUCKSACK-MAP-SLOT</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  > FUNCTION is a unary function that gets called for all instances of
+the specified class that have a slot value matching the EQUAL, MIN,
+MAX INCLUDE-MIN and INCLUDE-MAX arguments (see the documentation of
+MAP-INDEX for a description of these arguments).
+  ORDER can be either :ASCENDING (default) or :DESCENDING; currently,
+the specified order will be respected for instances of one class but
+not across subclasses.
+  If ID-ONLY is T (default is NIL), the function will be called with
+object ids instead of 'real' objects.  This can be handy if you want to
+do more filtering before actually loading objects from disk.
+  INCLUDE-SUBCLASSES defaults to T.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defgeneric rucksack-map-slot (rucksack class slot function
+                              &amp;key equal min max include-min include-max order
+                              include-subclasses)
+  (:documentation
+ &quot; FUNCTION is a unary function that gets called for all instances of
+the specified class that have a slot value matching the EQUAL, MIN,
+MAX INCLUDE-MIN and INCLUDE-MAX arguments (see the documentation of
+MAP-INDEX for a description of these arguments).
+  ORDER can be either :ASCENDING (default) or :DESCENDING; currently,
+the specified order will be respected for instances of one class but
+not across subclasses.
+  If ID-ONLY is T (default is NIL), the function will be called with
+object ids instead of 'real' objects.  This can be handy if you want to
+do more filtering before actually loading objects from disk.
+  INCLUDE-SUBCLASSES defaults to T.&quot;))</code
+            ></pre
+          ><a href="../Rucksack.html#generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAP-SLOT"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

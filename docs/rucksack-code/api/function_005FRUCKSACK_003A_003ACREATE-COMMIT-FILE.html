@@ -1,0 +1,44 @@
+<html
+  ><head
+    ><title
+      >Function CREATE-COMMIT-FILE</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: CREATE-COMMIT-FILE</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Write object ids of all dirty objects to the commit file, so
+recovery can do its job if this transaction never completes.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun create-commit-file (transaction cache)
+  &quot;Write object ids of all dirty objects to the commit file, so
+recovery can do its job if this transaction never completes.&quot;
+  (with-open-file (stream (commit-filename cache)
+                          :direction :output
+                          :if-exists :supersede
+                          :if-does-not-exist :create
+                          :element-type '(unsigned-byte 8))
+    (serialize (transaction-id transaction) stream)
+    (serialize (hash-table-count (dirty-objects transaction)) stream)
+    (loop for object-id being the hash-key of (dirty-objects transaction)
+          do (serialize object-id stream))))</code
+            ></pre
+          ><a href="../Rucksack.html#function_005FRUCKSACK_003A_003ACREATE-COMMIT-FILE"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

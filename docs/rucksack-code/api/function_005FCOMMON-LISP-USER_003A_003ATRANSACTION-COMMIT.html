@@ -1,0 +1,34 @@
+<html
+  ><head
+    ><title
+      >Function TRANSACTION-COMMIT</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: TRANSACTION-COMMIT</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Call transaction-commit-1 to do the real work.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun transaction-commit (transaction &amp;key (rucksack (current-rucksack)))
+  &quot;Call transaction-commit-1 to do the real work.&quot;
+  (transaction-commit-1 transaction (rucksack-cache rucksack) rucksack))</code
+            ></pre
+          ><a href="../Rucksack.html#function_005FCOMMON-LISP-USER_003A_003ATRANSACTION-COMMIT"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

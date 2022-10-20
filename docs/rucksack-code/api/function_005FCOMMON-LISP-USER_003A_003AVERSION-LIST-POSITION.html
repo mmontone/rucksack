@@ -1,0 +1,75 @@
+<html
+  ><head
+    ><title
+      >Function VERSION-LIST-POSITION</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: VERSION-LIST-POSITION</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Returns the correct position for a transaction-id in a version-list.
+To be more precise, it returns:
+  1. the block of the object version with the oldest transaction that's
+younger than the given transaction-id (nil if there is no such version).
+  2. the block of the first object version in the version list that has
+a transaction id older than the given transaction-id (nil if there is no
+such version).
+  VERSION-LIST is either nil or the heap position of the first object
+version in the version list.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun version-list-position (current-transaction-id obj-id version-list heap)
+  &quot;Returns the correct position for a transaction-id in a version-list.
+To be more precise, it returns:
+  1. the block of the object version with the oldest transaction that's
+younger than the given transaction-id (nil if there is no such version).
+  2. the block of the first object version in the version list that has
+a transaction id older than the given transaction-id (nil if there is no
+such version).
+  VERSION-LIST is either nil or the heap position of the first object
+version in the version list.&quot;
+  (and version-list
+       (let ((younger nil)
+             (block version-list))
+         (loop
+          (let ((buffer (load-block heap block :skip-header t)))
+            (multiple-value-bind (id nr-slots schema transaction-id previous)
+                (load-object-fields buffer obj-id)
+              ;; DO: Don't load id, nr-slots, schema at all!
+              (declare (ignore id nr-slots schema)) 
+              (cond ((&lt; transaction-id current-transaction-id)
+                     ;; The version we're examining is older than the
+                     ;; current-transaction-id, so we found the right
+                     ;; place for the current version.
+                     (return-from version-list-position
+                       (values younger block)))
+                    ((null previous)
+                     ;; There is no version that's older than the current
+                     ;; transaction.  This can happen, because transaction
+                     ;; commits do not necessarily happen in transaction
+                     ;; creation order.
+                     (return-from version-list-position
+                       (values younger nil)))
+                    (t
+                     ;; Keep trying older versions.
+                     (setq younger block
+                           block previous)))))))))</code
+            ></pre
+          ><a href="../Rucksack.html#function_005FCOMMON-LISP-USER_003A_003AVERSION-LIST-POSITION"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

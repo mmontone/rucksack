@@ -1,0 +1,48 @@
+<html
+  ><head
+    ><title
+      >Function REPLACE-SLOT-INDEX</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: REPLACE-SLOT-INDEX</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun replace-slot-index (rucksack class slot index-spec unique-p)
+  ;; We have an index but need a different one now.  This requires
+  ;; some care because we need to re-index all objects from the old
+  ;; index.
+  (let ((current-index (rucksack-slot-index rucksack class slot))
+        (new-index (rucksack-add-slot-index rucksack class slot
+                                            index-spec
+                                            unique-p
+                                            :errorp nil)))
+    ;; Re-index all objects for the new index.
+    ;; DO: This re-indexing can cause an error (e.g. if the old
+    ;; index has non-unique keys, the new index has unique keys
+    ;; and some keys occur more than once).  We need to handle
+    ;; that error here and offer some decent restarts (e.g.
+    ;; remove the index entirely, or go back to the old index).
+    (map-index current-index
+               (lambda (slot-value object)
+                 (index-insert new-index slot-value object)))
+    ;; We don't need to remove the old index explicitly, because
+    ;; RUCKSACK-ADD-SLOT-INDEX already did that for us.
+    ))</code
+            ></pre
+          ><a href="../Rucksack.html#function_005FRUCKSACK_003A_003AREPLACE-SLOT-INDEX"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

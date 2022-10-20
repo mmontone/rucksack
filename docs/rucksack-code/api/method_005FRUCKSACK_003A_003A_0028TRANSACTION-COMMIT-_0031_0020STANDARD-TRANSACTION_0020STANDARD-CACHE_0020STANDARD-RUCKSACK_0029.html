@@ -1,0 +1,74 @@
+<html
+  ><head
+    ><title
+      >Method (TRANSACTION-COMMIT-1 STANDARD-TRANSACTION STANDARD-CACHE STANDARD-RUCKSACK)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (TRANSACTION-COMMIT-1 STANDARD-TRANSACTION STANDARD-CACHE STANDARD-RUCKSACK)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod transaction-commit-1 ((transaction standard-transaction)
+                                 (cache standard-cache)
+                                 (rucksack standard-rucksack))
+  ;; Save all dirty objects to disk.
+  (if (zerop (transaction-nr-dirty-objects transaction))
+      (close-transaction cache transaction)
+    (progn
+      ;; 1. Create the commit file
+      (create-commit-file transaction cache)
+      ;; 2. Commit all dirty objects.
+      ;; Q: What if this is interleaved with other commits?
+      (let ((queue (dirty-queue transaction))
+            (table (dirty-objects transaction))
+            (heap (heap cache))
+            nr-allocated-octets)
+        (with-allocation-counter (heap)
+          (loop until (queue-empty-p queue)
+                do (let* ((id (queue-remove queue))
+                          (object (gethash id table)))
+                     (when object
+                       ;; If it's not in the dirty-objects table anymore, the
+                       ;; object was already saved during this transaction-commit.
+                       ;; That's possible, because the queue can contain duplicates.
+                       (save-dirty-object object cache transaction id)
+                       ;; Remove from hash-table too.
+                       (remhash id table))))
+          (setq nr-allocated-octets (nr-allocated-octets heap)))
+        ;; Check for consistency between hash table and queue.
+        (unless (zerop (hash-table-count table))
+          (internal-rucksack-error
+           &quot;Mismatch between dirty hash-table and queue while committing ~S:
+~D objects left in hash-table.&quot;
+           transaction
+           (hash-table-count table)))
+        ;; 3. Remove transaction from the cache's open transactions.
+        (close-transaction cache transaction)
+        ;; 4. Delete the commit file to indicate that everything went fine
+        ;; and we don't need to recover from this commit.
+        (delete-commit-file transaction cache)
+        ;; 5. Let the garbage collector do an amount of work proportional
+        ;; to the number of octets that were allocated during the commit.
+        (when *collect-garbage-on-commit*
+          (collect-some-garbage heap
+                                (gc-work-for-size heap nr-allocated-octets)))
+        ;; 6. Make sure that all changes are actually on disk before
+        ;; we continue.
+        (finish-all-output rucksack)))))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028TRANSACTION-COMMIT-_0031_0020STANDARD-TRANSACTION_0020STANDARD-CACHE_0020STANDARD-RUCKSACK_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

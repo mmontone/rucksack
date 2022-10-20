@@ -1,0 +1,37 @@
+<html
+  ><head
+    ><title
+      >Method (FINISH-ALL-OUTPUT STANDARD-RUCKSACK)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (FINISH-ALL-OUTPUT STANDARD-RUCKSACK)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod finish-all-output ((rucksack standard-rucksack))
+  (let ((cache (rucksack-cache rucksack)))
+    (finish-heap-output (heap cache))
+    (finish-heap-output (object-table (heap cache)))
+    ;; NOTE: I'm not totally sure that saving the schema table for
+    ;; each transaction commit is necessary, but it probably is.  So
+    ;; let's play safe for now.  We definitely need to save the roots,
+    ;; because the highest transaction-id is part of the roots file.
+    (save-roots rucksack)
+    (save-schema-table-if-necessary (schema-table cache))))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028FINISH-ALL-OUTPUT_0020STANDARD-RUCKSACK_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

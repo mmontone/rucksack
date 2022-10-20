@@ -1,0 +1,57 @@
+<html
+  ><head
+    ><title
+      >Method (RUCKSACK-ADD-SLOT-INDEX STANDARD-RUCKSACK T T T T)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (RUCKSACK-ADD-SLOT-INDEX STANDARD-RUCKSACK T T T T)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod rucksack-add-slot-index ((rucksack standard-rucksack)
+                                    class slot index-spec unique-p
+                                    &amp;key (errorp nil))
+  (unless (symbolp class)
+    (setq class (class-name class)))
+  (unless (symbolp slot)
+    (setq slot (slot-definition-name slot)))
+  ;; Find the slot index table for CLASS, create a slot index and add that
+  ;; index to the table.
+  (let* ((slot-index-tables (slot-index-tables rucksack))
+         (slot-index-table
+          (or (btree-search slot-index-tables class :errorp nil)
+              (let ((table (make-instance 'btree
+                                          :key&lt; 'string&lt;
+                                          :value= 'p-eql
+                                          :unique-keys-p t)))
+                (btree-insert slot-index-tables class table :if-exists :error)
+                table)))
+         (new-slot-index (make-index index-spec unique-p)))
+    (handler-bind ((btree-key-already-present-error
+                    (lambda (error)
+                      (declare (ignore error))
+                      (simple-rucksack-error &quot;Slot index for slot ~S of class ~S
+already exists in ~S.&quot;
+                                             slot
+                                             class
+                                             rucksack))))
+      (btree-insert slot-index-table slot new-slot-index
+                    :if-exists (if errorp :error :overwrite)))
+    new-slot-index))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028RUCKSACK-ADD-SLOT-INDEX_0020STANDARD-RUCKSACK_0020T_0020T_0020T_0020T_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

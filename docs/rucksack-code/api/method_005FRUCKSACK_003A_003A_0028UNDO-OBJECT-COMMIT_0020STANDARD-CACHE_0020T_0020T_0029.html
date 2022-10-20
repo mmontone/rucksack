@@ -1,0 +1,73 @@
+<html
+  ><head
+    ><title
+      >Method (UNDO-OBJECT-COMMIT STANDARD-CACHE T T)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (UNDO-OBJECT-COMMIT STANDARD-CACHE T T)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod undo-object-commit ((cache standard-cache)
+                               partial-transaction-id
+                               object-id)
+  ;; OBJECT-ID is the id of an object that may have been committed by
+  ;; PARTIAL-TRANSACTION-ID, but it's also possible that it hasn't
+  ;; been committed yet.
+
+  (let ((object-table (object-table cache))
+        (heap (heap cache)))
+
+    (when (eql :reserved (object-info object-table object-id))
+      ;; It hasn't been committed yet, so we don't need to
+      ;; do anything.
+      (return-from undo-object-commit nil))
+
+    ;; Walk along the version list, looking for a version
+    ;; that was committed by partial-transaction-id.
+    (let ((block (object-heap-position object-table object-id))
+          (younger nil))
+      (loop
+       (let ((buffer (load-block heap block :skip-header t)))
+         (multiple-value-bind (id nr-slots schema transaction-id older)
+             (load-object-fields buffer object-id)
+           ;; DO: Don't load id, nr-slots, schema at all!
+           (declare (ignore id nr-slots schema)) 
+           (cond ((= transaction-id partial-transaction-id)
+                  ;; Got it.  Remove from the version list.
+                  (if younger
+                      (setf (object-version-list younger heap) older)
+                    ;; There is no younger version so we're the first
+                    ;; in the version list.  If there's an older version,
+                    ;; let the object table point to that older version.
+                    ;; Otherwise, remove the object table entry.
+                    (if older
+                        (setf (object-heap-position object-table object-id)
+                              older)
+                      (delete-object-id object-table object-id)))
+                  (return-from undo-object-commit t))
+                 ((null older)
+                  ;; It hasn't been committed yet, so we don't need to
+                  ;; do anything.
+                  (return-from undo-object-commit nil))
+                 (t
+                  ;; Keep trying older versions.
+                  (setq younger block
+                        block older)))))))))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028UNDO-OBJECT-COMMIT_0020STANDARD-CACHE_0020T_0020T_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

@@ -1,0 +1,45 @@
+<html
+  ><head
+    ><title
+      >Method (RUCKSACK-DELETE-OBJECT STANDARD-RUCKSACK T)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (RUCKSACK-DELETE-OBJECT STANDARD-RUCKSACK T)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod rucksack-delete-object ((rucksack standard-rucksack) object)
+  (let ((class-name (class-name (class-of object))))
+    ;; Remove object from class index if necessary.
+    (let ((class-index (rucksack-class-index rucksack (class-of object)
+                                             :errorp nil)))
+      (when class-index
+        (index-delete class-index (object-id object) object)))
+    ;; Remove object from slot indexes if necessary.
+    (let ((indexed-slot-names (rucksack-indexed-slots-for-class rucksack
+                                                                (class-of object))))
+      (loop for slot-name in indexed-slot-names do
+            (index-delete (rucksack-slot-index rucksack class-name slot-name)
+                          (slot-value object slot-name)
+                          object
+                          :if-does-not-exist :ignore)))
+    ;; Remove object from roots if necessary.
+    (when (rucksack-root-p object rucksack)
+      (delete-rucksack-root object rucksack))))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028RUCKSACK-DELETE-OBJECT_0020STANDARD-RUCKSACK_0020T_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

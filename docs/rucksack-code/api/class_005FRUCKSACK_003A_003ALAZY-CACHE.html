@@ -1,0 +1,54 @@
+<html
+  ><head
+    ><title
+      >Class LAZY-CACHE</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Class: LAZY-CACHE</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >A lazy cache doesn't bother with fancy mechanisms
+for deciding which objects to remove from the cache.  It just fills
+the cache until maximum capacity (i.e. CACHE-SIZE) and then clears
+the entire cache at once.  Advantages of this could be that it uses
+less time and less memory to do its work.  Disadvantage is that it's
+very stupid about the objects it should try to keep in memory.</blockquote
+><h2
+  >Hierachy</h2
+><h3
+  >Precedence List</h3
+><ul
+  ><li
+  ><a href="../api/class_005FRUCKSACK_003A_003ASTANDARD-CACHE.html"
+  >STANDARD-CACHE</a
+></li
+></ul
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defclass lazy-cache (standard-cache)
+  ()
+  (:documentation &quot;A lazy cache doesn't bother with fancy mechanisms
+for deciding which objects to remove from the cache.  It just fills
+the cache until maximum capacity (i.e. CACHE-SIZE) and then clears
+the entire cache at once.  Advantages of this could be that it uses
+less time and less memory to do its work.  Disadvantage is that it's
+very stupid about the objects it should try to keep in memory.&quot;))</code
+            ></pre
+          ><a href="../Rucksack.html#class_005FRUCKSACK_003A_003ALAZY-CACHE"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

@@ -1,0 +1,34 @@
+<html
+  ><head
+    ><title
+      >Function FIND-OLD-INDEX-SPEC</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: FIND-OLD-INDEX-SPEC</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun find-old-index-spec (slot-name old-slots)
+  (let ((slot (find slot-name old-slots :key #'slot-definition-name)))
+    (and slot
+         (with-slots (index unique)
+             slot
+           (values (or (find-index-spec index :errorp nil) index)
+                   unique)))))</code
+            ></pre
+          ><a href="../Rucksack.html#function_005FRUCKSACK_003A_003AFIND-OLD-INDEX-SPEC"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

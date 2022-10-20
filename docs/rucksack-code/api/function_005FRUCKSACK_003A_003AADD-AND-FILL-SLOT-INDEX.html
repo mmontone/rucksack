@@ -1,0 +1,41 @@
+<html
+  ><head
+    ><title
+      >Function ADD-AND-FILL-SLOT-INDEX</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: ADD-AND-FILL-SLOT-INDEX</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun add-and-fill-slot-index (rucksack class slot index-spec unique-p)
+  ;; We didn't have an index but we need one now: add one.
+  (let ((index (rucksack-add-slot-index rucksack class slot index-spec unique-p
+                                        :errorp t))
+        (slot-name (slot-definition-name slot)))
+    ;; Index all instances for the new index.
+    ;; NOTE: This will only work if the class is indexed, otherwise there is no
+    ;; affordable way to find all instances of the class.
+    (when (class-index class)
+      (rucksack-map-class rucksack class
+                          (lambda (object)
+                            (when (slot-boundp object slot-name)
+                              (index-insert index (slot-value object slot-name)
+                                            object)))))))</code
+            ></pre
+          ><a href="../Rucksack.html#function_005FRUCKSACK_003A_003AADD-AND-FILL-SLOT-INDEX"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

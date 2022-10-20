@@ -1,0 +1,34 @@
+<html
+  ><head
+    ><title
+      >Method (CACHE-CREATE-OBJECT T STANDARD-CACHE)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (CACHE-CREATE-OBJECT T STANDARD-CACHE)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod cache-create-object (object (cache standard-cache))
+  ;; This is called by a before method on SHARED-INITIALIZE and
+  ;; by MAKE-PERSISTENT-DATA.
+  (let ((id (new-object-id (object-table (heap cache)))))
+    ;; Add to dirty objects.
+    (transaction-touch-object (current-transaction) object id)
+    id))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FCOMMON-LISP-USER_003A_003A_0028CACHE-CREATE-OBJECT_0020T_0020STANDARD-CACHE_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

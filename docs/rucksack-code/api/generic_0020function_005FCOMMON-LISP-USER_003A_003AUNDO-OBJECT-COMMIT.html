@@ -1,0 +1,37 @@
+<html
+  ><head
+    ><title
+      >Generic Function UNDO-OBJECT-COMMIT</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Generic Function: UNDO-OBJECT-COMMIT</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >If the object version list contains a version with
+the given transaction-id, unhook that version from the list.  Returns
+T if the object was already comitted, otherwise nil.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defgeneric undo-object-commit (cache transaction-id object-id)
+  (:documentation &quot;If the object version list contains a version with
+the given transaction-id, unhook that version from the list.  Returns
+T if the object was already comitted, otherwise nil.&quot;))</code
+            ></pre
+          ><a href="../Rucksack.html#generic_0020function_005FCOMMON-LISP-USER_003A_003AUNDO-OBJECT-COMMIT"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

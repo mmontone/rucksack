@@ -1,0 +1,87 @@
+<html
+  ><head
+    ><title
+      >Function OPEN-RUCKSACK</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: OPEN-RUCKSACK</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Opens the rucksack in the directory designated by DIRECTORY-DESIGNATOR.
+  :IF-DOES-NOT-EXIST can be either :CREATE (creates a new rucksack if the
+it does not exist; this is the default) or :ERROR (signals an error if
+the rucksack does not exist).
+  :IF-EXISTS can be either :OVERWRITE (loads the rucksack if it exists;
+this is the default), :SUPERSEDE (deletes the existing rucksack and creates
+a new empty rucksack) or :ERROR (signals an error if the rucksack exists).</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun open-rucksack (directory-designator 
+                      &amp;rest args
+                      &amp;key 
+                      (class 'serial-transaction-rucksack)
+                      (if-exists :overwrite)
+                      (if-does-not-exist :create)
+                      (cache-class 'lazy-cache)
+                      (cache-args '())
+                      &amp;allow-other-keys)
+  &quot;Opens the rucksack in the directory designated by DIRECTORY-DESIGNATOR.
+  :IF-DOES-NOT-EXIST can be either :CREATE (creates a new rucksack if the
+it does not exist; this is the default) or :ERROR (signals an error if
+the rucksack does not exist).
+  :IF-EXISTS can be either :OVERWRITE (loads the rucksack if it exists;
+this is the default), :SUPERSEDE (deletes the existing rucksack and creates
+a new empty rucksack) or :ERROR (signals an error if the rucksack exists).&quot;
+  (declare (ignorable cache-class cache-args))
+  (check-type directory-designator (or string pathname))
+  (check-type if-exists (member :overwrite :supersede :error))
+  (check-type if-does-not-exist (member :create :error))
+  (let ((directory (if (stringp directory-designator)  
+                      (pathname directory-designator)
+                      directory-designator)))
+    (with-lock (*rucksack-opening-lock*)
+      (setq *rucksack*
+            (if (probe-file (merge-pathnames &quot;roots&quot; directory))
+                ;; Rucksack already exists.
+                (ecase if-exists
+                  (:error
+                   (error &quot;Can't create rucksack in ~S: the directory
+already seems to contain a rucksack.&quot;
+                          directory))
+                  (:supersede
+                   ;; Remove all rucksack files from the directory.
+                   (loop for file in (rucksack-files-in-directory directory)
+                         do (delete-file file))
+                   ;; And create a fresh rucksack.
+ 		   (apply #'make-instance class :directory directory args))
+                  (:overwrite
+                   ;; This is the normal case.
+                   (apply #'make-instance class :directory directory args)))
+              ;; Rucksack doesn't seem to exist.
+              (ecase if-does-not-exist
+                (:error
+                 (error &quot;Can't open rucksack in ~S: the rucksack roots
+file is missing.&quot;
+                        directory))
+                (:create
+                 (ensure-directories-exist directory)
+                 (apply #'make-instance class :directory directory args))))))))</code
+            ></pre
+          ><a href="../Rucksack.html#function_005FRUCKSACK_003A_003AOPEN-RUCKSACK"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

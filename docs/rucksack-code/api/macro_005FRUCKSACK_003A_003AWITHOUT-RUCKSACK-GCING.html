@@ -1,0 +1,30 @@
+<html
+  ><head
+    ><title
+      >Macro WITHOUT-RUCKSACK-GCING</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Macro: WITHOUT-RUCKSACK-GCING</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmacro without-rucksack-gcing (&amp;body body)
+  `(let ((*collect-garbage-on-commit* nil))
+     ,@body))</code
+            ></pre
+          ><a href="../Rucksack.html#macro_005FRUCKSACK_003A_003AWITHOUT-RUCKSACK-GCING"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

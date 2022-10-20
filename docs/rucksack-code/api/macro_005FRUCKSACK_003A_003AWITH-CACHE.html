@@ -1,0 +1,31 @@
+<html
+  ><head
+    ><title
+      >Macro WITH-CACHE</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Macro: WITH-CACHE</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmacro with-cache ((cache directory &amp;rest options) &amp;body body)
+  `(let ((,cache (open-cache ,directory ,@options)))
+     (unwind-protect (progn ,@body)
+       (close-cache ,cache))))</code
+            ></pre
+          ><a href="../Rucksack.html#macro_005FRUCKSACK_003A_003AWITH-CACHE"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

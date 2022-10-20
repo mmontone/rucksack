@@ -1,0 +1,34 @@
+<html
+  ><head
+    ><title
+      >Function RUCKSACK-LIST-CLASS-INDEXES</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: RUCKSACK-LIST-CLASS-INDEXES</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun rucksack-list-class-indexes (rucksack)
+  (let ((result '()))
+    (rucksack-map-class-indexes rucksack
+                                (lambda (class-name index)
+                                  (declare (ignore index))
+                                  (push class-name result)))
+    result))</code
+            ></pre
+          ><a href="../Rucksack.html#function_005FRUCKSACK_003A_003ARUCKSACK-LIST-CLASS-INDEXES"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

@@ -1,0 +1,64 @@
+<html
+  ><head
+    ><title
+      >Macro WITH-TRANSACTION</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Macro: WITH-TRANSACTION</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmacro with-transaction ((&amp;rest args
+                             &amp;key
+                             (rucksack '(current-rucksack))
+                             (inhibit-gc nil inhibit-gc-supplied-p)
+                             &amp;allow-other-keys)
+                            &amp;body body)
+  (let ((committed (gensym &quot;COMMITTED&quot;))
+        (transaction (gensym &quot;TRANSACTION&quot;))
+        (result (gensym &quot;RESULT&quot;)))
+    `(let ((,transaction nil)
+           (*collect-garbage-on-commit* (if ,inhibit-gc-supplied-p
+                                            ,(not inhibit-gc)
+                                            *collect-garbage-on-commit*)))
+       (loop named ,transaction do         
+          (with-simple-restart (retry &quot;Retry ~S&quot; ,transaction)
+            (let ((,committed nil)
+                  (,result nil))
+              (unwind-protect
+                   (progn
+                     ;; Use a local variable for the transaction so that nothing
+                     ;; can replace it from underneath us, and only then bind
+                     ;; it to *TRANSACTION*. 
+                     (setf ,transaction (transaction-start :rucksack ,rucksack
+                                                           ,@(sans args :rucksack)))
+                     (let ((*transaction* ,transaction))
+                       (with-simple-restart (abort &quot;Abort ~S&quot; ,transaction)
+                         (setf ,result (progn ,@body))
+                         (transaction-commit ,transaction)
+                         (setf ,committed t)))
+                     ;; Normal exit from the WITH-SIMPLE-RESTART above -- either
+                     ;; everything went well or we aborted -- the ,COMMITTED will tell
+                     ;; us. In either case we jump out of the RETRY loop.
+                     (return-from ,transaction (values ,result ,committed)))
+                (unless ,committed
+                  (transaction-rollback ,transaction)))))
+            ;; Normal exit from the above block -- we selected the RETRY restart.
+            ))))</code
+            ></pre
+          ><a href="../Rucksack.html#macro_005FRUCKSACK_003A_003AWITH-TRANSACTION"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

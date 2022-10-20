@@ -1,0 +1,36 @@
+<html
+  ><head
+    ><title
+      >Method (MAP-TRANSACTIONS STANDARD-CACHE T)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (MAP-TRANSACTIONS STANDARD-CACHE T)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod map-transactions ((cache standard-cache) function)
+  ;; FUNCTION may be a function that closes the transaction (removing
+  ;; it from the hash table), so we create a fresh list with transactions
+  ;; before doing the actual iteration.
+  (let ((transactions '()))
+    (loop for transaction being the hash-value of (transactions cache)
+          do (push transaction transactions))
+    ;; Now we can iterate safely.
+    (mapc function transactions)))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FCOMMON-LISP-USER_003A_003A_0028MAP-TRANSACTIONS_0020STANDARD-CACHE_0020T_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

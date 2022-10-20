@@ -1,0 +1,40 @@
+<html
+  ><head
+    ><title
+      >Generic Function FIND-CONFLICTING-TRANSACTION</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Generic Function: FIND-CONFLICTING-TRANSACTION</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Tries to find an open transaction that has modified the object
+with the given object-id and is older than the given transaction.
+Returns this conflicting transaction, if there is one.  Otherwise it
+returns nil.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defgeneric find-conflicting-transaction (object-id cache transaction)
+  (:documentation
+   &quot;Tries to find an open transaction that has modified the object
+with the given object-id and is older than the given transaction.
+Returns this conflicting transaction, if there is one.  Otherwise it
+returns nil.&quot;))</code
+            ></pre
+          ><a href="../Rucksack.html#generic_0020function_005FRUCKSACK_003A_003AFIND-CONFLICTING-TRANSACTION"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

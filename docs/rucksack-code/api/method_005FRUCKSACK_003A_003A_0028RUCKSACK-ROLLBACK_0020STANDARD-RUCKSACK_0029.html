@@ -1,0 +1,33 @@
+<html
+  ><head
+    ><title
+      >Method (RUCKSACK-ROLLBACK STANDARD-RUCKSACK)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (RUCKSACK-ROLLBACK STANDARD-RUCKSACK)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod rucksack-rollback ((rucksack standard-rucksack))
+  ;; Rollback the cache.
+  (cache-rollback (rucksack-cache rucksack))
+  ;; Rollback the roots by loading them back from file.
+  (load-roots rucksack)
+  (setf (roots-changed-p rucksack) nil))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028RUCKSACK-ROLLBACK_0020STANDARD-RUCKSACK_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

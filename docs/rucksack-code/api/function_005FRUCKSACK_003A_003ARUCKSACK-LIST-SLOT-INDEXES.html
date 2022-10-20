@@ -1,0 +1,35 @@
+<html
+  ><head
+    ><title
+      >Function RUCKSACK-LIST-SLOT-INDEXES</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: RUCKSACK-LIST-SLOT-INDEXES</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun rucksack-list-slot-indexes (rucksack)
+  (let ((result '()))
+    (rucksack-map-slot-indexes rucksack
+                               (lambda (class-name slot-name slot-index)
+                                 (declare (ignore slot-index))
+                                 (push (cons class-name slot-name)
+                                       result)))
+    result))</code
+            ></pre
+          ><a href="../Rucksack.html#function_005FRUCKSACK_003A_003ARUCKSACK-LIST-SLOT-INDEXES"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

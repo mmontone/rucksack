@@ -1,0 +1,42 @@
+<html
+  ><head
+    ><title
+      >Method (CACHE-RECOVER STANDARD-CACHE)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (CACHE-RECOVER STANDARD-CACHE)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod cache-recover ((cache standard-cache))
+  ;; NOTE: This code assumes there's at most one partial commit
+  ;; at any time.
+  (multiple-value-bind (transaction-id object-ids)
+      ;; There's a possibility that the transaction was
+      ;; aborted while it was writing to the commit file
+      ;; (so before actually committing anything).
+      ;; In that case, LOAD-OBJECTS will probably fail
+      ;; with an error and transaction-id will be
+      ;; nil.  This is fine, because we won't need to
+      ;; undo anything in that case anyway.
+      (ignore-errors (load-commit-file cache))
+    (when (and transaction-id object-ids)
+      (loop for object-id in object-ids
+            do (undo-object-commit cache transaction-id object-id)))))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028CACHE-RECOVER_0020STANDARD-CACHE_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

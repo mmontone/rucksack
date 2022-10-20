@@ -1,0 +1,49 @@
+<html
+  ><head
+    ><title
+      >Method (RUCKSACK-REMOVE-SLOT-INDEX T T T)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (RUCKSACK-REMOVE-SLOT-INDEX T T T)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod rucksack-remove-slot-index (rucksack class slot &amp;key (errorp nil))
+  (unless (symbolp class)
+    (setq class (class-name class)))
+  (unless (symbolp slot)
+    (setq slot (slot-definition-name slot)))
+  (flet ((oops (error)
+           (declare (ignore error))
+           (simple-rucksack-error &quot;Attempt to remove non-existing slot
+index for slot ~S of class ~S in ~S.&quot;
+                                  slot
+                                  class
+                                  rucksack)))
+    ;; Return the slot name if everything went fine; otherwise, return
+    ;; NIL (or signal an error).
+    (and (handler-bind ((btree-search-error #'oops))
+           (let ((slot-index-table (btree-search (slot-index-tables rucksack) class
+                                                 :errorp errorp)))
+             (and slot-index-table
+                  (handler-bind ((btree-deletion-error #'oops))
+                    (btree-delete-key slot-index-table slot
+                                      :if-does-not-exist (if errorp :error :ignore))))))
+         slot)))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028RUCKSACK-REMOVE-SLOT-INDEX_0020T_0020T_0020T_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

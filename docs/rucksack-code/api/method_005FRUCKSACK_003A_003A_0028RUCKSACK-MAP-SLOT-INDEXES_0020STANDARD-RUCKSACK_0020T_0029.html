@@ -1,0 +1,52 @@
+<html
+  ><head
+    ><title
+      >Method (RUCKSACK-MAP-SLOT-INDEXES STANDARD-RUCKSACK T)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (RUCKSACK-MAP-SLOT-INDEXES STANDARD-RUCKSACK T)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod rucksack-map-slot-indexes ((rucksack standard-rucksack) function
+                                      &amp;key (class t) (include-subclasses t))
+  (if (eql class t)
+      (map-btree (slot-index-tables rucksack)
+                 (lambda (class slot-index-table)
+                   (map-btree slot-index-table
+                              (lambda (slot slot-index)
+                                (funcall function class slot slot-index)))))
+    (let ((visited-p (make-hash-table)))
+      (labels ((map-indexes (class)
+                 (unless (gethash class visited-p)
+                   (let ((slot-index-table (btree-search (slot-index-tables rucksack)
+                                                         (class-name class)
+                                                         :errorp nil)))
+                     (when slot-index-table
+                       (map-btree slot-index-table
+                                  (lambda (slot slot-index)
+                                    (funcall function (class-name class)
+                                             slot
+                                             slot-index)))))
+                   (setf (gethash class visited-p) t)
+                   (when include-subclasses
+                     (mapc #'map-indexes
+                           (class-direct-subclasses class))))))
+        (map-indexes (if (symbolp class) (find-class class) class))))))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028RUCKSACK-MAP-SLOT-INDEXES_0020STANDARD-RUCKSACK_0020T_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

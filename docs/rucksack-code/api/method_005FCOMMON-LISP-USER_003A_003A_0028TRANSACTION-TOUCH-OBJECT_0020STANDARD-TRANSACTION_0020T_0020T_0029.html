@@ -1,0 +1,32 @@
+<html
+  ><head
+    ><title
+      >Method (TRANSACTION-TOUCH-OBJECT STANDARD-TRANSACTION T T)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (TRANSACTION-TOUCH-OBJECT STANDARD-TRANSACTION T T)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod transaction-touch-object ((transaction standard-transaction)
+                                     object
+                                     object-id)
+  (setf (gethash object-id (dirty-objects transaction)) object)
+  (queue-add (dirty-queue transaction) object-id))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FCOMMON-LISP-USER_003A_003A_0028TRANSACTION-TOUCH-OBJECT_0020STANDARD-TRANSACTION_0020T_0020T_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

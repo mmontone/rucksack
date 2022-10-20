@@ -1,0 +1,42 @@
+<html
+  ><head
+    ><title
+      >Method (MAKE-ROOM-IN-CACHE STANDARD-CACHE)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (MAKE-ROOM-IN-CACHE STANDARD-CACHE)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod make-room-in-cache ((cache standard-cache))
+  ;; We need to remove some objects from the in-memory cache (both
+  ;; from the hash table and from the queue).
+  ;; We do this by removing the objects that have been used least
+  ;; recently.  We don't do anything with dirty objects, because
+  ;; they contain changes that must still be committed to disk.
+  (let ((queue (queue cache))
+        (nr-objects-to-remove (* (- 1.0 (cache-shrink-ratio cache))
+                                 (cache-size cache)))
+        (nr-objects-removed 0))
+    (loop until (or (= nr-objects-removed nr-objects-to-remove)
+                    (queue-empty-p queue))
+          do (let ((id (queue-remove queue)))
+               (when (remhash id (objects cache))
+                 (incf nr-objects-removed))))))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028MAKE-ROOM-IN-CACHE_0020STANDARD-CACHE_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

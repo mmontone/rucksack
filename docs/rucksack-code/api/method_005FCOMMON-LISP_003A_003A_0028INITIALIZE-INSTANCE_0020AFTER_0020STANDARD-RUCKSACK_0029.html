@@ -1,0 +1,39 @@
+<html
+  ><head
+    ><title
+      >Method (INITIALIZE-INSTANCE AFTER STANDARD-RUCKSACK)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (INITIALIZE-INSTANCE AFTER STANDARD-RUCKSACK)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod initialize-instance :after ((rucksack standard-rucksack)
+                                       &amp;key
+                                       (cache-class 'lazy-cache)
+                                       (cache-args '())
+                                       &amp;allow-other-keys)
+  ;; Open cache.
+  (setf (slot-value rucksack 'cache)
+        (apply #'open-cache (rucksack-directory rucksack)
+               :class cache-class
+               :rucksack rucksack
+               cache-args))
+  (load-roots rucksack))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FCOMMON-LISP_003A_003A_0028INITIALIZE-INSTANCE_0020AFTER_0020STANDARD-RUCKSACK_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

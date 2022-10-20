@@ -1,0 +1,58 @@
+<html
+  ><head
+    ><title
+      >Method (CACHE-TOUCH-OBJECT T STANDARD-CACHE)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (CACHE-TOUCH-OBJECT T STANDARD-CACHE)</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Checks for transaction conflicts and signals a transaction conflict
+if necessary.  Change the object's status to dirty.  If the object is
+already dirty, nothing happens.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod cache-touch-object (object (cache standard-cache))
+  &quot;Checks for transaction conflicts and signals a transaction conflict
+if necessary.  Change the object's status to dirty.  If the object is
+already dirty, nothing happens.&quot;
+  ;; This function is called by (SETF SLOT-VALUE-USING-CLASS),
+  ;; SLOT-MAKUNBOUND-USING-CLASS and P-DATA-WRITE.
+  (let ((object-id (object-id object))
+        (transaction (current-transaction)))
+    ;; Check for transaction conflict.
+    (let ((old-transaction
+           (find-conflicting-transaction object-id cache transaction)))
+      (when old-transaction
+        (rucksack-error 'transaction-conflict
+                        :object-id object-id
+                        :new-transaction transaction
+                        :old-transaction old-transaction)))
+    ;;
+    (unless (transaction-changed-object transaction object-id) ; already dirty
+      ;; Remove object from the 'clean objects' hash table.
+      ;; It would be nice to remove the object from the 'clean' queue too,
+      ;; but that's too expensive.  We'll let MAKE-ROOM-IN-CACHE take care
+      ;; of that.
+      (remhash object-id (objects cache))
+      ;; Let the transaction keep track of the dirty object.
+      (transaction-touch-object transaction object object-id))))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028CACHE-TOUCH-OBJECT_0020T_0020STANDARD-CACHE_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

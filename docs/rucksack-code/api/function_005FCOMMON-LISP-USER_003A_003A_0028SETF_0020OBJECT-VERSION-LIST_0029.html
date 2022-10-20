@@ -1,0 +1,39 @@
+<html
+  ><head
+    ><title
+      >Function SETFOBJECT-VERSION-LIST</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: SETF OBJECT-VERSION-LIST</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Let the (previous pointer of the) object in YOUNG-BLOCK point to
+OLD-BLOCK.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun (setf object-version-list) (old-block young-block heap)
+  &quot;Let the (previous pointer of the) object in YOUNG-BLOCK point to
+OLD-BLOCK.&quot;
+  (let ((stream (heap-stream heap)))
+    (file-position stream (+ young-block (block-header-size heap)))
+    (serialize-previous-version-pointer old-block stream))
+  old-block)</code
+            ></pre
+          ><a href="../Rucksack.html#function_005FCOMMON-LISP-USER_003A_003A_0028SETF_0020OBJECT-VERSION-LIST_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

@@ -1,0 +1,152 @@
+<html
+  ><head
+    ><title
+      >Class STANDARD-CACHE</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Class: STANDARD-CACHE</h1
+        ><div class="contents"
+          ><h2
+  >Slots</h2
+><ul class="slots"
+  ><li
+  ><em
+    >HEAP</em
+  ></li
+><li
+  ><em
+    >SCHEMA-TABLE</em
+  ></li
+><li
+  ><em
+    >RUCKSACK</em
+  ><p class="slot-description"
+  >Back pointer to the rucksack.</p
+></li
+><li
+  ><em
+    >OBJECTS</em
+  ><p class="slot-description"
+  >A hash-table (from id to object)
+containing the youngest committed version of all objects that are
+currently kept in memory but are not dirty.  ('The youngest version'
+means the version belonging to the youngest committed transaction.)</p
+></li
+><li
+  ><em
+    >QUEUE</em
+  ><p class="slot-description"
+  >A queue of the ids of all non-dirty objects
+that are currently in the cache memory.  Whenever an object is
+retrieved (i.e. read), it's added to the queue.  If an object-id is
+in this queue, it is not necessarily in the OBJECTS hash-table.</p
+></li
+><li
+  ><em
+    >LAST-TIMESTAMP</em
+  ></li
+><li
+  ><em
+    >TRANSACTION-ID-HELPER</em
+  ></li
+><li
+  ><em
+    >TRANSACTIONS</em
+  ><p class="slot-description"
+  >A mapping from transaction ids to
+transactions.  Contains only open transactions, i.e. transactions that
+haven't been rolled back or committed.</p
+></li
+><li
+  ><em
+    >SIZE</em
+  ><p class="slot-description"
+  >The maximum number of non-dirty objects that
+will be kept in the cache memory.</p
+></li
+><li
+  ><em
+    >SHRINK-RATIO</em
+  ><p class="slot-description"
+  >A number between 0 and 1.  When the
+cache is full, i.e. when there are at least SIZE (non-dirty) objects
+in the queue, it will be shrunk by removing (1 - SHRINK-RATIO) * SIZE
+objects.</p
+></li
+></ul
+><h2
+  >Hierachy</h2
+><h3
+  >Precedence List</h3
+><ul
+  ><li
+  ><a href="../api/class_005FRUCKSACK_003A_003ACACHE.html"
+  >CACHE</a
+></li
+></ul
+><h3
+  >Sub Classes</h3
+><ul
+  ><li
+  ><a href="../api/class_005FRUCKSACK_003A_003ALAZY-CACHE.html"
+  >LAZY-CACHE</a
+></li
+></ul
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defclass standard-cache (cache)
+  ;; The cache uses a heap to manage the object memory and a schema table to
+  ;; keep track of different class versions for objects in the heap.
+  ((heap :initarg :heap :reader heap)
+   (schema-table :initarg :schema-table :reader schema-table)
+   (rucksack :initarg :rucksack :reader rucksack
+             :documentation &quot;Back pointer to the rucksack.&quot;)
+   ;; Clean objects
+   (objects :initarg :objects
+            :reader objects
+            :documentation &quot;A hash-table \(from id to object)
+containing the youngest committed version of all objects that are
+currently kept in memory but are not dirty.  \('The youngest version'
+means the version belonging to the youngest committed transaction.)&quot;)
+   (queue :initform (make-instance 'queue) :reader queue
+          :documentation &quot;A queue of the ids of all non-dirty objects
+that are currently in the cache memory.  Whenever an object is
+retrieved (i.e. read), it's added to the queue.  If an object-id is
+in this queue, it is not necessarily in the OBJECTS hash-table.&quot;)
+   (last-timestamp :initform (get-universal-time)
+                   :accessor last-timestamp)
+   (transaction-id-helper :initform -1
+                          :accessor transaction-id-helper)
+   (transactions :initform (make-hash-table)
+                 :reader transactions
+                 :documentation &quot;A mapping from transaction ids to
+transactions.  Contains only open transactions, i.e. transactions that
+haven't been rolled back or committed.&quot;)
+   ;;
+   (size :initarg :size :accessor cache-size
+         :documentation &quot;The maximum number of non-dirty objects that
+will be kept in the cache memory.&quot;)
+   (shrink-ratio :initarg :shrink-ratio
+                 :initform 0.7
+                 :accessor cache-shrink-ratio
+                 :documentation &quot;A number between 0 and 1.  When the
+cache is full, i.e. when there are at least SIZE (non-dirty) objects
+in the queue, it will be shrunk by removing (1 - SHRINK-RATIO) * SIZE
+objects.&quot;)))</code
+            ></pre
+          ><a href="../Rucksack.html#class_005FRUCKSACK_003A_003ASTANDARD-CACHE"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

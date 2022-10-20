@@ -1,0 +1,47 @@
+<html
+  ><head
+    ><title
+      >Macro RUCKSACK-DO-CLASS</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Macro: RUCKSACK-DO-CLASS</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Evaluate BODY for each instance of CLASS, with INSTANCE-VAR
+successively bound to each instance.  See the documentation of
+RUCKSACK-MAP-CLASS for more details.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmacro rucksack-do-class ((instance-var class
+                              &amp;key
+                              (rucksack '*rucksack*)
+                              id-only
+                              (include-subclasses t))
+                             &amp;body body)
+  &quot;Evaluate BODY for each instance of CLASS, with INSTANCE-VAR
+successively bound to each instance.  See the documentation of
+RUCKSACK-MAP-CLASS for more details.&quot;
+  (check-type instance-var symbol)
+  `(rucksack-map-class ,rucksack ,class
+                       (lambda (,instance-var) ,@body)
+                       :id-only ,id-only
+                       :include-subclasses ,include-subclasses))</code
+            ></pre
+          ><a href="../Rucksack.html#macro_005FRUCKSACK_003A_003ARUCKSACK-DO-CLASS"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

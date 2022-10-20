@@ -1,0 +1,49 @@
+<html
+  ><head
+    ><title
+      >Method (RUCKSACK-SLOT-INDEX STANDARD-RUCKSACK T T)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (RUCKSACK-SLOT-INDEX STANDARD-RUCKSACK T T)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod rucksack-slot-index ((rucksack standard-rucksack) class slot
+                                &amp;key (errorp nil) (include-superclasses nil))
+  (unless (symbolp class)
+    (setq class (class-name class)))
+  (unless (symbolp slot)
+    (setq slot (slot-definition-name slot)))
+  (let ((slot-index-tables (slot-index-tables rucksack)))
+    (flet ((find-index (class)
+             (let ((slot-index-table (btree-search slot-index-tables class
+                                                   :errorp nil)))
+ 	       (and slot-index-table
+                    (btree-search slot-index-table slot :errorp nil)))))
+      (or (find-index class)
+          (and include-superclasses
+               (loop for superclass in (class-precedence-list (find-class class))
+                     thereis (find-index (class-name superclass))))
+          (and errorp
+               (simple-rucksack-error
+                &quot;Can't find slot index for slot ~S of class ~S in ~S.&quot;
+                slot
+                class
+                rucksack))))))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028RUCKSACK-SLOT-INDEX_0020STANDARD-RUCKSACK_0020T_0020T_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

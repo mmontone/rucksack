@@ -1,0 +1,38 @@
+<html
+  ><head
+    ><title
+      >Function MAKE-LOCK</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: MAKE-LOCK</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun make-lock (&amp;key (name &quot;lock&quot;))
+  #+allegro
+  (mp:make-process-lock :name name)
+  #+lispworks
+  (mp:make-lock :name name)
+  #+sbcl
+  (sb-thread:make-mutex :name name)
+  #+openmcl
+  (ccl:make-lock name)
+  #-(or allegro lispworks sbcl openmcl)
+  (not-implemented 'make-lock))</code
+            ></pre
+          ><a href="../Rucksack.html#function_005FRUCKSACK_003A_003AMAKE-LOCK"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

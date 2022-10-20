@@ -1,0 +1,39 @@
+<html
+  ><head
+    ><title
+      >Function RUCKSACK-FILES-IN-DIRECTORY</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: RUCKSACK-FILES-IN-DIRECTORY</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Returns a list with the pathnames of all Rucksack files
+in the specified directory.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun rucksack-files-in-directory (directory-pathname)
+  &quot;Returns a list with the pathnames of all Rucksack files
+in the specified directory.&quot;
+  (list (merge-pathnames &quot;roots&quot; directory-pathname)
+        (merge-pathnames &quot;objects&quot; directory-pathname)
+        (merge-pathnames &quot;heap&quot; directory-pathname)
+        (merge-pathnames &quot;schemas&quot; directory-pathname)))</code
+            ></pre
+          ><a href="../Rucksack.html#function_005FRUCKSACK_003A_003ARUCKSACK-FILES-IN-DIRECTORY"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

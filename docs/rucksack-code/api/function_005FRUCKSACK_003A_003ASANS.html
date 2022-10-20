@@ -1,0 +1,47 @@
+<html
+  ><head
+    ><title
+      >Function SANS</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: SANS</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Returns PLIST with keyword arguments from KEYS removed.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun sans (plist &amp;rest keys)
+  &quot;Returns PLIST with keyword arguments from KEYS removed.&quot;
+  ;; From Usenet posting &lt;3247672165664225@naggum.no&gt; by Erik
+  ;; Naggum.
+  (let ((sans ()))
+    (loop
+      (let ((tail (nth-value 2 (get-properties plist keys))))
+        ;; this is how it ends
+        (unless tail
+          (return (nreconc sans plist)))
+        ;; copy all the unmatched keys
+        (loop until (eq plist tail) do
+              (push (pop plist) sans)
+              (push (pop plist) sans))
+        ;; skip the matched key
+        (setq plist (cddr plist))))))</code
+            ></pre
+          ><a href="../Rucksack.html#function_005FRUCKSACK_003A_003ASANS"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

@@ -1,0 +1,55 @@
+<html
+  ><head
+    ><title
+      >Method (SAVE-DIRTY-OBJECT T STANDARD-CACHE STANDARD-TRANSACTION T)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (SAVE-DIRTY-OBJECT T STANDARD-CACHE STANDARD-TRANSACTION T)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod save-dirty-object (object
+                              (cache standard-cache)
+                              (transaction standard-transaction)
+                              object-id &amp;key schema)
+  (let* ((transaction-id (transaction-id transaction))
+         (heap (heap cache))
+         (object-table (object-table heap))
+         (version-list
+          ;; If the object-table entry is not marked :reserved, there
+          ;; is an object version list.  Get the start of that list.
+          (and (not (eql :reserved (object-info object-table object-id)))
+               (object-heap-position object-table object-id))))
+    (multiple-value-bind (younger-version older-version)
+        ;; Determine the correct position in the version list.
+        (version-list-position transaction-id object-id version-list heap)
+      ;; Write the object to a fresh block on the heap.
+      (let ((block (save-object object object-id cache 
+                                transaction-id older-version
+                                :schema schema)))
+        ;; Hook the block into the version list.
+        (if younger-version
+            ;; Let younger version point to this version.
+            (setf (object-version-list younger-version heap) block)
+          ;; There is no younger version, so this version becomes
+          ;; the start of the version list.
+          (setf (object-heap-position object-table object-id)
+                block)))))
+  object-id)</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028SAVE-DIRTY-OBJECT_0020T_0020STANDARD-CACHE_0020STANDARD-TRANSACTION_0020T_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

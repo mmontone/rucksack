@@ -2,9 +2,7 @@
 
 (in-package :rucksack)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Cache: API
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;** Cache
 
 ;; (defun open-cache (directory
 ;;                   &key (class 'standard-cache) (if-exists :overwrite)
@@ -13,6 +11,8 @@
 ;;
 ;; Creates or opens a cache in the given directory and returns that
 ;; cache. SIZE is the number of objects that may be kept in memory.
+
+;;;;*** API
 
 (defgeneric close-cache (cache &key commit)
   (:documentation "Closes the cache.  If COMMIT is true (which is the

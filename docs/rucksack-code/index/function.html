@@ -1,0 +1,204 @@
+<html
+  ><head
+    ><title
+      >Function Index</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="api-index"
+        ><h1
+          >Function Index</h1
+        ><div class="contents"
+          ><dl
+            ><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AADD-AND-FILL-SLOT-INDEX.html"
+    >ADD-AND-FILL-SLOT-INDEX</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AADD-CLASS-INDEX.html"
+    >ADD-CLASS-INDEX</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AADD-RUCKSACK-ROOT-ID.html"
+    >ADD-RUCKSACK-ROOT-ID</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AADD-SLOT-INDEX.html"
+    >ADD-SLOT-INDEX</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ACLOSE-RUCKSACK.html"
+    >CLOSE-RUCKSACK</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ACOMMIT.html"
+    >COMMIT</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ACOMMIT-FILENAME.html"
+    >COMMIT-FILENAME</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ACREATE-COMMIT-FILE.html"
+    >CREATE-COMMIT-FILE</a
+  ></dt
+><dd
+  >Write object ids of all dirty objects to the commit file, so
+recovery can do its job if this transaction never completes.</dd
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ACURRENT-TRANSACTION.html"
+    >CURRENT-TRANSACTION</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ADELETE-COMMIT-FILE.html"
+    >DELETE-COMMIT-FILE</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AFIND-OBJECT-VERSION.html"
+    >FIND-OBJECT-VERSION</a
+  ></dt
+><dd
+  >Returns the object version for OBJECT-ID that's compatible with
+CURRENT-TRANSACTION, or NIL if there's no such version in the cache
+memory.</dd
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AFIND-OLD-INDEX-SPEC.html"
+    >FIND-OLD-INDEX-SPEC</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ALOAD-COMMIT-FILE.html"
+    >LOAD-COMMIT-FILE</a
+  ></dt
+><dd
+  >Returns two values: a transaction id and a list of object ids
+(of objects that may be partially committed).</dd
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ALOAD-ROOTS.html"
+    >LOAD-ROOTS</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AMAKE-LOCK.html"
+    >MAKE-LOCK</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AMAP-CLASS-INDEXES.html"
+    >MAP-CLASS-INDEXES</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AMAP-SLOT-INDEXES.html"
+    >MAP-SLOT-INDEXES</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003A_0028SETF_0020OBJECT-VERSION-LIST_0029.html"
+    >SETF OBJECT-VERSION-LIST</a
+  ></dt
+><dd
+  >Let the (previous pointer of the) object in YOUNG-BLOCK point to
+OLD-BLOCK.</dd
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AOPEN-CACHE.html"
+    >OPEN-CACHE</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AOPEN-RUCKSACK.html"
+    >OPEN-RUCKSACK</a
+  ></dt
+><dd
+  >Opens the rucksack in the directory designated by DIRECTORY-DESIGNATOR.</dd
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003APROCESS-LOCK.html"
+    >PROCESS-LOCK</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003APROCESS-UNLOCK.html"
+    >PROCESS-UNLOCK</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AREMOVE-CLASS-INDEX.html"
+    >REMOVE-CLASS-INDEX</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AREMOVE-SLOT-INDEX.html"
+    >REMOVE-SLOT-INDEX</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AREPLACE-SLOT-INDEX.html"
+    >REPLACE-SLOT-INDEX</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AROLLBACK.html"
+    >ROLLBACK</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ARUCKSACK-DELETE-OBJECTS.html"
+    >RUCKSACK-DELETE-OBJECTS</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ARUCKSACK-FILES-IN-DIRECTORY.html"
+    >RUCKSACK-FILES-IN-DIRECTORY</a
+  ></dt
+><dd
+  >Returns a list with the pathnames of all Rucksack files
+in the specified directory.</dd
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ARUCKSACK-INDEXED-SLOTS-FOR-CLASS.html"
+    >RUCKSACK-INDEXED-SLOTS-FOR-CLASS</a
+  ></dt
+><dd
+  >Returns a list with the names of the indexed direct slots of CLASS.</dd
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ARUCKSACK-LIST-CLASS-INDEXES.html"
+    >RUCKSACK-LIST-CLASS-INDEXES</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ARUCKSACK-LIST-SLOT-INDEXES.html"
+    >RUCKSACK-LIST-SLOT-INDEXES</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ASANS.html"
+    >SANS</a
+  ></dt
+><dd
+  >Returns PLIST with keyword arguments from KEYS removed.</dd
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ASAVE-ROOTS.html"
+    >SAVE-ROOTS</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ASAVE-ROOTS-IF-NECESSARY.html"
+    >SAVE-ROOTS-IF-NECESSARY</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ATEST-GARBAGE-COLLECTOR.html"
+    >TEST-GARBAGE-COLLECTOR</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ATRANSACTION-COMMIT.html"
+    >TRANSACTION-COMMIT</a
+  ></dt
+><dd
+  >Call transaction-commit-1 to do the real work.</dd
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ATRANSACTION-ROLLBACK.html"
+    >TRANSACTION-ROLLBACK</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ATRANSACTION-START.html"
+    >TRANSACTION-START</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AVERSION-LIST-POSITION.html"
+    >VERSION-LIST-POSITION</a
+  ></dt
+><dd
+  >Returns the correct position for a transaction-id in a version-list.</dd
+></dl
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

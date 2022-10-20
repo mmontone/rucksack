@@ -1,0 +1,33 @@
+<html
+  ><head
+    ><title
+      >Method (RUCKSACK-ROOTS STANDARD-RUCKSACK)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (RUCKSACK-ROOTS STANDARD-RUCKSACK)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod rucksack-roots ((rucksack standard-rucksack))
+  (let ((result '()))
+    (map-rucksack-roots (lambda (root) (push root result))
+                        rucksack)
+    ;; We don't need to nreverse the list, because the order isn't specified.
+    result))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028RUCKSACK-ROOTS_0020STANDARD-RUCKSACK_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

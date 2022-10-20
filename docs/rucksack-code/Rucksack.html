@@ -1,0 +1,1776 @@
+<html
+  ><head
+    ><title
+      >Rucksack code</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="style.css" rel="stylesheet"
+    /><link title="Print" href="print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><h1 class="title"
+        >Rucksack code</h1
+      ><div class="contents"
+        ><h2
+  ><a name="Rucksack"
+  >Rucksack</a
+>&nbsp;</h2
+><div class="nav-links"
+  ><span class="dead-nav-link"
+  >prev</span
+> | <span class="dead-nav-link"
+  >up</span
+> | <a href="Rucksack.html#Api"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<h3
+  ><a name="Api"
+  >Api</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html"
+  >up</a
+> | <a href="Rucksack.html#Class_0020and_0020slot_0020indexing_0020"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003AADD-RUCKSACK-ROOT.html" name="generic_0020function_005FRUCKSACK_003A_003AADD-RUCKSACK-ROOT"
+      >Generic Function ADD-RUCKSACK-ROOT</a
+    > Adds an object to the root set of a rucksack.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ADELETE-RUCKSACK-ROOT.html" name="generic_0020function_005FRUCKSACK_003A_003ADELETE-RUCKSACK-ROOT"
+      >Generic Function DELETE-RUCKSACK-ROOT</a
+    > Delete an object from the root set of a rucksack.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003AMAP-RUCKSACK-ROOTS.html" name="generic_0020function_005FRUCKSACK_003A_003AMAP-RUCKSACK-ROOTS"
+      >Generic Function MAP-RUCKSACK-ROOTS</a
+    > Applies a function to all objects in the root set of a rucksack.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-ROOTS.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-ROOTS"
+      >Generic Function RUCKSACK-ROOTS</a
+    > Returns a list with all objects in the root set of a rucksack.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-ROOT-P.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-ROOT-P"
+      >Generic Function RUCKSACK-ROOT-P</a
+    > Returns true iff OBJECT is a member of the root set of a rucksack.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-CACHE.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-CACHE"
+      >Generic Function RUCKSACK-CACHE</a
+    > Returns the cache for a rucksack.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-DIRECTORY.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-DIRECTORY"
+      >Generic Function RUCKSACK-DIRECTORY</a
+    > Returns a pathname for the directory that contains all files of a
+rucksack.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-COMMIT.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-COMMIT"
+      >Generic Function RUCKSACK-COMMIT</a
+    > Ensures that all in-memory data is saved to disk.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-ROLLBACK.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-ROLLBACK"
+      >Generic Function RUCKSACK-ROLLBACK</a
+    > .</p
+  ></div
+>
+
+<h3
+  ><a name="Class_0020and_0020slot_0020indexing_0020"
+  >Class and slot indexing </a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Api"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html"
+  >up</a
+> | <a href="Rucksack.html#Locks"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-UPDATE-CLASS-INDEX.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-UPDATE-CLASS-INDEX"
+      >Generic Function RUCKSACK-UPDATE-CLASS-INDEX</a
+    > Compares the current class index for CLASS to the class index
+that's specified in the :INDEX class option of CLASS.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-UPDATE-SLOT-INDEXES.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-UPDATE-SLOT-INDEXES"
+      >Generic Function RUCKSACK-UPDATE-SLOT-INDEXES</a
+    > Compares the current slot indexes for CLASS to the slot indexes
+that are specified in the slot options for the direct slots of CLASS.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-ADD-CLASS-INDEX.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-ADD-CLASS-INDEX"
+      >Generic Function RUCKSACK-ADD-CLASS-INDEX</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-REMOVE-CLASS-INDEX.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-REMOVE-CLASS-INDEX"
+      >Generic Function RUCKSACK-REMOVE-CLASS-INDEX</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-CLASS-INDEX.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-CLASS-INDEX"
+      >Generic Function RUCKSACK-CLASS-INDEX</a
+    > Returns the class index for a class designator.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAP-CLASS-INDEXES.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAP-CLASS-INDEXES"
+      >Generic Function RUCKSACK-MAP-CLASS-INDEXES</a
+    > FUNCTION must take two arguments: a class name and a class index.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAKE-CLASS-INDEX.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAKE-CLASS-INDEX"
+      >Generic Function RUCKSACK-MAKE-CLASS-INDEX</a
+    > Creates a new class index and returns that index.</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-ADD-SLOT-INDEX.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-ADD-SLOT-INDEX"
+      >Generic Function RUCKSACK-ADD-SLOT-INDEX</a
+    > Creates a new slot index for the slot designated by
+CLASS-DESIGNATOR and SLOT.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-REMOVE-SLOT-INDEX.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-REMOVE-SLOT-INDEX"
+      >Generic Function RUCKSACK-REMOVE-SLOT-INDEX</a
+    > </p
+  ></div
+>
+
+
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-SLOT-INDEX.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-SLOT-INDEX"
+      >Generic Function RUCKSACK-SLOT-INDEX</a
+    > Returns the slot index for the slot specified by CLASS-DESIGNATOR
+and SLOT.</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAP-SLOT-INDEXES.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAP-SLOT-INDEXES"
+      >Generic Function RUCKSACK-MAP-SLOT-INDEXES</a
+    > FUNCTION must take three arguments: a class name, a slot name and
+a slot index.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAYBE-INDEX-CHANGED-SLOT.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAYBE-INDEX-CHANGED-SLOT"
+      >Generic Function RUCKSACK-MAYBE-INDEX-CHANGED-SLOT</a
+    > This function is called after a slot has changed.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAYBE-INDEX-NEW-OBJECT.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAYBE-INDEX-NEW-OBJECT"
+      >Generic Function RUCKSACK-MAYBE-INDEX-NEW-OBJECT</a
+    > Adds the object id of OBJECT to the class index for the class
+designated by CLASS-DESIGNATOR.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAP-CLASS.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAP-CLASS"
+      >Generic Function RUCKSACK-MAP-CLASS</a
+    >   FUNCTION is a unary function that gets called for all instances of
+the specified class.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-macro"
+  ><p
+    ><a class="descriptor macro" href="api/macro_005FRUCKSACK_003A_003ARUCKSACK-DO-CLASS.html" name="macro_005FRUCKSACK_003A_003ARUCKSACK-DO-CLASS"
+      >Macro RUCKSACK-DO-CLASS</a
+    > Evaluate BODY for each instance of CLASS, with INSTANCE-VAR
+successively bound to each instance.</p
+  ></div
+>
+                                 
+                                          
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAP-SLOT.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAP-SLOT"
+      >Generic Function RUCKSACK-MAP-SLOT</a
+    >  FUNCTION is a unary function that gets called for all instances of
+the specified class that have a slot value matching the EQUAL, MIN,
+MAX INCLUDE-MIN and INCLUDE-MAX arguments (s</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-macro"
+  ><p
+    ><a class="descriptor macro" href="api/macro_005FRUCKSACK_003A_003ARUCKSACK-DO-SLOT.html" name="macro_005FRUCKSACK_003A_003ARUCKSACK-DO-SLOT"
+      >Macro RUCKSACK-DO-SLOT</a
+    > Evaluate BODY for each instance of CLASS where SLOT has the
+specified value.</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-DELETE-OBJECT.html" name="generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-DELETE-OBJECT"
+      >Generic Function RUCKSACK-DELETE-OBJECT</a
+    > Removes OBJECT from RUCKSACK, i.</p
+  ></div
+>
+
+
+<h3
+  ><a name="Locks"
+  >Locks</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Class_0020and_0020slot_0020indexing_0020"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html"
+  >up</a
+> | <a href="Rucksack.html#Transactions"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AMAKE-LOCK.html" name="function_005FRUCKSACK_003A_003AMAKE-LOCK"
+      >Function MAKE-LOCK</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-macro"
+  ><p
+    ><a class="descriptor macro" href="api/macro_005FRUCKSACK_003A_003AWITH-LOCK.html" name="macro_005FRUCKSACK_003A_003AWITH-LOCK"
+      >Macro WITH-LOCK</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003APROCESS-LOCK.html" name="function_005FRUCKSACK_003A_003APROCESS-LOCK"
+      >Function PROCESS-LOCK</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003APROCESS-UNLOCK.html" name="function_005FRUCKSACK_003A_003APROCESS-UNLOCK"
+      >Function PROCESS-UNLOCK</a
+    > </p
+  ></div
+>
+
+
+<h3
+  ><a name="Transactions"
+  >Transactions</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Locks"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html"
+  >up</a
+> | <a href="Rucksack.html#Rucksacks"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-variable"
+  ><p
+    ><a class="descriptor variable" href="api/variable_005FRUCKSACK_003A_003A_002ATRANSACTION_002A.html" name="variable_005FRUCKSACK_003A_003A_002ATRANSACTION_002A"
+      >Variable *TRANSACTION*</a
+    > The currently active transaction.</p
+  ></div
+>
+ 
+<div class="computational-element-link computational-element-link-macro"
+  ><p
+    ><a class="descriptor macro" href="api/macro_005FRUCKSACK_003A_003AWITH-TRANSACTION.html" name="macro_005FRUCKSACK_003A_003AWITH-TRANSACTION"
+      >Macro WITH-TRANSACTION</a
+    > </p
+  ></div
+>
+
+
+
+
+<h3
+  ><a name="Rucksacks"
+  >Rucksacks</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Transactions"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html"
+  >up</a
+> | <a href="Rucksack.html#Opening"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003ARUCKSACK.html" name="class_005FRUCKSACK_003A_003ARUCKSACK"
+      >Class RUCKSACK</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003ASTANDARD-RUCKSACK.html" name="class_005FRUCKSACK_003A_003ASTANDARD-RUCKSACK"
+      >Class STANDARD-RUCKSACK</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FCOMMON-LISP_003A_003A_0028PRINT-OBJECT_0020RUCKSACK_0020T_0029.html" name="method_005FCOMMON-LISP_003A_003A_0028PRINT-OBJECT_0020RUCKSACK_0020T_0029"
+      >Method (PRINT-OBJECT RUCKSACK T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-ROOTS-PATHNAME_0020STANDARD-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-ROOTS-PATHNAME_0020STANDARD-RUCKSACK_0029"
+      >Method (RUCKSACK-ROOTS-PATHNAME STANDARD-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CLASS-INDEX-TABLE_0020STANDARD-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028CLASS-INDEX-TABLE_0020STANDARD-RUCKSACK_0029"
+      >Method (CLASS-INDEX-TABLE STANDARD-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028SLOT-INDEX-TABLES_0020STANDARD-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028SLOT-INDEX-TABLES_0020STANDARD-RUCKSACK_0029"
+      >Method (SLOT-INDEX-TABLES STANDARD-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FCOMMON-LISP_003A_003A_0028INITIALIZE-INSTANCE_0020AFTER_0020STANDARD-RUCKSACK_0029.html" name="method_005FCOMMON-LISP_003A_003A_0028INITIALIZE-INSTANCE_0020AFTER_0020STANDARD-RUCKSACK_0029"
+      >Method (INITIALIZE-INSTANCE AFTER STANDARD-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ALOAD-ROOTS.html" name="function_005FRUCKSACK_003A_003ALOAD-ROOTS"
+      >Function LOAD-ROOTS</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ASAVE-ROOTS.html" name="function_005FRUCKSACK_003A_003ASAVE-ROOTS"
+      >Function SAVE-ROOTS</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ASAVE-ROOTS-IF-NECESSARY.html" name="function_005FRUCKSACK_003A_003ASAVE-ROOTS-IF-NECESSARY"
+      >Function SAVE-ROOTS-IF-NECESSARY</a
+    > </p
+  ></div
+>
+  
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028ADD-RUCKSACK-ROOT_0020T_0020STANDARD-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028ADD-RUCKSACK-ROOT_0020T_0020STANDARD-RUCKSACK_0029"
+      >Method (ADD-RUCKSACK-ROOT T STANDARD-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AADD-RUCKSACK-ROOT-ID.html" name="function_005FRUCKSACK_003A_003AADD-RUCKSACK-ROOT-ID"
+      >Function ADD-RUCKSACK-ROOT-ID</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028DELETE-RUCKSACK-ROOT_0020T_0020STANDARD-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028DELETE-RUCKSACK-ROOT_0020T_0020STANDARD-RUCKSACK_0029"
+      >Method (DELETE-RUCKSACK-ROOT T STANDARD-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028MAP-RUCKSACK-ROOTS_0020T_0020STANDARD-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028MAP-RUCKSACK-ROOTS_0020T_0020STANDARD-RUCKSACK_0029"
+      >Method (MAP-RUCKSACK-ROOTS T STANDARD-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-ROOTS_0020STANDARD-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-ROOTS_0020STANDARD-RUCKSACK_0029"
+      >Method (RUCKSACK-ROOTS STANDARD-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-ROOT-P_0020T_0020STANDARD-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-ROOT-P_0020T_0020STANDARD-RUCKSACK_0029"
+      >Method (RUCKSACK-ROOT-P T STANDARD-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+<h3
+  ><a name="Opening"
+  >Opening</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Rucksacks"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html"
+  >up</a
+> | <a href="Rucksack.html#Commit"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-variable"
+  ><p
+    ><a class="descriptor variable" href="api/variable_005FRUCKSACK_003A_003A_002ARUCKSACK-OPENING-LOCK_002A.html" name="variable_005FRUCKSACK_003A_003A_002ARUCKSACK-OPENING-LOCK_002A"
+      >Variable *RUCKSACK-OPENING-LOCK*</a
+    > </p
+  ></div
+>
+ 
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AOPEN-RUCKSACK.html" name="function_005FRUCKSACK_003A_003AOPEN-RUCKSACK"
+      >Function OPEN-RUCKSACK</a
+    > Opens the rucksack in the directory designated by DIRECTORY-DESIGNATOR.</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ARUCKSACK-FILES-IN-DIRECTORY.html" name="function_005FRUCKSACK_003A_003ARUCKSACK-FILES-IN-DIRECTORY"
+      >Function RUCKSACK-FILES-IN-DIRECTORY</a
+    > Returns a list with the pathnames of all Rucksack files
+in the specified directory.</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ACLOSE-RUCKSACK.html" name="function_005FRUCKSACK_003A_003ACLOSE-RUCKSACK"
+      >Function CLOSE-RUCKSACK</a
+    > </p
+  ></div
+>
+
+<h3
+  ><a name="Commit"
+  >Commit</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Opening"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html"
+  >up</a
+> | <a href="Rucksack.html#Rollback"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ACOMMIT.html" name="function_005FRUCKSACK_003A_003ACOMMIT"
+      >Function COMMIT</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-COMMIT_0020STANDARD-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-COMMIT_0020STANDARD-RUCKSACK_0029"
+      >Method (RUCKSACK-COMMIT STANDARD-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+<h3
+  ><a name="Rollback"
+  >Rollback</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Commit"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html"
+  >up</a
+> | <a href="Rucksack.html#Indexing"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AROLLBACK.html" name="function_005FRUCKSACK_003A_003AROLLBACK"
+      >Function ROLLBACK</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-ROLLBACK_0020STANDARD-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-ROLLBACK_0020STANDARD-RUCKSACK_0029"
+      >Method (RUCKSACK-ROLLBACK STANDARD-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-macro"
+  ><p
+    ><a class="descriptor macro" href="api/macro_005FRUCKSACK_003A_003AWITH-RUCKSACK.html" name="macro_005FRUCKSACK_003A_003AWITH-RUCKSACK"
+      >Macro WITH-RUCKSACK</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ATEST-GARBAGE-COLLECTOR.html" name="function_005FRUCKSACK_003A_003ATEST-GARBAGE-COLLECTOR"
+      >Function TEST-GARBAGE-COLLECTOR</a
+    > </p
+  ></div
+>
+
+
+<h3
+  ><a name="Indexing"
+  >Indexing</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Rollback"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html"
+  >up</a
+> | <a href="Rucksack.html#Class_0020indexes"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-UPDATE-CLASS-INDEX_0020STANDARD-RUCKSACK_0020PERSISTENT-CLASS_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-UPDATE-CLASS-INDEX_0020STANDARD-RUCKSACK_0020PERSISTENT-CLASS_0029"
+      >Method (RUCKSACK-UPDATE-CLASS-INDEX STANDARD-RUCKSACK PERSISTENT-CLASS)</a
+    > </p
+  ></div
+>
+
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-UPDATE-SLOT-INDEXES_0020STANDARD-RUCKSACK_0020PERSISTENT-CLASS_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-UPDATE-SLOT-INDEXES_0020STANDARD-RUCKSACK_0020PERSISTENT-CLASS_0029"
+      >Method (RUCKSACK-UPDATE-SLOT-INDEXES STANDARD-RUCKSACK PERSISTENT-CLASS)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AADD-AND-FILL-SLOT-INDEX.html" name="function_005FRUCKSACK_003A_003AADD-AND-FILL-SLOT-INDEX"
+      >Function ADD-AND-FILL-SLOT-INDEX</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AREPLACE-SLOT-INDEX.html" name="function_005FRUCKSACK_003A_003AREPLACE-SLOT-INDEX"
+      >Function REPLACE-SLOT-INDEX</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AFIND-OLD-INDEX-SPEC.html" name="function_005FRUCKSACK_003A_003AFIND-OLD-INDEX-SPEC"
+      >Function FIND-OLD-INDEX-SPEC</a
+    > </p
+  ></div
+>
+
+
+             
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AADD-CLASS-INDEX.html" name="function_005FRUCKSACK_003A_003AADD-CLASS-INDEX"
+      >Function ADD-CLASS-INDEX</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AADD-SLOT-INDEX.html" name="function_005FRUCKSACK_003A_003AADD-SLOT-INDEX"
+      >Function ADD-SLOT-INDEX</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AREMOVE-CLASS-INDEX.html" name="function_005FRUCKSACK_003A_003AREMOVE-CLASS-INDEX"
+      >Function REMOVE-CLASS-INDEX</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AREMOVE-SLOT-INDEX.html" name="function_005FRUCKSACK_003A_003AREMOVE-SLOT-INDEX"
+      >Function REMOVE-SLOT-INDEX</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AMAP-CLASS-INDEXES.html" name="function_005FRUCKSACK_003A_003AMAP-CLASS-INDEXES"
+      >Function MAP-CLASS-INDEXES</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AMAP-SLOT-INDEXES.html" name="function_005FRUCKSACK_003A_003AMAP-SLOT-INDEXES"
+      >Function MAP-SLOT-INDEXES</a
+    > </p
+  ></div
+>
+
+<h4
+  ><a name="Class_0020indexes"
+  >Class indexes</a
+>&nbsp;</h4
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Indexing"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Indexing"
+  >up</a
+> | <a href="Rucksack.html#Slot_0020indexing"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-ADD-CLASS-INDEX_0020STANDARD-RUCKSACK_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-ADD-CLASS-INDEX_0020STANDARD-RUCKSACK_0020T_0029"
+      >Method (RUCKSACK-ADD-CLASS-INDEX STANDARD-RUCKSACK T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-MAKE-CLASS-INDEX_0020STANDARD-RUCKSACK_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-MAKE-CLASS-INDEX_0020STANDARD-RUCKSACK_0020T_0029"
+      >Method (RUCKSACK-MAKE-CLASS-INDEX STANDARD-RUCKSACK T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-REMOVE-CLASS-INDEX_0020STANDARD-RUCKSACK_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-REMOVE-CLASS-INDEX_0020STANDARD-RUCKSACK_0020T_0029"
+      >Method (RUCKSACK-REMOVE-CLASS-INDEX STANDARD-RUCKSACK T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-MAP-CLASS-INDEXES_0020T_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-MAP-CLASS-INDEXES_0020T_0020T_0029"
+      >Method (RUCKSACK-MAP-CLASS-INDEXES T T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-CLASS-INDEX_0020STANDARD-RUCKSACK_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-CLASS-INDEX_0020STANDARD-RUCKSACK_0020T_0029"
+      >Method (RUCKSACK-CLASS-INDEX STANDARD-RUCKSACK T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-MAYBE-INDEX-NEW-OBJECT_0020STANDARD-RUCKSACK_0020T_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-MAYBE-INDEX-NEW-OBJECT_0020STANDARD-RUCKSACK_0020T_0020T_0029"
+      >Method (RUCKSACK-MAYBE-INDEX-NEW-OBJECT STANDARD-RUCKSACK T T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-MAP-CLASS_0020STANDARD-RUCKSACK_0020T_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-MAP-CLASS_0020STANDARD-RUCKSACK_0020T_0020T_0029"
+      >Method (RUCKSACK-MAP-CLASS STANDARD-RUCKSACK T T)</a
+    > </p
+  ></div
+>
+
+<h4
+  ><a name="Slot_0020indexing"
+  >Slot indexing</a
+>&nbsp;</h4
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Class_0020indexes"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Indexing"
+  >up</a
+> | <a href="Rucksack.html#Debugging"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-ADD-SLOT-INDEX_0020STANDARD-RUCKSACK_0020T_0020T_0020T_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-ADD-SLOT-INDEX_0020STANDARD-RUCKSACK_0020T_0020T_0020T_0020T_0029"
+      >Method (RUCKSACK-ADD-SLOT-INDEX STANDARD-RUCKSACK T T T T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-REMOVE-SLOT-INDEX_0020T_0020T_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-REMOVE-SLOT-INDEX_0020T_0020T_0020T_0029"
+      >Method (RUCKSACK-REMOVE-SLOT-INDEX T T T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-MAP-SLOT-INDEXES_0020STANDARD-RUCKSACK_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-MAP-SLOT-INDEXES_0020STANDARD-RUCKSACK_0020T_0029"
+      >Method (RUCKSACK-MAP-SLOT-INDEXES STANDARD-RUCKSACK T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-MAYBE-INDEX-CHANGED-SLOT_0020STANDARD-RUCKSACK_0020T_0020T_0020T_0020T_0020T_0020T_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-MAYBE-INDEX-CHANGED-SLOT_0020STANDARD-RUCKSACK_0020T_0020T_0020T_0020T_0020T_0020T_0020T_0029"
+      >Method (RUCKSACK-MAYBE-INDEX-CHANGED-SLOT STANDARD-RUCKSACK T T T T T T T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-SLOT-INDEX_0020STANDARD-RUCKSACK_0020T_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-SLOT-INDEX_0020STANDARD-RUCKSACK_0020T_0020T_0029"
+      >Method (RUCKSACK-SLOT-INDEX STANDARD-RUCKSACK T T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-MAP-SLOT_0020STANDARD-RUCKSACK_0020T_0020T_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-MAP-SLOT_0020STANDARD-RUCKSACK_0020T_0020T_0020T_0029"
+      >Method (RUCKSACK-MAP-SLOT STANDARD-RUCKSACK T T T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ARUCKSACK-INDEXED-SLOTS-FOR-CLASS.html" name="function_005FRUCKSACK_003A_003ARUCKSACK-INDEXED-SLOTS-FOR-CLASS"
+      >Function RUCKSACK-INDEXED-SLOTS-FOR-CLASS</a
+    > Returns a list with the names of the indexed direct slots of CLASS.</p
+  ></div
+>
+
+
+<h3
+  ><a name="Debugging"
+  >Debugging</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Slot_0020indexing"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html"
+  >up</a
+> | <a href="Rucksack.html#Deleting_0020objects"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ARUCKSACK-LIST-SLOT-INDEXES.html" name="function_005FRUCKSACK_003A_003ARUCKSACK-LIST-SLOT-INDEXES"
+      >Function RUCKSACK-LIST-SLOT-INDEXES</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ARUCKSACK-LIST-CLASS-INDEXES.html" name="function_005FRUCKSACK_003A_003ARUCKSACK-LIST-CLASS-INDEXES"
+      >Function RUCKSACK-LIST-CLASS-INDEXES</a
+    > </p
+  ></div
+>
+
+
+                       
+<h3
+  ><a name="Deleting_0020objects"
+  >Deleting objects</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Debugging"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html"
+  >up</a
+> | <a href="Rucksack.html#Transactions"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028RUCKSACK-DELETE-OBJECT_0020STANDARD-RUCKSACK_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028RUCKSACK-DELETE-OBJECT_0020STANDARD-RUCKSACK_0020T_0029"
+      >Method (RUCKSACK-DELETE-OBJECT STANDARD-RUCKSACK T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ARUCKSACK-DELETE-OBJECTS.html" name="function_005FRUCKSACK_003A_003ARUCKSACK-DELETE-OBJECTS"
+      >Function RUCKSACK-DELETE-OBJECTS</a
+    > </p
+  ></div
+>
+
+
+
+<h3
+  ><a name="Transactions"
+  >Transactions</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Deleting_0020objects"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html"
+  >up</a
+> | <a href="Rucksack.html#Transactions"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-START-_0031.html" name="generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-START-_0031"
+      >Generic Function TRANSACTION-START-1</a
+    > Creates and returns a new transaction.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-COMMIT-_0031.html" name="generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-COMMIT-_0031"
+      >Generic Function TRANSACTION-COMMIT-1</a
+    > Save all modified objects to disk.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-ROLLBACK-_0031.html" name="generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-ROLLBACK-_0031"
+      >Generic Function TRANSACTION-ROLLBACK-1</a
+    > </p
+  ></div
+>
+
+<h4
+  ><a name="Transactions"
+  >Transactions</a
+>&nbsp;</h4
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Transactions"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Transactions"
+  >up</a
+> | <a href="Rucksack.html#Modifying_0020objects_0020and_0020checking_0020for_0020conflicts"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003ATRANSACTION.html" name="class_005FRUCKSACK_003A_003ATRANSACTION"
+      >Class TRANSACTION</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003ASTANDARD-TRANSACTION.html" name="class_005FRUCKSACK_003A_003ASTANDARD-TRANSACTION"
+      >Class STANDARD-TRANSACTION</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FCOMMON-LISP_003A_003A_0028PRINT-OBJECT_0020TRANSACTION_0020T_0029.html" name="method_005FCOMMON-LISP_003A_003A_0028PRINT-OBJECT_0020TRANSACTION_0020T_0029"
+      >Method (PRINT-OBJECT TRANSACTION T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ACURRENT-TRANSACTION.html" name="function_005FRUCKSACK_003A_003ACURRENT-TRANSACTION"
+      >Function CURRENT-TRANSACTION</a
+    > </p
+  ></div
+>
+
+
+<h4
+  ><a name="Modifying_0020objects_0020and_0020checking_0020for_0020conflicts"
+  >Modifying objects and checking for conflicts</a
+>&nbsp;</h4
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Transactions"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Transactions"
+  >up</a
+> | <a href="Rucksack.html#Cache"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-CHANGED-OBJECT.html" name="generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-CHANGED-OBJECT"
+      >Generic Function TRANSACTION-CHANGED-OBJECT</a
+    > If the given transaction has modified the object with the given
+object id, this function returns the modified object.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-OLDER-P.html" name="generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-OLDER-P"
+      >Generic Function TRANSACTION-OLDER-P</a
+    > Returns true iff transaction A is older than transaction B.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003AFIND-CONFLICTING-TRANSACTION.html" name="generic_0020function_005FRUCKSACK_003A_003AFIND-CONFLICTING-TRANSACTION"
+      >Generic Function FIND-CONFLICTING-TRANSACTION</a
+    > Tries to find an open transaction that has modified the object
+with the given object-id and is older than the given transaction.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-NR-DIRTY-OBJECTS_0020STANDARD-TRANSACTION_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-NR-DIRTY-OBJECTS_0020STANDARD-TRANSACTION_0029"
+      >Method (TRANSACTION-NR-DIRTY-OBJECTS STANDARD-TRANSACTION)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-TOUCH-OBJECT_0020STANDARD-TRANSACTION_0020T_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-TOUCH-OBJECT_0020STANDARD-TRANSACTION_0020T_0020T_0029"
+      >Method (TRANSACTION-TOUCH-OBJECT STANDARD-TRANSACTION T T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-CHANGED-OBJECT_0020STANDARD-TRANSACTION_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-CHANGED-OBJECT_0020STANDARD-TRANSACTION_0020T_0029"
+      >Method (TRANSACTION-CHANGED-OBJECT STANDARD-TRANSACTION T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028FIND-CONFLICTING-TRANSACTION_0020T_0020STANDARD-CACHE_0020STANDARD-TRANSACTION_0029.html" name="method_005FRUCKSACK_003A_003A_0028FIND-CONFLICTING-TRANSACTION_0020T_0020STANDARD-CACHE_0020STANDARD-TRANSACTION_0029"
+      >Method (FIND-CONFLICTING-TRANSACTION T STANDARD-CACHE STANDARD-TRANSACTION)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-OLDER-P_0020STANDARD-TRANSACTION_0020STANDARD-TRANSACTION_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-OLDER-P_0020STANDARD-TRANSACTION_0020STANDARD-TRANSACTION_0029"
+      >Method (TRANSACTION-OLDER-P STANDARD-TRANSACTION STANDARD-TRANSACTION)</a
+    > </p
+  ></div
+>
+
+
+<p>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ATRANSACTION-START.html" name="function_005FRUCKSACK_003A_003ATRANSACTION-START"
+      >Function TRANSACTION-START</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-START-_0031_0020STANDARD-CACHE_0020STANDARD-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-START-_0031_0020STANDARD-CACHE_0020STANDARD-RUCKSACK_0029"
+      >Method (TRANSACTION-START-1 STANDARD-CACHE STANDARD-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+<p>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003ASERIAL-TRANSACTION-RUCKSACK.html" name="class_005FRUCKSACK_003A_003ASERIAL-TRANSACTION-RUCKSACK"
+      >Class SERIAL-TRANSACTION-RUCKSACK</a
+    > A serial transaction rucksack allows only one active transaction
+at a time.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-START-_0031_0020BEFORE_0020STANDARD-CACHE_0020SERIAL-TRANSACTION-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-START-_0031_0020BEFORE_0020STANDARD-CACHE_0020SERIAL-TRANSACTION-RUCKSACK_0029"
+      >Method (TRANSACTION-START-1 BEFORE STANDARD-CACHE SERIAL-TRANSACTION-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-COMMIT-_0031_0020AFTER_0020STANDARD-TRANSACTION_0020STANDARD-CACHE_0020SERIAL-TRANSACTION-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-COMMIT-_0031_0020AFTER_0020STANDARD-TRANSACTION_0020STANDARD-CACHE_0020SERIAL-TRANSACTION-RUCKSACK_0029"
+      >Method (TRANSACTION-COMMIT-1 AFTER STANDARD-TRANSACTION STANDARD-CACHE SERIAL-TRANSACTION-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-ROLLBACK-_0031_0020AFTER_0020STANDARD-TRANSACTION_0020STANDARD-CACHE_0020SERIAL-TRANSACTION-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-ROLLBACK-_0031_0020AFTER_0020STANDARD-TRANSACTION_0020STANDARD-CACHE_0020SERIAL-TRANSACTION-RUCKSACK_0029"
+      >Method (TRANSACTION-ROLLBACK-1 AFTER STANDARD-TRANSACTION STANDARD-CACHE SERIAL-TRANSACTION-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+
+<p>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+<div class="computational-element-link computational-element-link-macro"
+  ><p
+    ><a class="descriptor macro" href="api/macro_005FRUCKSACK_003A_003AWITHOUT-RUCKSACK-GCING.html" name="macro_005FRUCKSACK_003A_003AWITHOUT-RUCKSACK-GCING"
+      >Macro WITHOUT-RUCKSACK-GCING</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ATRANSACTION-COMMIT.html" name="function_005FRUCKSACK_003A_003ATRANSACTION-COMMIT"
+      >Function TRANSACTION-COMMIT</a
+    > Call transaction-commit-1 to do the real work.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-COMMIT-_0031_0020STANDARD-TRANSACTION_0020STANDARD-CACHE_0020STANDARD-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-COMMIT-_0031_0020STANDARD-TRANSACTION_0020STANDARD-CACHE_0020STANDARD-RUCKSACK_0029"
+      >Method (TRANSACTION-COMMIT-1 STANDARD-TRANSACTION STANDARD-CACHE STANDARD-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028FINISH-ALL-OUTPUT_0020STANDARD-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028FINISH-ALL-OUTPUT_0020STANDARD-RUCKSACK_0029"
+      >Method (FINISH-ALL-OUTPUT STANDARD-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+                                        
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ACREATE-COMMIT-FILE.html" name="function_005FRUCKSACK_003A_003ACREATE-COMMIT-FILE"
+      >Function CREATE-COMMIT-FILE</a
+    > Write object ids of all dirty objects to the commit file, so
+recovery can do its job if this transaction never completes.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ADELETE-COMMIT-FILE.html" name="function_005FRUCKSACK_003A_003ADELETE-COMMIT-FILE"
+      >Function DELETE-COMMIT-FILE</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ALOAD-COMMIT-FILE.html" name="function_005FRUCKSACK_003A_003ALOAD-COMMIT-FILE"
+      >Function LOAD-COMMIT-FILE</a
+    > Returns two values: a transaction id and a list of object ids
+(of objects that may be partially committed).</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028SAVE-DIRTY-OBJECT_0020T_0020STANDARD-CACHE_0020STANDARD-TRANSACTION_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028SAVE-DIRTY-OBJECT_0020T_0020STANDARD-CACHE_0020STANDARD-TRANSACTION_0020T_0029"
+      >Method (SAVE-DIRTY-OBJECT T STANDARD-CACHE STANDARD-TRANSACTION T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AVERSION-LIST-POSITION.html" name="function_005FRUCKSACK_003A_003AVERSION-LIST-POSITION"
+      >Function VERSION-LIST-POSITION</a
+    > Returns the correct position for a transaction-id in a version-list.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003A_0028SETF_0020OBJECT-VERSION-LIST_0029.html" name="function_005FRUCKSACK_003A_003A_0028SETF_0020OBJECT-VERSION-LIST_0029"
+      >Function SETF OBJECT-VERSION-LIST</a
+    > Let the (previous pointer of the) object in YOUNG-BLOCK point to
+OLD-BLOCK.</p
+  ></div
+>
+
+<p>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ATRANSACTION-ROLLBACK.html" name="function_005FRUCKSACK_003A_003ATRANSACTION-ROLLBACK"
+      >Function TRANSACTION-ROLLBACK</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-ROLLBACK-_0031_0020STANDARD-TRANSACTION_0020STANDARD-CACHE_0020STANDARD-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-ROLLBACK-_0031_0020STANDARD-TRANSACTION_0020STANDARD-CACHE_0020STANDARD-RUCKSACK_0029"
+      >Method (TRANSACTION-ROLLBACK-1 STANDARD-TRANSACTION STANDARD-CACHE STANDARD-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+
+ 
+
+
+        
+
+
+<h3
+  ><a name="Cache"
+  >Cache</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Modifying_0020objects_0020and_0020checking_0020for_0020conflicts"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html"
+  >up</a
+> | <a href="Rucksack.html#API"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+
+<h4
+  ><a name="API"
+  >API</a
+>&nbsp;</h4
+><div class="nav-links"
+  ><a class="nav-link" href="Rucksack.html#Cache"
+  >prev</a
+> | <a class="nav-link" href="Rucksack.html#Cache"
+  >up</a
+> | <span class="nav-link"
+  >next</span
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACLOSE-CACHE.html" name="generic_0020function_005FRUCKSACK_003A_003ACLOSE-CACHE"
+      >Generic Function CLOSE-CACHE</a
+    > Closes the cache.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACACHE-SIZE.html" name="generic_0020function_005FRUCKSACK_003A_003ACACHE-SIZE"
+      >Generic Function CACHE-SIZE</a
+    > Returns the number of non-dirty objects that the
+cache may keep in memory.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACACHE-COUNT.html" name="generic_0020function_005FRUCKSACK_003A_003ACACHE-COUNT"
+      >Generic Function CACHE-COUNT</a
+    > Returns the number of objects (both dirty and
+non-dirty) in the cache.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACACHE-CREATE-OBJECT.html" name="generic_0020function_005FRUCKSACK_003A_003ACACHE-CREATE-OBJECT"
+      >Generic Function CACHE-CREATE-OBJECT</a
+    > Adds a new object to the cache and returns an
+object id that can be used to retrieve the object from the cache.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACACHE-GET-OBJECT.html" name="generic_0020function_005FRUCKSACK_003A_003ACACHE-GET-OBJECT"
+      >Generic Function CACHE-GET-OBJECT</a
+    > Retrieves the object with the given id from the
+cache and returns that object.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACACHE-DELETE-OBJECT.html" name="generic_0020function_005FRUCKSACK_003A_003ACACHE-DELETE-OBJECT"
+      >Generic Function CACHE-DELETE-OBJECT</a
+    > Removes an object-id from the cache and from
+the object table, so the object-id can be reused for another object
+later.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACACHE-COMMIT.html" name="generic_0020function_005FRUCKSACK_003A_003ACACHE-COMMIT"
+      >Generic Function CACHE-COMMIT</a
+    > Makes sure that all changes to the cache are
+written to disk.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACACHE-ROLLBACK.html" name="generic_0020function_005FRUCKSACK_003A_003ACACHE-ROLLBACK"
+      >Generic Function CACHE-ROLLBACK</a
+    > Undoes all cache changes that were made since the
+last cache-commit.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACACHE-RECOVER.html" name="generic_0020function_005FRUCKSACK_003A_003ACACHE-RECOVER"
+      >Generic Function CACHE-RECOVER</a
+    > Undoes partially committed transactions to ensure
+that the cache is in a consistent state.</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003AOPEN-TRANSACTION.html" name="generic_0020function_005FRUCKSACK_003A_003AOPEN-TRANSACTION"
+      >Generic Function OPEN-TRANSACTION</a
+    > Adds a transaction to the set of open
+transactions.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACLOSE-TRANSACTION.html" name="generic_0020function_005FRUCKSACK_003A_003ACLOSE-TRANSACTION"
+      >Generic Function CLOSE-TRANSACTION</a
+    > Removes a transaction from the set of open
+transactions.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003AMAP-TRANSACTIONS.html" name="generic_0020function_005FRUCKSACK_003A_003AMAP-TRANSACTIONS"
+      >Generic Function MAP-TRANSACTIONS</a
+    > Applies a function to each open transaction in a
+cache.</p
+  ></div
+>
+
+
+
+
+
+<p>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003ACACHE.html" name="class_005FRUCKSACK_003A_003ACACHE"
+      >Class CACHE</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003ASTANDARD-CACHE.html" name="class_005FRUCKSACK_003A_003ASTANDARD-CACHE"
+      >Class STANDARD-CACHE</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003ALAZY-CACHE.html" name="class_005FRUCKSACK_003A_003ALAZY-CACHE"
+      >Class LAZY-CACHE</a
+    > A lazy cache doesn't bother with fancy mechanisms
+for deciding which objects to remove from the cache.</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FCOMMON-LISP_003A_003A_0028PRINT-OBJECT_0020STANDARD-CACHE_0020T_0029.html" name="method_005FCOMMON-LISP_003A_003A_0028PRINT-OBJECT_0020STANDARD-CACHE_0020T_0029"
+      >Method (PRINT-OBJECT STANDARD-CACHE T)</a
+    > </p
+  ></div
+>
+
+
+
+
+<div class="computational-element-link computational-element-link-variable"
+  ><p
+    ><a class="descriptor variable" href="api/variable_005FRUCKSACK_003A_003A_002ACACHE_002A.html" name="variable_005FRUCKSACK_003A_003A_002ACACHE_002A"
+      >Variable *CACHE*</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ASANS.html" name="function_005FRUCKSACK_003A_003ASANS"
+      >Function SANS</a
+    > Returns PLIST with keyword arguments from KEYS removed.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AOPEN-CACHE.html" name="function_005FRUCKSACK_003A_003AOPEN-CACHE"
+      >Function OPEN-CACHE</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CLOSE-CACHE_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CLOSE-CACHE_0020STANDARD-CACHE_0029"
+      >Method (CLOSE-CACHE STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-macro"
+  ><p
+    ><a class="descriptor macro" href="api/macro_005FRUCKSACK_003A_003AWITH-CACHE.html" name="macro_005FRUCKSACK_003A_003AWITH-CACHE"
+      >Macro WITH-CACHE</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FCOMMON-LISP_003A_003A_0028INITIALIZE-INSTANCE_0020AFTER_0020STANDARD-CACHE_0029.html" name="method_005FCOMMON-LISP_003A_003A_0028INITIALIZE-INSTANCE_0020AFTER_0020STANDARD-CACHE_0029"
+      >Method (INITIALIZE-INSTANCE AFTER STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ACOMMIT-FILENAME.html" name="function_005FRUCKSACK_003A_003ACOMMIT-FILENAME"
+      >Function COMMIT-FILENAME</a
+    > </p
+  ></div
+>
+
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-COUNT_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-COUNT_0020STANDARD-CACHE_0029"
+      >Method (CACHE-COUNT STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-FULL-P_0020CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-FULL-P_0020CACHE_0029"
+      >Method (CACHE-FULL-P CACHE)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-ROOM_0020CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-ROOM_0020CACHE_0029"
+      >Method (CACHE-ROOM CACHE)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-CREATE-OBJECT_0020T_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-CREATE-OBJECT_0020T_0020STANDARD-CACHE_0029"
+      >Method (CACHE-CREATE-OBJECT T STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-TOUCH-OBJECT_0020T_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-TOUCH-OBJECT_0020T_0020STANDARD-CACHE_0029"
+      >Method (CACHE-TOUCH-OBJECT T STANDARD-CACHE)</a
+    > Checks for transaction conflicts and signals a transaction conflict
+if necessary.</p
+  ></div
+>
+
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-GET-OBJECT_0020T_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-GET-OBJECT_0020T_0020STANDARD-CACHE_0029"
+      >Method (CACHE-GET-OBJECT T STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AFIND-OBJECT-VERSION.html" name="function_005FRUCKSACK_003A_003AFIND-OBJECT-VERSION"
+      >Function FIND-OBJECT-VERSION</a
+    > Returns the object version for OBJECT-ID that's compatible with
+CURRENT-TRANSACTION, or NIL if there's no such version in the cache
+memory.</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-DELETE-OBJECT_0020T_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-DELETE-OBJECT_0020T_0020STANDARD-CACHE_0029"
+      >Method (CACHE-DELETE-OBJECT T STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028MAKE-ROOM-IN-CACHE_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028MAKE-ROOM-IN-CACHE_0020STANDARD-CACHE_0029"
+      >Method (MAKE-ROOM-IN-CACHE STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028ADD-TO-QUEUE_0020T_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028ADD-TO-QUEUE_0020T_0020STANDARD-CACHE_0029"
+      >Method (ADD-TO-QUEUE T STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028MAKE-ROOM-IN-CACHE_0020LAZY-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028MAKE-ROOM-IN-CACHE_0020LAZY-CACHE_0029"
+      >Method (MAKE-ROOM-IN-CACHE LAZY-CACHE)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028ADD-TO-QUEUE_0020T_0020LAZY-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028ADD-TO-QUEUE_0020T_0020LAZY-CACHE_0029"
+      >Method (ADD-TO-QUEUE T LAZY-CACHE)</a
+    > </p
+  ></div
+>
+
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028OPEN-TRANSACTION_0020STANDARD-CACHE_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028OPEN-TRANSACTION_0020STANDARD-CACHE_0020T_0029"
+      >Method (OPEN-TRANSACTION STANDARD-CACHE T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CLOSE-TRANSACTION_0020STANDARD-CACHE_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028CLOSE-TRANSACTION_0020STANDARD-CACHE_0020T_0029"
+      >Method (CLOSE-TRANSACTION STANDARD-CACHE T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028MAP-TRANSACTIONS_0020STANDARD-CACHE_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028MAP-TRANSACTIONS_0020STANDARD-CACHE_0020T_0029"
+      >Method (MAP-TRANSACTIONS STANDARD-CACHE T)</a
+    > </p
+  ></div
+>
+
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-ROLLBACK_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-ROLLBACK_0020STANDARD-CACHE_0029"
+      >Method (CACHE-ROLLBACK STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-COMMIT_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-COMMIT_0020STANDARD-CACHE_0029"
+      >Method (CACHE-COMMIT STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-RECOVER_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-RECOVER_0020STANDARD-CACHE_0029"
+      >Method (CACHE-RECOVER STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003AUNDO-OBJECT-COMMIT.html" name="generic_0020function_005FRUCKSACK_003A_003AUNDO-OBJECT-COMMIT"
+      >Generic Function UNDO-OBJECT-COMMIT</a
+    > If the object version list contains a version with
+the given transaction-id, unhook that version from the list.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028UNDO-OBJECT-COMMIT_0020STANDARD-CACHE_0020T_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028UNDO-OBJECT-COMMIT_0020STANDARD-CACHE_0020T_0020T_0029"
+      >Method (UNDO-OBJECT-COMMIT STANDARD-CACHE T T)</a
+    > </p
+  ></div
+>
+
+
+
+
+
+
+</div
+      ></div
+    ></body
+  ></html
+>

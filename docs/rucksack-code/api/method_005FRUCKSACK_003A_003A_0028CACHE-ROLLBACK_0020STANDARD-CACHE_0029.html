@@ -1,0 +1,36 @@
+<html
+  ><head
+    ><title
+      >Method (CACHE-ROLLBACK STANDARD-CACHE)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (CACHE-ROLLBACK STANDARD-CACHE)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod cache-rollback ((cache standard-cache))
+  ;; Roll back by rolling back all transactions and removing
+  ;; all objects from the cache, so they'll be reloaded
+  ;; from disk the next time.
+  (map-transactions cache #'transaction-rollback)
+  (clrhash (objects cache))
+  (queue-clear (queue cache))
+  ;; DO: Reverse the schema table to its previous state?
+  )</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028CACHE-ROLLBACK_0020STANDARD-CACHE_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

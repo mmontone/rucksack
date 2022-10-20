@@ -1,0 +1,37 @@
+<html
+  ><head
+    ><title
+      >Method (TRANSACTION-START-1 STANDARD-CACHE STANDARD-RUCKSACK)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (TRANSACTION-START-1 STANDARD-CACHE STANDARD-RUCKSACK)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod transaction-start-1 ((cache standard-cache)
+                                (rucksack standard-rucksack)
+                                &amp;key &amp;allow-other-keys)
+  ;; Create new transaction.
+  (let* ((id (incf (highest-transaction-id rucksack)))
+         (transaction (make-instance 'standard-transaction :id id)))
+    ;; Add to open transactions.
+    (open-transaction cache transaction)
+    ;; And return the new transaction.
+    transaction))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FCOMMON-LISP-USER_003A_003A_0028TRANSACTION-START-_0031_0020STANDARD-CACHE_0020STANDARD-RUCKSACK_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

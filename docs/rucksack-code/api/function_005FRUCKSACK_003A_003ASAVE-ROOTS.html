@@ -1,0 +1,36 @@
+<html
+  ><head
+    ><title
+      >Function SAVE-ROOTS</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: SAVE-ROOTS</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun save-roots (rucksack)
+  (save-objects (list (slot-value rucksack 'roots)
+                      (and (slot-boundp rucksack 'class-index-table)
+                           (slot-value rucksack 'class-index-table))
+                      (and (slot-boundp rucksack 'slot-index-tables)
+                           (slot-value rucksack 'slot-index-tables))
+                      (slot-value rucksack 'highest-transaction-id))
+                (rucksack-roots-pathname rucksack))
+  (setf (roots-changed-p rucksack) nil))</code
+            ></pre
+          ><a href="../Rucksack.html#function_005FRUCKSACK_003A_003ASAVE-ROOTS"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

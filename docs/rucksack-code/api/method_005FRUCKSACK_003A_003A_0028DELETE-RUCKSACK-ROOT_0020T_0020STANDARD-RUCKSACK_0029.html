@@ -1,0 +1,32 @@
+<html
+  ><head
+    ><title
+      >Method (DELETE-RUCKSACK-ROOT T STANDARD-RUCKSACK)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (DELETE-RUCKSACK-ROOT T STANDARD-RUCKSACK)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod delete-rucksack-root (object (rucksack standard-rucksack))
+  (with-slots (roots)
+      rucksack
+    (setf roots (delete (object-id object) roots)
+          (roots-changed-p rucksack) t)))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028DELETE-RUCKSACK-ROOT_0020T_0020STANDARD-RUCKSACK_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

@@ -1,0 +1,41 @@
+<html
+  ><head
+    ><title
+      >Method (RUCKSACK-REMOVE-CLASS-INDEX STANDARD-RUCKSACK T)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (RUCKSACK-REMOVE-CLASS-INDEX STANDARD-RUCKSACK T)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod rucksack-remove-class-index ((rucksack standard-rucksack) class
+                                        &amp;key (errorp nil))
+  (unless (symbolp class)
+    (setq class (class-name class)))
+  (handler-bind ((btree-deletion-error
+                  ;; Translate a btree error to something that makes more sense
+                  ;; in this context.
+                  (lambda (error)
+                    (declare (ignore error))
+                    (simple-rucksack-error &quot;Class index for ~S doesn't exist in ~A.&quot;
+                                           class
+                                           rucksack))))
+    (btree-delete-key (class-index-table rucksack) class
+                      :if-does-not-exist (if errorp :error :ignore))))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028RUCKSACK-REMOVE-CLASS-INDEX_0020STANDARD-RUCKSACK_0020T_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

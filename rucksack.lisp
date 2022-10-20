@@ -2,9 +2,7 @@
 
 (in-package :rucksack)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Rucksacks: API
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;**Api
 
 ;; open-rucksack [Function]
 ;; close-rucksack [Function]
@@ -51,9 +49,7 @@ rucksack."))
   ;; DO: What does rollback mean exactly here?
   (:documentation "...."))
 
-;;
-;;  Class and slot indexing
-;;
+;;;;** Class and slot indexing 
 
 ;; add-class-index (class-designator &key errorp)  [Function]
 ;; add-slot-index (class-designator slot index-spec &key errorp) [Function]
@@ -224,9 +220,7 @@ rucksack roots (if it is a root) and from all class and slot indexes
 in which it appears."))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Locks
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;** Locks
 
 (defun make-lock (&key (name "lock"))
   #+allegro
@@ -271,9 +265,7 @@ in which it appears."))
   (not-implemented 'process-unlock))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; WITH-TRANSACTION
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Transactions
 
 ;; It would be prettier if we could put this macro in TRANSACTIONS.LISP, but
 ;; we need it here already.
@@ -322,9 +314,7 @@ in which it appears."))
 
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Rucksacks
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Rucksacks
 
 
 (defclass rucksack ()
@@ -491,9 +481,7 @@ objects.")))
   (member (object-id object)
           (slot-value rucksack 'roots)))
 
-;;
-;; Opening
-;;
+;;;; ** Opening
 
 (defparameter *rucksack-opening-lock*
   (make-lock :name "Rucksack opening lock"))
@@ -566,9 +554,7 @@ in the specified directory."
   ;; committed by the rucksack-commit, so we close them without committing.
   (close-cache (rucksack-cache rucksack) :commit nil))
 
-;;
-;; Commit
-;;
+;;;; ** Commit
 
 (defun commit (&key (rucksack (current-rucksack)))
   (rucksack-commit rucksack))
@@ -580,9 +566,7 @@ in the specified directory."
     (save-roots rucksack))
   (cache-commit (rucksack-cache rucksack)))
 
-;;
-;; Rollback
-;;
+;;;; ** Rollback
 
 (defun rollback (&key (rucksack (current-rucksack)))
   (rucksack-rollback rucksack))
@@ -609,9 +593,7 @@ in the specified directory."
   (collect-garbage (heap (rucksack-cache rucksack))))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Indexing
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;** Indexing
 
 (defmethod rucksack-update-class-index ((rucksack standard-rucksack)
                                         (class persistent-class))
@@ -749,9 +731,7 @@ in the specified directory."
                              :class class
                              :include-subclasses include-subclasses))
 
-;;
-;; Class indexes
-;;
+;;;;*** Class indexes
 
 (defmethod rucksack-add-class-index ((rucksack standard-rucksack) class
                                      &key (errorp nil))
@@ -844,9 +824,7 @@ in the specified directory."
                          do (map-instances class))))))
       (map-instances class))))
 
-;;
-;; Slot indexing
-;;
+;;;; *** Slot indexing
 
 (defmethod rucksack-add-slot-index ((rucksack standard-rucksack)
                                     class slot index-spec unique-p
@@ -1020,9 +998,7 @@ index for slot ~S of class ~S in ~S."
     result))
 
 
-;;
-;; Debugging
-;;
+;;;; ** Debugging
 
 (defun rucksack-list-slot-indexes (rucksack)
   (let ((result '()))
@@ -1043,9 +1019,7 @@ index for slot ~S of class ~S in ~S."
 
 
                        
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Deleting objects
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Deleting objects
 
 (defmethod rucksack-delete-object ((rucksack standard-rucksack) object)
   (let ((class-name (class-name (class-of object))))

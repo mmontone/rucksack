@@ -1,0 +1,40 @@
+<html
+  ><head
+    ><title
+      >Method (FIND-CONFLICTING-TRANSACTION T STANDARD-CACHE STANDARD-TRANSACTION)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (FIND-CONFLICTING-TRANSACTION T STANDARD-CACHE STANDARD-TRANSACTION)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod find-conflicting-transaction
+           (object-id
+            (cache standard-cache)
+            (current-transaction standard-transaction))
+  ;; EFFICIENCY: We need to consider all transactions, because the
+  ;; transactions are in a hash-table.  If we use a container that's
+  ;; ordered by creation time (like a btree), we only need to consider
+  ;; transactions that are younger than the given transaction.
+  (loop for transaction being the hash-value of (transactions cache)
+        thereis (and (not (eql transaction current-transaction))
+                     (transaction-older-p transaction current-transaction)
+                     (transaction-changed-object transaction object-id)
+                     transaction)))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028FIND-CONFLICTING-TRANSACTION_0020T_0020STANDARD-CACHE_0020STANDARD-TRANSACTION_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

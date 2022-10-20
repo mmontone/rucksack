@@ -1,0 +1,38 @@
+<html
+  ><head
+    ><title
+      >Macro WITH-LOCK</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Macro: WITH-LOCK</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmacro with-lock ((lock) &amp;body body)
+  #+allegro
+  `(mp:with-process-lock (,lock) ,@body)
+  #+lispworks
+  `(mp:with-lock (,lock) ,@body)
+  #+sbcl
+  `(sb-thread:with-mutex (,lock) ,@body)
+  #+openmcl
+  `(ccl:with-lock-grabbed (,lock) ,@body)
+  #-(or allegro lispworks sbcl openmcl)
+  (not-implemented 'with-lock))</code
+            ></pre
+          ><a href="../Rucksack.html#macro_005FRUCKSACK_003A_003AWITH-LOCK"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

@@ -1,0 +1,118 @@
+<html
+  ><head
+    ><title
+      >Class STANDARD-RUCKSACK</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Class: STANDARD-RUCKSACK</h1
+        ><div class="contents"
+          ><h2
+  >Slots</h2
+><ul class="slots"
+  ><li
+  ><em
+    >CACHE</em
+  ></li
+><li
+  ><em
+    >DIRECTORY</em
+  ></li
+><li
+  ><em
+    >ROOTS</em
+  ><p class="slot-description"
+  >A list with the object ids of all root
+objects, i.e.  the objects from which the garbage collector can reach
+all live objects.</p
+></li
+><li
+  ><em
+    >ROOTS-CHANGED-P</em
+  ></li
+><li
+  ><em
+    >HIGHEST-TRANSACTION-ID</em
+  > <span class="slot-type"
+  >INTEGER</span
+><p class="slot-description"
+  >The highest transaction ID
+in the entire rucksack.  This is saved together with the roots.</p
+></li
+><li
+  ><em
+    >CLASS-INDEX-TABLE</em
+  ><p class="slot-description"
+  >The object id of a btree mapping class names to
+class indexes.  Each class index contains the ids of all instances
+from a class; it maps object ids to objects.</p
+></li
+><li
+  ><em
+    >SLOT-INDEX-TABLES</em
+  ><p class="slot-description"
+  >The object id of a btree mapping class names to
+slot index tables, where each slot index table is a btree mapping slot
+names to slot indexes.  Each slot index maps slot values to
+objects.</p
+></li
+></ul
+><h2
+  >Hierachy</h2
+><h3
+  >Precedence List</h3
+><ul
+  ><li
+  ><a href="../api/class_005FRUCKSACK_003A_003ARUCKSACK.html"
+  >RUCKSACK</a
+></li
+></ul
+><h3
+  >Sub Classes</h3
+><ul
+  ><li
+  ><a href="../api/class_005FRUCKSACK_003A_003ASERIAL-TRANSACTION-RUCKSACK.html"
+  >SERIAL-TRANSACTION-RUCKSACK</a
+></li
+></ul
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defclass standard-rucksack (rucksack)
+  ((cache :reader rucksack-cache)
+   (directory :initarg :directory :reader rucksack-directory)
+   (roots :initform '()
+          :documentation &quot;A list with the object ids of all root
+objects, i.e.  the objects from which the garbage collector can reach
+all live objects.&quot;)
+   (roots-changed-p :initform nil :accessor roots-changed-p)
+   (highest-transaction-id :initform 0
+                           :accessor highest-transaction-id
+                           :type integer
+                           :documentation &quot;The highest transaction ID
+in the entire rucksack.  This is saved together with the roots.&quot;)
+   ;; Indexes
+   (class-index-table
+    :documentation &quot;The object id of a btree mapping class names to
+class indexes.  Each class index contains the ids of all instances
+from a class; it maps object ids to objects.&quot;)
+   (slot-index-tables
+    :documentation &quot;The object id of a btree mapping class names to
+slot index tables, where each slot index table is a btree mapping slot
+names to slot indexes.  Each slot index maps slot values to
+objects.&quot;)))</code
+            ></pre
+          ><a href="../Rucksack.html#class_005FRUCKSACK_003A_003ASTANDARD-RUCKSACK"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

@@ -1,0 +1,45 @@
+<html
+  ><head
+    ><title
+      >Function LOAD-COMMIT-FILE</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: LOAD-COMMIT-FILE</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Returns two values: a transaction id and a list of object ids
+(of objects that may be partially committed).</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun load-commit-file (cache)
+  &quot;Returns two values: a transaction id and a list of object ids
+(of objects that may be partially committed).&quot;
+  (with-open-file (stream (commit-filename cache)
+                          :direction :output
+                          :if-exists :supersede
+                          :if-does-not-exist :create
+                          :element-type '(unsigned-byte 8))
+    (let* ((transaction-id (deserialize stream))
+           (nr-objects (deserialize stream))
+           (objects (loop repeat nr-objects
+                          collect (deserialize stream))))
+      (values transaction-id objects))))</code
+            ></pre
+          ><a href="../Rucksack.html#function_005FRUCKSACK_003A_003ALOAD-COMMIT-FILE"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

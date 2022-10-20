@@ -1,0 +1,31 @@
+<html
+  ><head
+    ><title
+      >Method (TRANSACTION-ROLLBACK-1 AFTER STANDARD-TRANSACTION STANDARD-CACHE SERIAL-TRANSACTION-RUCKSACK)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (TRANSACTION-ROLLBACK-1 AFTER STANDARD-TRANSACTION STANDARD-CACHE SERIAL-TRANSACTION-RUCKSACK)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod transaction-rollback-1 :after ((transaction standard-transaction)
+                                          (cache standard-cache)
+                                          (rucksack serial-transaction-rucksack))
+  (process-unlock (rucksack-transaction-lock rucksack)))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FCOMMON-LISP-USER_003A_003A_0028TRANSACTION-ROLLBACK-_0031_0020AFTER_0020STANDARD-TRANSACTION_0020STANDARD-CACHE_0020SERIAL-TRANSACTION-RUCKSACK_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

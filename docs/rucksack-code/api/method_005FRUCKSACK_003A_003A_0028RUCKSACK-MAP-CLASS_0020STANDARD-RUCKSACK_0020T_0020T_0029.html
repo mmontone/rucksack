@@ -1,0 +1,51 @@
+<html
+  ><head
+    ><title
+      >Method (RUCKSACK-MAP-CLASS STANDARD-RUCKSACK T T)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (RUCKSACK-MAP-CLASS STANDARD-RUCKSACK T T)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod rucksack-map-class ((rucksack standard-rucksack) class function
+                               &amp;key (id-only nil) (include-subclasses t))
+  ;; EFFICIENCY: Follow Sean Ross' suggestion and implement ID-ONLY
+  ;; by defining a function MAP-INDEX-KEYS and then calling
+  ;; that function here (so that we don't need to load any objects
+  ;; that we don't want to load yet).
+  (let ((visited-p (make-hash-table)))
+    (labels ((map-instances (class)
+               (let ((index (rucksack-class-index rucksack class :errorp nil)))
+                 (when index
+                   (map-index index
+                              (lambda (id object)
+                                (if id-only
+                                    (funcall function id)
+                                  (funcall function object))))
+                   (setf (gethash class visited-p) t))
+                 (when include-subclasses
+                   (loop for class in (class-direct-subclasses
+                                       (if (symbolp class)
+                                           (find-class class)
+                                         class))
+                         unless (gethash class visited-p)
+                         do (map-instances class))))))
+      (map-instances class))))</code
+            ></pre
+          ><a href="../Rucksack.html#method_005FRUCKSACK_003A_003A_0028RUCKSACK-MAP-CLASS_0020STANDARD-RUCKSACK_0020T_0020T_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

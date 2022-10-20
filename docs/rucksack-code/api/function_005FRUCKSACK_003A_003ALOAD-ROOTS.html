@@ -1,0 +1,48 @@
+<html
+  ><head
+    ><title
+      >Function LOAD-ROOTS</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: LOAD-ROOTS</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun load-roots (rucksack)
+  ;; Read roots (i.e. object ids) from the roots file (if there is
+  ;; one).  Also load the highest transaction id and the (object ids
+  ;; of the) class and slot index tables.
+  (let ((roots-file (rucksack-roots-pathname rucksack)))
+    (when (probe-file roots-file)
+      (destructuring-bind (root-list class-index slot-index
+                                     &amp;optional
+                                     ;; Added in version 0.1.20.
+                                     highest-transaction)
+          (load-objects roots-file)
+        (with-slots (roots class-index-table slot-index-tables highest-transaction-id)
+            rucksack
+          (setf roots root-list)
+          (when class-index
+            (setf class-index-table class-index))
+          (when slot-index
+            (setf slot-index-tables slot-index))
+          (when highest-transaction
+            (setf highest-transaction-id highest-transaction))))))
+  rucksack)</code
+            ></pre
+          ><a href="../Rucksack.html#function_005FRUCKSACK_003A_003ALOAD-ROOTS"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>

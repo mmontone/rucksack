@@ -1,0 +1,303 @@
+<html
+  ><head
+    ><title
+      >Generic Function Index</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /></head
+  ><body
+    ><div class="qbook"
+      ><div class="api-index"
+        ><h1
+          >Generic Function Index</h1
+        ><div class="contents"
+          ><dl
+            ><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003AADD-RUCKSACK-ROOT.html"
+    >ADD-RUCKSACK-ROOT</a
+  ></dt
+><dd
+  >Adds an object to the root set of a rucksack.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ACACHE-COMMIT.html"
+    >CACHE-COMMIT</a
+  ></dt
+><dd
+  >Makes sure that all changes to the cache are
+written to disk.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ACACHE-COUNT.html"
+    >CACHE-COUNT</a
+  ></dt
+><dd
+  >Returns the number of objects (both dirty and
+non-dirty) in the cache.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ACACHE-CREATE-OBJECT.html"
+    >CACHE-CREATE-OBJECT</a
+  ></dt
+><dd
+  >Adds a new object to the cache and returns an
+object id that can be used to retrieve the object from the cache.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ACACHE-DELETE-OBJECT.html"
+    >CACHE-DELETE-OBJECT</a
+  ></dt
+><dd
+  >Removes an object-id from the cache and from
+the object table, so the object-id can be reused for another object
+later.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ACACHE-GET-OBJECT.html"
+    >CACHE-GET-OBJECT</a
+  ></dt
+><dd
+  >Retrieves the object with the given id from the
+cache and returns that object.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ACACHE-RECOVER.html"
+    >CACHE-RECOVER</a
+  ></dt
+><dd
+  >Undoes partially committed transactions to ensure
+that the cache is in a consistent state.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ACACHE-ROLLBACK.html"
+    >CACHE-ROLLBACK</a
+  ></dt
+><dd
+  >Undoes all cache changes that were made since the
+last cache-commit.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ACACHE-SIZE.html"
+    >CACHE-SIZE</a
+  ></dt
+><dd
+  >Returns the number of non-dirty objects that the
+cache may keep in memory.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ACLOSE-CACHE.html"
+    >CLOSE-CACHE</a
+  ></dt
+><dd
+  >Closes the cache.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ACLOSE-TRANSACTION.html"
+    >CLOSE-TRANSACTION</a
+  ></dt
+><dd
+  >Removes a transaction from the set of open
+transactions.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ADELETE-RUCKSACK-ROOT.html"
+    >DELETE-RUCKSACK-ROOT</a
+  ></dt
+><dd
+  >Delete an object from the root set of a rucksack.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003AFIND-CONFLICTING-TRANSACTION.html"
+    >FIND-CONFLICTING-TRANSACTION</a
+  ></dt
+><dd
+  >Tries to find an open transaction that has modified the object
+with the given object-id and is older than the given transaction.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003AMAP-RUCKSACK-ROOTS.html"
+    >MAP-RUCKSACK-ROOTS</a
+  ></dt
+><dd
+  >Applies a function to all objects in the root set of a rucksack.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003AMAP-TRANSACTIONS.html"
+    >MAP-TRANSACTIONS</a
+  ></dt
+><dd
+  >Applies a function to each open transaction in a
+cache.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003AOPEN-TRANSACTION.html"
+    >OPEN-TRANSACTION</a
+  ></dt
+><dd
+  >Adds a transaction to the set of open
+transactions.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-ADD-CLASS-INDEX.html"
+    >RUCKSACK-ADD-CLASS-INDEX</a
+  ></dt
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-ADD-SLOT-INDEX.html"
+    >RUCKSACK-ADD-SLOT-INDEX</a
+  ></dt
+><dd
+  >Creates a new slot index for the slot designated by
+CLASS-DESIGNATOR and SLOT.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-CACHE.html"
+    >RUCKSACK-CACHE</a
+  ></dt
+><dd
+  >Returns the cache for a rucksack.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-CLASS-INDEX.html"
+    >RUCKSACK-CLASS-INDEX</a
+  ></dt
+><dd
+  >Returns the class index for a class designator.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-COMMIT.html"
+    >RUCKSACK-COMMIT</a
+  ></dt
+><dd
+  >Ensures that all in-memory data is saved to disk.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-DELETE-OBJECT.html"
+    >RUCKSACK-DELETE-OBJECT</a
+  ></dt
+><dd
+  >Removes OBJECT from RUCKSACK, i.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-DIRECTORY.html"
+    >RUCKSACK-DIRECTORY</a
+  ></dt
+><dd
+  >Returns a pathname for the directory that contains all files of a
+rucksack.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAKE-CLASS-INDEX.html"
+    >RUCKSACK-MAKE-CLASS-INDEX</a
+  ></dt
+><dd
+  >Creates a new class index and returns that index.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAP-CLASS.html"
+    >RUCKSACK-MAP-CLASS</a
+  ></dt
+><dd
+  >  FUNCTION is a unary function that gets called for all instances of
+the specified class.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAP-CLASS-INDEXES.html"
+    >RUCKSACK-MAP-CLASS-INDEXES</a
+  ></dt
+><dd
+  >FUNCTION must take two arguments: a class name and a class index.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAP-SLOT.html"
+    >RUCKSACK-MAP-SLOT</a
+  ></dt
+><dd
+  > FUNCTION is a unary function that gets called for all instances of
+the specified class that have a slot value matching the EQUAL, MIN,
+MAX INCLUDE-MIN and INCLUDE-MAX arguments (s</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAP-SLOT-INDEXES.html"
+    >RUCKSACK-MAP-SLOT-INDEXES</a
+  ></dt
+><dd
+  >FUNCTION must take three arguments: a class name, a slot name and
+a slot index.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAYBE-INDEX-CHANGED-SLOT.html"
+    >RUCKSACK-MAYBE-INDEX-CHANGED-SLOT</a
+  ></dt
+><dd
+  >This function is called after a slot has changed.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-MAYBE-INDEX-NEW-OBJECT.html"
+    >RUCKSACK-MAYBE-INDEX-NEW-OBJECT</a
+  ></dt
+><dd
+  >Adds the object id of OBJECT to the class index for the class
+designated by CLASS-DESIGNATOR.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-REMOVE-CLASS-INDEX.html"
+    >RUCKSACK-REMOVE-CLASS-INDEX</a
+  ></dt
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-REMOVE-SLOT-INDEX.html"
+    >RUCKSACK-REMOVE-SLOT-INDEX</a
+  ></dt
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-ROLLBACK.html"
+    >RUCKSACK-ROLLBACK</a
+  ></dt
+><dd
+  >.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-ROOT-P.html"
+    >RUCKSACK-ROOT-P</a
+  ></dt
+><dd
+  >Returns true iff OBJECT is a member of the root set of a rucksack.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-ROOTS.html"
+    >RUCKSACK-ROOTS</a
+  ></dt
+><dd
+  >Returns a list with all objects in the root set of a rucksack.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-SLOT-INDEX.html"
+    >RUCKSACK-SLOT-INDEX</a
+  ></dt
+><dd
+  >Returns the slot index for the slot specified by CLASS-DESIGNATOR
+and SLOT.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-UPDATE-CLASS-INDEX.html"
+    >RUCKSACK-UPDATE-CLASS-INDEX</a
+  ></dt
+><dd
+  >Compares the current class index for CLASS to the class index
+that's specified in the :INDEX class option of CLASS.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ARUCKSACK-UPDATE-SLOT-INDEXES.html"
+    >RUCKSACK-UPDATE-SLOT-INDEXES</a
+  ></dt
+><dd
+  >Compares the current slot indexes for CLASS to the slot indexes
+that are specified in the slot options for the direct slots of CLASS.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-CHANGED-OBJECT.html"
+    >TRANSACTION-CHANGED-OBJECT</a
+  ></dt
+><dd
+  >If the given transaction has modified the object with the given
+object id, this function returns the modified object.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-COMMIT-_0031.html"
+    >TRANSACTION-COMMIT-1</a
+  ></dt
+><dd
+  >Save all modified objects to disk.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-OLDER-P.html"
+    >TRANSACTION-OLDER-P</a
+  ></dt
+><dd
+  >Returns true iff transaction A is older than transaction B.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-ROLLBACK-_0031.html"
+    >TRANSACTION-ROLLBACK-1</a
+  ></dt
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-START-_0031.html"
+    >TRANSACTION-START-1</a
+  ></dt
+><dd
+  >Creates and returns a new transaction.</dd
+><dt
+  ><a href="../api/generic_0020function_005FRUCKSACK_003A_003AUNDO-OBJECT-COMMIT.html"
+    >UNDO-OBJECT-COMMIT</a
+  ></dt
+><dd
+  >If the object version list contains a version with
+the given transaction-id, unhook that version from the list.</dd
+></dl
+          ></div
+        ></div
+      ></div
+    ></body
+  ></html
+>
