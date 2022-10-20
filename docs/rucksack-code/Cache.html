@@ -1,0 +1,572 @@
+<html
+  ><head
+    ><title
+      >Rucksack code</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="style.css" rel="stylesheet"
+    /><link title="Print" href="print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><h1 class="title"
+        >Rucksack code</h1
+      ><div class="contents"
+        ><h2
+  ><a name="Cache"
+  >Cache</a
+>&nbsp;</h2
+><div class="nav-links"
+  ><a class="nav-link" href="Transactions.html#Rolling_0020back"
+  >prev</a
+> | <span class="dead-nav-link"
+  >up</span
+> | <a href="Cache.html#Cache_0020API"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+
+<h3
+  ><a name="Cache_0020API"
+  >Cache API</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Cache.html"
+  >prev</a
+> | <a class="nav-link" href="Cache.html"
+  >up</a
+> | <a href="Cache.html#The_0020cache"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACLOSE-CACHE.html" name="generic_0020function_005FRUCKSACK_003A_003ACLOSE-CACHE"
+      >Generic Function CLOSE-CACHE</a
+    > Closes the cache.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACACHE-SIZE.html" name="generic_0020function_005FRUCKSACK_003A_003ACACHE-SIZE"
+      >Generic Function CACHE-SIZE</a
+    > Returns the number of non-dirty objects that the
+cache may keep in memory.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACACHE-COUNT.html" name="generic_0020function_005FRUCKSACK_003A_003ACACHE-COUNT"
+      >Generic Function CACHE-COUNT</a
+    > Returns the number of objects (both dirty and
+non-dirty) in the cache.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACACHE-CREATE-OBJECT.html" name="generic_0020function_005FRUCKSACK_003A_003ACACHE-CREATE-OBJECT"
+      >Generic Function CACHE-CREATE-OBJECT</a
+    > Adds a new object to the cache and returns an
+object id that can be used to retrieve the object from the cache.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACACHE-GET-OBJECT.html" name="generic_0020function_005FRUCKSACK_003A_003ACACHE-GET-OBJECT"
+      >Generic Function CACHE-GET-OBJECT</a
+    > Retrieves the object with the given id from the
+cache and returns that object.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACACHE-DELETE-OBJECT.html" name="generic_0020function_005FRUCKSACK_003A_003ACACHE-DELETE-OBJECT"
+      >Generic Function CACHE-DELETE-OBJECT</a
+    > Removes an object-id from the cache and from
+the object table, so the object-id can be reused for another object
+later.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACACHE-COMMIT.html" name="generic_0020function_005FRUCKSACK_003A_003ACACHE-COMMIT"
+      >Generic Function CACHE-COMMIT</a
+    > Makes sure that all changes to the cache are
+written to disk.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACACHE-ROLLBACK.html" name="generic_0020function_005FRUCKSACK_003A_003ACACHE-ROLLBACK"
+      >Generic Function CACHE-ROLLBACK</a
+    > Undoes all cache changes that were made since the
+last cache-commit.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACACHE-RECOVER.html" name="generic_0020function_005FRUCKSACK_003A_003ACACHE-RECOVER"
+      >Generic Function CACHE-RECOVER</a
+    > Undoes partially committed transactions to ensure
+that the cache is in a consistent state.</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003AOPEN-TRANSACTION.html" name="generic_0020function_005FRUCKSACK_003A_003AOPEN-TRANSACTION"
+      >Generic Function OPEN-TRANSACTION</a
+    > Adds a transaction to the set of open
+transactions.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ACLOSE-TRANSACTION.html" name="generic_0020function_005FRUCKSACK_003A_003ACLOSE-TRANSACTION"
+      >Generic Function CLOSE-TRANSACTION</a
+    > Removes a transaction from the set of open
+transactions.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003AMAP-TRANSACTIONS.html" name="generic_0020function_005FRUCKSACK_003A_003AMAP-TRANSACTIONS"
+      >Generic Function MAP-TRANSACTIONS</a
+    > Applies a function to each open transaction in a
+cache.</p
+  ></div
+>
+
+<h3
+  ><a name="The_0020cache"
+  >The cache</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Cache.html#Cache_0020API"
+  >prev</a
+> | <a class="nav-link" href="Cache.html"
+  >up</a
+> | <a href="Cache.html#Open_002Fclose_002Finitialize"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003ACACHE.html" name="class_005FRUCKSACK_003A_003ACACHE"
+      >Class CACHE</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003ASTANDARD-CACHE.html" name="class_005FRUCKSACK_003A_003ASTANDARD-CACHE"
+      >Class STANDARD-CACHE</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003ALAZY-CACHE.html" name="class_005FRUCKSACK_003A_003ALAZY-CACHE"
+      >Class LAZY-CACHE</a
+    > A lazy cache doesn't bother with fancy mechanisms
+for deciding which objects to remove from the cache.</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FCOMMON-LISP_003A_003A_0028PRINT-OBJECT_0020STANDARD-CACHE_0020T_0029.html" name="method_005FCOMMON-LISP_003A_003A_0028PRINT-OBJECT_0020STANDARD-CACHE_0020T_0029"
+      >Method (PRINT-OBJECT STANDARD-CACHE T)</a
+    > </p
+  ></div
+>
+
+
+
+<h3
+  ><a name="Open_002Fclose_002Finitialize"
+  >Open/close/initialize</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Cache.html#The_0020cache"
+  >prev</a
+> | <a class="nav-link" href="Cache.html"
+  >up</a
+> | <a href="Cache.html#Cache_0020info"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-variable"
+  ><p
+    ><a class="descriptor variable" href="api/variable_005FRUCKSACK_003A_003A_002ACACHE_002A.html" name="variable_005FRUCKSACK_003A_003A_002ACACHE_002A"
+      >Variable *CACHE*</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ASANS.html" name="function_005FRUCKSACK_003A_003ASANS"
+      >Function SANS</a
+    > Returns PLIST with keyword arguments from KEYS removed.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AOPEN-CACHE.html" name="function_005FRUCKSACK_003A_003AOPEN-CACHE"
+      >Function OPEN-CACHE</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CLOSE-CACHE_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CLOSE-CACHE_0020STANDARD-CACHE_0029"
+      >Method (CLOSE-CACHE STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-macro"
+  ><p
+    ><a class="descriptor macro" href="api/macro_005FRUCKSACK_003A_003AWITH-CACHE.html" name="macro_005FRUCKSACK_003A_003AWITH-CACHE"
+      >Macro WITH-CACHE</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FCOMMON-LISP_003A_003A_0028INITIALIZE-INSTANCE_0020AFTER_0020STANDARD-CACHE_0029.html" name="method_005FCOMMON-LISP_003A_003A_0028INITIALIZE-INSTANCE_0020AFTER_0020STANDARD-CACHE_0029"
+      >Method (INITIALIZE-INSTANCE AFTER STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ACOMMIT-FILENAME.html" name="function_005FRUCKSACK_003A_003ACOMMIT-FILENAME"
+      >Function COMMIT-FILENAME</a
+    > </p
+  ></div
+>
+
+
+<h3
+  ><a name="Cache_0020info"
+  >Cache info</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Cache.html#Open_002Fclose_002Finitialize"
+  >prev</a
+> | <a class="nav-link" href="Cache.html"
+  >up</a
+> | <a href="Cache.html#Create_002Fget_002Ftouch_002Fdelete"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-COUNT_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-COUNT_0020STANDARD-CACHE_0029"
+      >Method (CACHE-COUNT STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-FULL-P_0020CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-FULL-P_0020CACHE_0029"
+      >Method (CACHE-FULL-P CACHE)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-ROOM_0020CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-ROOM_0020CACHE_0029"
+      >Method (CACHE-ROOM CACHE)</a
+    > </p
+  ></div
+>
+
+<h3
+  ><a name="Create_002Fget_002Ftouch_002Fdelete"
+  >Create/get/touch/delete</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Cache.html#Cache_0020info"
+  >prev</a
+> | <a class="nav-link" href="Cache.html"
+  >up</a
+> | <a href="Cache.html#Queue_0020operations"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-CREATE-OBJECT_0020T_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-CREATE-OBJECT_0020T_0020STANDARD-CACHE_0029"
+      >Method (CACHE-CREATE-OBJECT T STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-TOUCH-OBJECT_0020T_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-TOUCH-OBJECT_0020T_0020STANDARD-CACHE_0029"
+      >Method (CACHE-TOUCH-OBJECT T STANDARD-CACHE)</a
+    > Checks for transaction conflicts and signals a transaction conflict
+if necessary.</p
+  ></div
+>
+
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-GET-OBJECT_0020T_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-GET-OBJECT_0020T_0020STANDARD-CACHE_0029"
+      >Method (CACHE-GET-OBJECT T STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AFIND-OBJECT-VERSION.html" name="function_005FRUCKSACK_003A_003AFIND-OBJECT-VERSION"
+      >Function FIND-OBJECT-VERSION</a
+    > Returns the object version for OBJECT-ID that's compatible with
+CURRENT-TRANSACTION, or NIL if there's no such version in the cache
+memory.</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-DELETE-OBJECT_0020T_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-DELETE-OBJECT_0020T_0020STANDARD-CACHE_0029"
+      >Method (CACHE-DELETE-OBJECT T STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+
+<h3
+  ><a name="Queue_0020operations"
+  >Queue operations</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Cache.html#Create_002Fget_002Ftouch_002Fdelete"
+  >prev</a
+> | <a class="nav-link" href="Cache.html"
+  >up</a
+> | <a href="Cache.html#Queue_0020operations_0020for_0020lazy_0020caches"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028MAKE-ROOM-IN-CACHE_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028MAKE-ROOM-IN-CACHE_0020STANDARD-CACHE_0029"
+      >Method (MAKE-ROOM-IN-CACHE STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028ADD-TO-QUEUE_0020T_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028ADD-TO-QUEUE_0020T_0020STANDARD-CACHE_0029"
+      >Method (ADD-TO-QUEUE T STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+<h4
+  ><a name="Queue_0020operations_0020for_0020lazy_0020caches"
+  >Queue operations for lazy caches</a
+>&nbsp;</h4
+><div class="nav-links"
+  ><a class="nav-link" href="Cache.html#Queue_0020operations"
+  >prev</a
+> | <a class="nav-link" href="Cache.html#Queue_0020operations"
+  >up</a
+> | <a href="Cache.html#Open_002Fclose_002Fmap_0020transactions"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028MAKE-ROOM-IN-CACHE_0020LAZY-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028MAKE-ROOM-IN-CACHE_0020LAZY-CACHE_0029"
+      >Method (MAKE-ROOM-IN-CACHE LAZY-CACHE)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028ADD-TO-QUEUE_0020T_0020LAZY-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028ADD-TO-QUEUE_0020T_0020LAZY-CACHE_0029"
+      >Method (ADD-TO-QUEUE T LAZY-CACHE)</a
+    > </p
+  ></div
+>
+
+
+<h3
+  ><a name="Open_002Fclose_002Fmap_0020transactions"
+  >Open/close/map transactions</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Cache.html#Queue_0020operations_0020for_0020lazy_0020caches"
+  >prev</a
+> | <a class="nav-link" href="Cache.html"
+  >up</a
+> | <a href="Cache.html#Commit_002Frollback"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028OPEN-TRANSACTION_0020STANDARD-CACHE_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028OPEN-TRANSACTION_0020STANDARD-CACHE_0020T_0029"
+      >Method (OPEN-TRANSACTION STANDARD-CACHE T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CLOSE-TRANSACTION_0020STANDARD-CACHE_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028CLOSE-TRANSACTION_0020STANDARD-CACHE_0020T_0029"
+      >Method (CLOSE-TRANSACTION STANDARD-CACHE T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028MAP-TRANSACTIONS_0020STANDARD-CACHE_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028MAP-TRANSACTIONS_0020STANDARD-CACHE_0020T_0029"
+      >Method (MAP-TRANSACTIONS STANDARD-CACHE T)</a
+    > </p
+  ></div
+>
+
+
+<h3
+  ><a name="Commit_002Frollback"
+  >Commit/rollback</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Cache.html#Open_002Fclose_002Fmap_0020transactions"
+  >prev</a
+> | <a class="nav-link" href="Cache.html"
+  >up</a
+> | <a href="Cache.html#Recovery"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-ROLLBACK_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-ROLLBACK_0020STANDARD-CACHE_0029"
+      >Method (CACHE-ROLLBACK STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-COMMIT_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-COMMIT_0020STANDARD-CACHE_0029"
+      >Method (CACHE-COMMIT STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+<h3
+  ><a name="Recovery"
+  >Recovery</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Cache.html#Commit_002Frollback"
+  >prev</a
+> | <a class="nav-link" href="Cache.html"
+  >up</a
+> | <span class="nav-link"
+  >next</span
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CACHE-RECOVER_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028CACHE-RECOVER_0020STANDARD-CACHE_0029"
+      >Method (CACHE-RECOVER STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003AUNDO-OBJECT-COMMIT.html" name="generic_0020function_005FRUCKSACK_003A_003AUNDO-OBJECT-COMMIT"
+      >Generic Function UNDO-OBJECT-COMMIT</a
+    > If the object version list contains a version with
+the given transaction-id, unhook that version from the list.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028UNDO-OBJECT-COMMIT_0020STANDARD-CACHE_0020T_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028UNDO-OBJECT-COMMIT_0020STANDARD-CACHE_0020T_0020T_0029"
+      >Method (UNDO-OBJECT-COMMIT STANDARD-CACHE T T)</a
+    > </p
+  ></div
+>
+
+
+</div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

@@ -2,7 +2,7 @@
 
 (in-package :rucksack)
 
-;;;;**Transactions
+;;;;*Transactions
 
 ;;; User API:
 ;;;  transaction-start
@@ -24,7 +24,7 @@
 
 (defgeneric transaction-rollback-1 (transaction cache rucksack))
 
-;;;;***Transaction classes
+;;;;**Transaction classes
 
 (defclass transaction ()
   ())
@@ -59,7 +59,7 @@ that doesn't exist on disk yet.")))
   *transaction*)
 
 
-;;;;*** Modifying objects and checking for conflicts
+;;;;** Modifying objects and checking for conflicts
 
 (defgeneric transaction-changed-object (transaction object-id)
   (:documentation
@@ -113,7 +113,7 @@ returns nil."))
   (< (transaction-id a) (transaction-id b)))
 
 
-;;;;*** Starting a new transaction
+;;;;** Starting a new transaction
 
 (defun transaction-start (&rest args
                           &key (rucksack (current-rucksack))
@@ -132,7 +132,7 @@ returns nil."))
     ;; And return the new transaction.
     transaction))
 
-;;;;*** Rucksacks with serial transactions
+;;;;** Rucksacks with serial transactions
 
 (defclass serial-transaction-rucksack (standard-rucksack)
   ((transaction-lock :initform (make-lock :name "Rucksack transaction lock")
@@ -157,7 +157,7 @@ at a time."))
   (process-unlock (rucksack-transaction-lock rucksack)))
 
 
-;;;;*** Committing a transaction
+;;;;** Committing a transaction
 
 ;;; use without-rucksack-gcing to locally set
 ;;; *collect-garbage-on-commit* to nil in order to supress rucksack
@@ -230,7 +230,7 @@ at a time."))
     (save-schema-table-if-necessary (schema-table cache))))
 
                                         
-;;;;*** Commit file
+;;;;** Commit file
 
 (defun create-commit-file (transaction cache)
   "Write object ids of all dirty objects to the commit file, so
@@ -263,7 +263,7 @@ recovery can do its job if this transaction never completes."
                           collect (deserialize stream))))
       (values transaction-id objects))))
 
-;;;;*** Saving objects
+;;;;** Saving objects
 
 (defmethod save-dirty-object (object
                               (cache standard-cache)
@@ -339,7 +339,7 @@ OLD-BLOCK."
     (serialize-previous-version-pointer old-block stream))
   old-block)
 
-;;;; *** Rolling back
+;;;; ** Rolling back
 
 (defun transaction-rollback (transaction &key (rucksack (current-rucksack)))
   (transaction-rollback-1 transaction

@@ -1,0 +1,441 @@
+<html
+  ><head
+    ><title
+      >Rucksack code</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="style.css" rel="stylesheet"
+    /><link title="Print" href="print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><h1 class="title"
+        >Rucksack code</h1
+      ><div class="contents"
+        ><h2
+  ><a name="Transactions"
+  >Transactions</a
+>&nbsp;</h2
+><div class="nav-links"
+  ><a class="nav-link" href="Heaps.html#Buffers"
+  >prev</a
+> | <span class="dead-nav-link"
+  >up</span
+> | <a href="Transactions.html#Transaction_0020classes"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-START-_0031.html" name="generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-START-_0031"
+      >Generic Function TRANSACTION-START-1</a
+    > Creates and returns a new transaction.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-COMMIT-_0031.html" name="generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-COMMIT-_0031"
+      >Generic Function TRANSACTION-COMMIT-1</a
+    > Save all modified objects to disk.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-ROLLBACK-_0031.html" name="generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-ROLLBACK-_0031"
+      >Generic Function TRANSACTION-ROLLBACK-1</a
+    > </p
+  ></div
+>
+
+<h3
+  ><a name="Transaction_0020classes"
+  >Transaction classes</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Transactions.html"
+  >prev</a
+> | <a class="nav-link" href="Transactions.html"
+  >up</a
+> | <a href="Transactions.html#Modifying_0020objects_0020and_0020checking_0020for_0020conflicts"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003ATRANSACTION.html" name="class_005FRUCKSACK_003A_003ATRANSACTION"
+      >Class TRANSACTION</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003ASTANDARD-TRANSACTION.html" name="class_005FRUCKSACK_003A_003ASTANDARD-TRANSACTION"
+      >Class STANDARD-TRANSACTION</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FCOMMON-LISP_003A_003A_0028PRINT-OBJECT_0020TRANSACTION_0020T_0029.html" name="method_005FCOMMON-LISP_003A_003A_0028PRINT-OBJECT_0020TRANSACTION_0020T_0029"
+      >Method (PRINT-OBJECT TRANSACTION T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ACURRENT-TRANSACTION.html" name="function_005FRUCKSACK_003A_003ACURRENT-TRANSACTION"
+      >Function CURRENT-TRANSACTION</a
+    > </p
+  ></div
+>
+
+
+<h3
+  ><a name="Modifying_0020objects_0020and_0020checking_0020for_0020conflicts"
+  >Modifying objects and checking for conflicts</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Transactions.html#Transaction_0020classes"
+  >prev</a
+> | <a class="nav-link" href="Transactions.html"
+  >up</a
+> | <a href="Transactions.html#Starting_0020a_0020new_0020transaction"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-CHANGED-OBJECT.html" name="generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-CHANGED-OBJECT"
+      >Generic Function TRANSACTION-CHANGED-OBJECT</a
+    > If the given transaction has modified the object with the given
+object id, this function returns the modified object.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-OLDER-P.html" name="generic_0020function_005FRUCKSACK_003A_003ATRANSACTION-OLDER-P"
+      >Generic Function TRANSACTION-OLDER-P</a
+    > Returns true iff transaction A is older than transaction B.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003AFIND-CONFLICTING-TRANSACTION.html" name="generic_0020function_005FRUCKSACK_003A_003AFIND-CONFLICTING-TRANSACTION"
+      >Generic Function FIND-CONFLICTING-TRANSACTION</a
+    > Tries to find an open transaction that has modified the object
+with the given object-id and is older than the given transaction.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-NR-DIRTY-OBJECTS_0020STANDARD-TRANSACTION_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-NR-DIRTY-OBJECTS_0020STANDARD-TRANSACTION_0029"
+      >Method (TRANSACTION-NR-DIRTY-OBJECTS STANDARD-TRANSACTION)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-TOUCH-OBJECT_0020STANDARD-TRANSACTION_0020T_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-TOUCH-OBJECT_0020STANDARD-TRANSACTION_0020T_0020T_0029"
+      >Method (TRANSACTION-TOUCH-OBJECT STANDARD-TRANSACTION T T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-CHANGED-OBJECT_0020STANDARD-TRANSACTION_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-CHANGED-OBJECT_0020STANDARD-TRANSACTION_0020T_0029"
+      >Method (TRANSACTION-CHANGED-OBJECT STANDARD-TRANSACTION T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028FIND-CONFLICTING-TRANSACTION_0020T_0020STANDARD-CACHE_0020STANDARD-TRANSACTION_0029.html" name="method_005FRUCKSACK_003A_003A_0028FIND-CONFLICTING-TRANSACTION_0020T_0020STANDARD-CACHE_0020STANDARD-TRANSACTION_0029"
+      >Method (FIND-CONFLICTING-TRANSACTION T STANDARD-CACHE STANDARD-TRANSACTION)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-OLDER-P_0020STANDARD-TRANSACTION_0020STANDARD-TRANSACTION_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-OLDER-P_0020STANDARD-TRANSACTION_0020STANDARD-TRANSACTION_0029"
+      >Method (TRANSACTION-OLDER-P STANDARD-TRANSACTION STANDARD-TRANSACTION)</a
+    > </p
+  ></div
+>
+
+
+<h3
+  ><a name="Starting_0020a_0020new_0020transaction"
+  >Starting a new transaction</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Transactions.html#Modifying_0020objects_0020and_0020checking_0020for_0020conflicts"
+  >prev</a
+> | <a class="nav-link" href="Transactions.html"
+  >up</a
+> | <a href="Transactions.html#Rucksacks_0020with_0020serial_0020transactions"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ATRANSACTION-START.html" name="function_005FRUCKSACK_003A_003ATRANSACTION-START"
+      >Function TRANSACTION-START</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-START-_0031_0020STANDARD-CACHE_0020STANDARD-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-START-_0031_0020STANDARD-CACHE_0020STANDARD-RUCKSACK_0029"
+      >Method (TRANSACTION-START-1 STANDARD-CACHE STANDARD-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+<h3
+  ><a name="Rucksacks_0020with_0020serial_0020transactions"
+  >Rucksacks with serial transactions</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Transactions.html#Starting_0020a_0020new_0020transaction"
+  >prev</a
+> | <a class="nav-link" href="Transactions.html"
+  >up</a
+> | <a href="Transactions.html#Committing_0020a_0020transaction"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003ASERIAL-TRANSACTION-RUCKSACK.html" name="class_005FRUCKSACK_003A_003ASERIAL-TRANSACTION-RUCKSACK"
+      >Class SERIAL-TRANSACTION-RUCKSACK</a
+    > A serial transaction rucksack allows only one active transaction
+at a time.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-START-_0031_0020BEFORE_0020STANDARD-CACHE_0020SERIAL-TRANSACTION-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-START-_0031_0020BEFORE_0020STANDARD-CACHE_0020SERIAL-TRANSACTION-RUCKSACK_0029"
+      >Method (TRANSACTION-START-1 BEFORE STANDARD-CACHE SERIAL-TRANSACTION-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-COMMIT-_0031_0020AFTER_0020STANDARD-TRANSACTION_0020STANDARD-CACHE_0020SERIAL-TRANSACTION-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-COMMIT-_0031_0020AFTER_0020STANDARD-TRANSACTION_0020STANDARD-CACHE_0020SERIAL-TRANSACTION-RUCKSACK_0029"
+      >Method (TRANSACTION-COMMIT-1 AFTER STANDARD-TRANSACTION STANDARD-CACHE SERIAL-TRANSACTION-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-ROLLBACK-_0031_0020AFTER_0020STANDARD-TRANSACTION_0020STANDARD-CACHE_0020SERIAL-TRANSACTION-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-ROLLBACK-_0031_0020AFTER_0020STANDARD-TRANSACTION_0020STANDARD-CACHE_0020SERIAL-TRANSACTION-RUCKSACK_0029"
+      >Method (TRANSACTION-ROLLBACK-1 AFTER STANDARD-TRANSACTION STANDARD-CACHE SERIAL-TRANSACTION-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+
+<h3
+  ><a name="Committing_0020a_0020transaction"
+  >Committing a transaction</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Transactions.html#Rucksacks_0020with_0020serial_0020transactions"
+  >prev</a
+> | <a class="nav-link" href="Transactions.html"
+  >up</a
+> | <a href="Transactions.html#Commit_0020file"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-macro"
+  ><p
+    ><a class="descriptor macro" href="api/macro_005FRUCKSACK_003A_003AWITHOUT-RUCKSACK-GCING.html" name="macro_005FRUCKSACK_003A_003AWITHOUT-RUCKSACK-GCING"
+      >Macro WITHOUT-RUCKSACK-GCING</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ATRANSACTION-COMMIT.html" name="function_005FRUCKSACK_003A_003ATRANSACTION-COMMIT"
+      >Function TRANSACTION-COMMIT</a
+    > Call transaction-commit-1 to do the real work.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-COMMIT-_0031_0020STANDARD-TRANSACTION_0020STANDARD-CACHE_0020STANDARD-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-COMMIT-_0031_0020STANDARD-TRANSACTION_0020STANDARD-CACHE_0020STANDARD-RUCKSACK_0029"
+      >Method (TRANSACTION-COMMIT-1 STANDARD-TRANSACTION STANDARD-CACHE STANDARD-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028FINISH-ALL-OUTPUT_0020STANDARD-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028FINISH-ALL-OUTPUT_0020STANDARD-RUCKSACK_0029"
+      >Method (FINISH-ALL-OUTPUT STANDARD-RUCKSACK)</a
+    > </p
+  ></div
+>
+
+                                        
+<h3
+  ><a name="Commit_0020file"
+  >Commit file</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Transactions.html#Committing_0020a_0020transaction"
+  >prev</a
+> | <a class="nav-link" href="Transactions.html"
+  >up</a
+> | <a href="Transactions.html#Saving_0020objects"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ACREATE-COMMIT-FILE.html" name="function_005FRUCKSACK_003A_003ACREATE-COMMIT-FILE"
+      >Function CREATE-COMMIT-FILE</a
+    > Write object ids of all dirty objects to the commit file, so
+recovery can do its job if this transaction never completes.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ADELETE-COMMIT-FILE.html" name="function_005FRUCKSACK_003A_003ADELETE-COMMIT-FILE"
+      >Function DELETE-COMMIT-FILE</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ALOAD-COMMIT-FILE.html" name="function_005FRUCKSACK_003A_003ALOAD-COMMIT-FILE"
+      >Function LOAD-COMMIT-FILE</a
+    > Returns two values: a transaction id and a list of object ids
+(of objects that may be partially committed).</p
+  ></div
+>
+
+<h3
+  ><a name="Saving_0020objects"
+  >Saving objects</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Transactions.html#Commit_0020file"
+  >prev</a
+> | <a class="nav-link" href="Transactions.html"
+  >up</a
+> | <a href="Transactions.html#Rolling_0020back"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028SAVE-DIRTY-OBJECT_0020T_0020STANDARD-CACHE_0020STANDARD-TRANSACTION_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028SAVE-DIRTY-OBJECT_0020T_0020STANDARD-CACHE_0020STANDARD-TRANSACTION_0020T_0029"
+      >Method (SAVE-DIRTY-OBJECT T STANDARD-CACHE STANDARD-TRANSACTION T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AVERSION-LIST-POSITION.html" name="function_005FRUCKSACK_003A_003AVERSION-LIST-POSITION"
+      >Function VERSION-LIST-POSITION</a
+    > Returns the correct position for a transaction-id in a version-list.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003A_0028SETF_0020OBJECT-VERSION-LIST_0029.html" name="function_005FRUCKSACK_003A_003A_0028SETF_0020OBJECT-VERSION-LIST_0029"
+      >Function SETF OBJECT-VERSION-LIST</a
+    > Let the (previous pointer of the) object in YOUNG-BLOCK point to
+OLD-BLOCK.</p
+  ></div
+>
+
+<h3
+  ><a name="Rolling_0020back"
+  >Rolling back</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Transactions.html#Saving_0020objects"
+  >prev</a
+> | <a class="nav-link" href="Transactions.html"
+  >up</a
+> | <a href="Cache.html"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ATRANSACTION-ROLLBACK.html" name="function_005FRUCKSACK_003A_003ATRANSACTION-ROLLBACK"
+      >Function TRANSACTION-ROLLBACK</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-ROLLBACK-_0031_0020STANDARD-TRANSACTION_0020STANDARD-CACHE_0020STANDARD-RUCKSACK_0029.html" name="method_005FRUCKSACK_003A_003A_0028TRANSACTION-ROLLBACK-_0031_0020STANDARD-TRANSACTION_0020STANDARD-CACHE_0020STANDARD-RUCKSACK_0029"
+      >Method (TRANSACTION-ROLLBACK-1 STANDARD-TRANSACTION STANDARD-CACHE STANDARD-RUCKSACK)</a
+    > </p
+  ></div
+> 
+
+
+</div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

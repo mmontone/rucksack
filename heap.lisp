@@ -2,9 +2,9 @@
 
 (in-package :rucksack)
 
-;;;;** Heaps
+;;;;* Heaps
 
-;;;;*** API
+;;;;** Heaps API
 
 #|
 * heap [Class]
@@ -39,7 +39,7 @@ the block's header."))
 
 ;; DO: Many more generic functions.
 
-;;;;*** Implementation
+;;;;** Heaps Implementation
 
 (defconstant +pointer-size+ 8
   "The number of octets for a heap pointer.  A heap pointer is a number that
@@ -68,7 +68,7 @@ was called.")))
                         
 
 
-;;;;***** Open/close/initialize
+;;;;** Open/close/initialize
 
 (defun open-heap (pathname
                   &key (class 'heap) rucksack (options '())
@@ -96,7 +96,7 @@ was called.")))
 (defmethod heap-size ((heap heap))
   (- (heap-end heap) (heap-start heap)))
 
-;;;;***** Pointers
+;;;;** Pointers
 
 (defun pointer-value (pointer heap)
   (file-position (heap-stream heap) pointer)
@@ -109,7 +109,7 @@ was called.")))
                         +pointer-size+)
   value)
 
-;;;;***** Heap expansion
+;;;;** Heap expansion
 
 (defmethod expand-heap ((heap heap) block-size)
   ;; Creates (and initializes) a block of the specified size by expanding
@@ -131,7 +131,7 @@ the specified maximum heap size of ~D octets."
     (initialize-block new-block block-size heap)
     new-block))
 
-;;;;***** Tracking of allocations
+;;;;** Tracking of allocations
 
 (defmethod allocate-block :around ((heap heap) &key &allow-other-keys)
   (multiple-value-bind (block nr-octets)
@@ -153,7 +153,7 @@ the specified maximum heap size of ~D octets."
        (unwind-protect (progn ,@body)
          (setf (nr-allocated-octets ,heap-var) ,old-counter)))))
 
-;;;;**** Free list heap
+;;;;** Free list heap
 
 (defclass free-list-heap (heap)
   ((nr-free-lists :initarg :nr-free-lists :initform 32 :reader nr-free-lists)
@@ -328,7 +328,7 @@ specified position.  This includes the size of the block header."))
     (initialize-block block size heap)))
 
 
-;;;;***** Expansion
+;;;;** Expansion
 
 (defmethod expand-free-list (size-class (heap free-list-heap))
   ;; Try to find a block that's at least EXPANSION-SIZE big on
@@ -393,9 +393,7 @@ list."
    (declare (ignore block-size))
    block))
 
-;;
-;; Heap info
-;;
+;;;;** Heap info
 
 (defmethod heap-info ((heap free-list-heap))
   ;; Returns the total number of free octets in the heap.
@@ -423,7 +421,7 @@ list."
                                 :nr-free-octets total-block-size)))))
 
 
-;;;;****Simple free list heap with fixed size blocks
+;;;;**Simple free list heap with fixed size blocks
 
 (defclass simple-free-list-heap (free-list-heap)
   ()
@@ -438,7 +436,7 @@ list."
   (min-block-size heap))
 
 
-;;;;**** Appending heap (as used by copying garbage collector)
+;;;;** Appending heap (as used by copying garbage collector)
 
 (defclass appending-heap (heap)
   ;; For an APPENDING-HEAP, all writes take place to the heap's end.
@@ -475,7 +473,7 @@ list."
       (setf (slot-value heap 'end) end))))
 
 
-;;;;**** Little utility functions
+;;;;** Little utility functions
   
 (defun write-unsigned-bytes (integer buffer stream
                                      &optional (nr-octets +pointer-size+))
@@ -489,7 +487,7 @@ list."
   (deserialize stream))
 
 
-;;;;**** Buffers
+;;;;** Buffers
 
 (defparameter *default-buffer-size* 
   (* 64 1024)
@@ -574,4 +572,3 @@ list."
                                &key file-position)
   (declare (ignore stream nr-octets file-position))
   (setf (scan-pointer buffer) 0))
-
