@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<meta name="author" content="Arthur Lemmens">
+<title>Rucksack: a flexible, light weight, open source persistence library</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<style>
+/* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
+/* Uncomment @import statement to use as custom stylesheet */
+/*@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";*/
+article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section{display:block}
+audio,video{display:inline-block}
+audio:not([controls]){display:none;height:0}
+html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}
+a{background:none}
+a:focus{outline:thin dotted}
+a:active,a:hover{outline:0}
+h1{font-size:2em;margin:.67em 0}
+abbr[title]{border-bottom:1px dotted}
+b,strong{font-weight:bold}
+dfn{font-style:italic}
+hr{-moz-box-sizing:content-box;box-sizing:content-box;height:0}
+mark{background:#ff0;color:#000}
+code,kbd,pre,samp{font-family:monospace;font-size:1em}
+pre{white-space:pre-wrap}
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sup{top:-.5em}
+sub{bottom:-.25em}
+img{border:0}
+svg:not(:root){overflow:hidden}
+figure{margin:0}
+fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}
+legend{border:0;padding:0}
+button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}
+button,input{line-height:normal}
+button,select{text-transform:none}
+button,html input[type="button"],input[type="reset"],input[type="submit"]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+textarea{overflow:auto;vertical-align:top}
+table{border-collapse:collapse;border-spacing:0}
+*,*::before,*::after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
+html,body{font-size:100%}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto;tab-size:4;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+a:hover{cursor:pointer}
+img,object,embed{max-width:100%;height:auto}
+object,embed{height:100%}
+img{-ms-interpolation-mode:bicubic}
+.left{float:left!important}
+.right{float:right!important}
+.text-left{text-align:left!important}
+.text-right{text-align:right!important}
+.text-center{text-align:center!important}
+.text-justify{text-align:justify!important}
+.hide{display:none}
+img,object,svg{display:inline-block;vertical-align:middle}
+textarea{height:auto;min-height:50px}
+select{width:100%}
+.center{margin-left:auto;margin-right:auto}
+.stretch{width:100%}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0;direction:ltr}
+a{color:#2156a5;text-decoration:underline;line-height:inherit}
+a:hover,a:focus{color:#1d4b8f}
+a img{border:0}
+p{font-family:inherit;font-weight:400;font-size:1em;line-height:1.6;margin-bottom:1.25em;text-rendering:optimizeLegibility}
+p aside{font-size:.875em;line-height:1.35;font-style:italic}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Open Sans","DejaVu Sans",sans-serif;font-weight:300;font-style:normal;color:#ba3925;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
+h1 small,h2 small,h3 small,#toctitle small,.sidebarblock>.content>.title small,h4 small,h5 small,h6 small{font-size:60%;color:#e99b8f;line-height:0}
+h1{font-size:2.125em}
+h2{font-size:1.6875em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.375em}
+h4,h5{font-size:1.125em}
+h6{font-size:1em}
+hr{border:solid #dddddf;border-width:1px 0 0;clear:both;margin:1.25em 0 1.1875em;height:0}
+em,i{font-style:italic;line-height:inherit}
+strong,b{font-weight:bold;line-height:inherit}
+small{font-size:60%;line-height:inherit}
+code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
+ul,ol,dl{font-size:1em;line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
+ul,ol{margin-left:1.5em}
+ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0;font-size:1em}
+ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
+ul.square{list-style-type:square}
+ul.circle{list-style-type:circle}
+ul.disc{list-style-type:disc}
+ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
+dl dt{margin-bottom:.3125em;font-weight:bold}
+dl dd{margin-bottom:1.25em}
+abbr,acronym{text-transform:uppercase;font-size:90%;color:rgba(0,0,0,.8);border-bottom:1px dotted #ddd;cursor:help}
+abbr{text-transform:none}
+blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
+blockquote cite{display:block;font-size:.9375em;color:rgba(0,0,0,.6)}
+blockquote cite::before{content:"\2014 \0020"}
+blockquote cite a,blockquote cite a:visited{color:rgba(0,0,0,.6)}
+blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
+@media screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
+h1{font-size:2.75em}
+h2{font-size:2.3125em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
+h4{font-size:1.4375em}}
+table{background:#fff;margin-bottom:1.25em;border:solid 1px #dedede}
+table thead,table tfoot{background:#f7f8f7}
+table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
+table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
+table tr.even,table tr.alt{background:#f8f8f7}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{display:table-cell;line-height:1.6}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
+h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.clearfix::before,.clearfix::after,.float-group::before,.float-group::after{content:" ";display:table}
+.clearfix::after,.float-group::after{clear:both}
+:not(pre):not([class^=L])>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed;word-wrap:break-word}
+:not(pre)>code.nobreak{word-wrap:normal}
+:not(pre)>code.nowrap{white-space:nowrap}
+pre{color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;line-height:1.45;text-rendering:optimizeSpeed}
+pre code,pre pre{color:inherit;font-size:inherit;line-height:inherit}
+pre>code{display:block}
+pre.nowrap,pre.nowrap pre{white-space:pre;word-wrap:normal}
+em em{font-style:normal}
+strong strong{font-weight:400}
+.keyseq{color:rgba(51,51,51,.8)}
+kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
+.keyseq kbd:first-child{margin-left:0}
+.keyseq kbd:last-child{margin-right:0}
+.menuseq,.menuref{color:#000}
+.menuseq b:not(.caret),.menuref{font-weight:inherit}
+.menuseq{word-spacing:-.02em}
+.menuseq b.caret{font-size:1.25em;line-height:.8}
+.menuseq i.caret{font-weight:bold;text-align:center;width:.45em}
+b.button::before,b.button::after{position:relative;top:-1px;font-weight:400}
+b.button::before{content:"[";padding:0 3px 0 2px}
+b.button::after{content:"]";padding:0 2px 0 3px}
+p a>code:hover{color:rgba(0,0,0,.9)}
+#header,#content,#footnotes,#footer{width:100%;margin-left:auto;margin-right:auto;margin-top:0;margin-bottom:0;max-width:62.5em;*zoom:1;position:relative;padding-left:.9375em;padding-right:.9375em}
+#header::before,#header::after,#content::before,#content::after,#footnotes::before,#footnotes::after,#footer::before,#footer::after{content:" ";display:table}
+#header::after,#content::after,#footnotes::after,#footer::after{clear:both}
+#content{margin-top:1.25em}
+#content::before{content:none}
+#header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #dddddf}
+#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
+#header .details{border-bottom:1px solid #dddddf;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:-ms-flexbox;display:-webkit-flex;display:flex;-ms-flex-flow:row wrap;-webkit-flex-flow:row wrap;flex-flow:row wrap}
+#header .details span:first-child{margin-left:-.125em}
+#header .details span.email a{color:rgba(0,0,0,.85)}
+#header .details br{display:none}
+#header .details br+span::before{content:"\00a0\2013\00a0"}
+#header .details br+span.author::before{content:"\00a0\22c5\00a0";color:rgba(0,0,0,.85)}
+#header .details br+span#revremark::before{content:"\00a0|\00a0"}
+#header #revnumber{text-transform:capitalize}
+#header #revnumber::after{content:"\00a0"}
+#content>h1:first-child:not([class]){color:rgba(0,0,0,.85);border-bottom:1px solid #dddddf;padding-bottom:8px;margin-top:0;padding-top:1rem;margin-bottom:1.25rem}
+#toc{border-bottom:1px solid #e7e7e9;padding-bottom:.5em}
+#toc>ul{margin-left:.125em}
+#toc ul.sectlevel0>li>a{font-style:italic}
+#toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
+#toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc li{line-height:1.3334;margin-top:.3334em}
+#toc a{text-decoration:none}
+#toc a:active{text-decoration:underline}
+#toctitle{color:#7a2518;font-size:1.2em}
+@media screen and (min-width:768px){#toctitle{font-size:1.375em}
+body.toc2{padding-left:15em;padding-right:0}
+#toc.toc2{margin-top:0!important;background:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #e7e7e9;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
+#toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
+#toc.toc2>ul{font-size:.9em;margin-bottom:0}
+#toc.toc2 ul ul{margin-left:0;padding-left:1em}
+#toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
+body.toc2.toc-right{padding-left:0;padding-right:15em}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #e7e7e9;left:auto;right:0}}
+@media screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+#toc.toc2{width:20em}
+#toc.toc2 #toctitle{font-size:1.375em}
+#toc.toc2>ul{font-size:.95em}
+#toc.toc2 ul ul{padding-left:1.25em}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}
+#content #toc{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+#content #toc>:first-child{margin-top:0}
+#content #toc>:last-child{margin-bottom:0}
+#footer{max-width:100%;background:rgba(0,0,0,.8);padding:1.25em}
+#footer-text{color:rgba(255,255,255,.8);line-height:1.44}
+#content{margin-bottom:.625em}
+.sect1{padding-bottom:.625em}
+@media screen and (min-width:768px){#content{margin-bottom:1.25em}
+.sect1{padding-bottom:1.25em}}
+.sect1:last-child{padding-bottom:0}
+.sect1+.sect1{border-top:1px solid #e7e7e9}
+#content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
+#content h1>a.anchor::before,h2>a.anchor::before,h3>a.anchor::before,#toctitle>a.anchor::before,.sidebarblock>.content>.title>a.anchor::before,h4>a.anchor::before,h5>a.anchor::before,h6>a.anchor::before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
+#content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
+#content h1>a.link,h2>a.link,h3>a.link,#toctitle>a.link,.sidebarblock>.content>.title>a.link,h4>a.link,h5>a.link,h6>a.link{color:#ba3925;text-decoration:none}
+#content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
+details,.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
+details>summary:first-of-type{cursor:pointer;display:list-item;outline:none;margin-bottom:.75em}
+.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{text-rendering:optimizeLegibility;text-align:left;font-family:"Noto Serif","DejaVu Serif",serif;font-size:1rem;font-style:italic}
+table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
+.paragraph.lead>p,#preamble>.sectionbody>[class="paragraph"]:first-of-type p{font-size:1.21875em;line-height:1.6;color:rgba(0,0,0,.85)}
+table.tableblock #preamble>.sectionbody>[class="paragraph"]:first-of-type p{font-size:inherit}
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6)}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content{border-style:solid;border-width:1px;border-color:#e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;-webkit-border-radius:4px;border-radius:4px}
+.exampleblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child{margin-bottom:0}
+.sidebarblock{border-style:solid;border-width:1px;border-color:#dbdbd6;margin-bottom:1.25em;padding:1.25em;background:#f3f3f2;-webkit-border-radius:4px;border-radius:4px}
+.sidebarblock>:first-child{margin-top:0}
+.sidebarblock>:last-child{margin-bottom:0}
+.sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
+.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock>.content>pre{-webkit-border-radius:4px;border-radius:4px;word-wrap:break-word;overflow-x:auto;padding:1em;font-size:.8125em}
+@media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
+@media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
+.literalblock pre,.listingblock>.content>pre:not(.highlight),.listingblock>.content>pre[class="highlight"],.listingblock>.content>pre[class^="highlight "]{background:#f7f7f8}
+.literalblock.output pre{color:#f7f7f8;background:rgba(0,0,0,.9)}
+.listingblock>.content{position:relative}
+.listingblock code[data-lang]::before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:inherit;opacity:.5}
+.listingblock:hover code[data-lang]::before{display:block}
+.listingblock.terminal pre .command::before{content:attr(data-prompt);padding-right:.5em;color:inherit;opacity:.5}
+.listingblock.terminal pre .command:not([data-prompt])::before{content:"$"}
+.listingblock pre.highlightjs{padding:0}
+.listingblock pre.highlightjs>code{padding:1em;-webkit-border-radius:4px;border-radius:4px}
+.listingblock pre.prettyprint{border-width:0}
+.prettyprint{background:#f7f7f8}
+pre.prettyprint .linenums{line-height:1.45;margin-left:2em}
+pre.prettyprint li{background:none;list-style-type:inherit;padding-left:0}
+pre.prettyprint li code[data-lang]::before{opacity:1}
+pre.prettyprint li:not(:first-child) code[data-lang]::before{display:none}
+table.linenotable{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.linenotable td[class]{color:inherit;vertical-align:top;padding:0;line-height:inherit;white-space:normal}
+table.linenotable td.code{padding-left:.75em}
+table.linenotable td.linenos{border-right:1px solid currentColor;opacity:.35;padding-right:.5em}
+pre.pygments .lineno{border-right:1px solid currentColor;opacity:.35;display:inline-block;margin-right:.75em}
+pre.pygments .lineno::before{content:"";margin-right:-.125em}
+.quoteblock{margin:0 1em 1.25em 1.5em;display:table}
+.quoteblock:not(.excerpt)>.title{margin-left:-1.5em;margin-bottom:.75em}
+.quoteblock blockquote,.quoteblock p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
+.quoteblock blockquote{margin:0;padding:0;border:0}
+.quoteblock blockquote::before{content:"\201c";float:left;font-size:2.75em;font-weight:bold;line-height:.6em;margin-left:-.6em;color:#7a2518;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+.quoteblock blockquote>.paragraph:last-child p{margin-bottom:0}
+.quoteblock .attribution{margin-top:.75em;margin-right:.5ex;text-align:right}
+.verseblock{margin:0 1em 1.25em}
+.verseblock pre{font-family:"Open Sans","DejaVu Sans",sans;font-size:1.15rem;color:rgba(0,0,0,.85);font-weight:300;text-rendering:optimizeLegibility}
+.verseblock pre strong{font-weight:400}
+.verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
+.quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
+.quoteblock .attribution br,.verseblock .attribution br{display:none}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.025em;color:rgba(0,0,0,.6)}
+.quoteblock.abstract blockquote::before,.quoteblock.excerpt blockquote::before,.quoteblock .quoteblock blockquote::before{display:none}
+.quoteblock.abstract blockquote,.quoteblock.abstract p,.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{line-height:1.6;word-spacing:0}
+.quoteblock.abstract{margin:0 1em 1.25em;display:block}
+.quoteblock.abstract>.title{margin:0 0 .375em;font-size:1.15em;text-align:center}
+.quoteblock.excerpt>blockquote,.quoteblock .quoteblock{padding:0 0 .25em 1em;border-left:.25em solid #dddddf}
+.quoteblock.excerpt,.quoteblock .quoteblock{margin-left:0}
+.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{color:inherit;font-size:1.0625rem}
+.quoteblock.excerpt .attribution,.quoteblock .quoteblock .attribution{color:inherit;text-align:left;margin-right:0}
+table.tableblock{max-width:100%;border-collapse:separate}
+p.tableblock:last-child{margin-bottom:0}
+td.tableblock>.content>:last-child{margin-bottom:-1.25em}
+td.tableblock>.content>:last-child.sidebarblock{margin-bottom:0}
+table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
+table.grid-all>thead>tr>.tableblock,table.grid-all>tbody>tr>.tableblock{border-width:0 1px 1px 0}
+table.grid-all>tfoot>tr>.tableblock{border-width:1px 1px 0 0}
+table.grid-cols>*>tr>.tableblock{border-width:0 1px 0 0}
+table.grid-rows>thead>tr>.tableblock,table.grid-rows>tbody>tr>.tableblock{border-width:0 0 1px}
+table.grid-rows>tfoot>tr>.tableblock{border-width:1px 0 0}
+table.grid-all>*>tr>.tableblock:last-child,table.grid-cols>*>tr>.tableblock:last-child{border-right-width:0}
+table.grid-all>tbody>tr:last-child>.tableblock,table.grid-all>thead:last-child>tr>.tableblock,table.grid-rows>tbody>tr:last-child>.tableblock,table.grid-rows>thead:last-child>tr>.tableblock{border-bottom-width:0}
+table.frame-all{border-width:1px}
+table.frame-sides{border-width:0 1px}
+table.frame-topbot,table.frame-ends{border-width:1px 0}
+table.stripes-all tr,table.stripes-odd tr:nth-of-type(odd),table.stripes-even tr:nth-of-type(even),table.stripes-hover tr:hover{background:#f8f8f7}
+th.halign-left,td.halign-left{text-align:left}
+th.halign-right,td.halign-right{text-align:right}
+th.halign-center,td.halign-center{text-align:center}
+th.valign-top,td.valign-top{vertical-align:top}
+th.valign-bottom,td.valign-bottom{vertical-align:bottom}
+th.valign-middle,td.valign-middle{vertical-align:middle}
+table thead th,table tfoot th{font-weight:bold}
+tbody tr th{display:table-cell;line-height:1.6;background:#f7f8f7}
+tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:rgba(0,0,0,.8);font-weight:bold}
+p.tableblock>code:only-child{background:none;padding:0}
+p.tableblock{font-size:1em}
+ol{margin-left:1.75em}
+ul li ol{margin-left:1.5em}
+dl dd{margin-left:1.125em}
+dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
+ol>li p,ul>li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+ul.checklist,ul.none,ol.none,ul.no-bullet,ol.no-bullet,ol.unnumbered,ul.unstyled,ol.unstyled{list-style-type:none}
+ul.no-bullet,ol.no-bullet,ol.unnumbered{margin-left:.625em}
+ul.unstyled,ol.unstyled{margin-left:0}
+ul.checklist{margin-left:.625em}
+ul.checklist li>p:first-child>.fa-square-o:first-child,ul.checklist li>p:first-child>.fa-check-square-o:first-child{width:1.25em;font-size:.8em;position:relative;bottom:.125em}
+ul.checklist li>p:first-child>input[type="checkbox"]:first-child{margin-right:.25em}
+ul.inline{display:-ms-flexbox;display:-webkit-box;display:flex;-ms-flex-flow:row wrap;-webkit-flex-flow:row wrap;flex-flow:row wrap;list-style:none;margin:0 0 .625em -1.25em}
+ul.inline>li{margin-left:1.25em}
+.unstyled dl dt{font-weight:400;font-style:normal}
+ol.arabic{list-style-type:decimal}
+ol.decimal{list-style-type:decimal-leading-zero}
+ol.loweralpha{list-style-type:lower-alpha}
+ol.upperalpha{list-style-type:upper-alpha}
+ol.lowerroman{list-style-type:lower-roman}
+ol.upperroman{list-style-type:upper-roman}
+ol.lowergreek{list-style-type:lower-greek}
+.hdlist>table,.colist>table{border:0;background:none}
+.hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
+td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
+td.hdlist1{font-weight:bold;padding-bottom:1.25em}
+.literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
+.colist td:not([class]):first-child{padding:.4em .75em 0;line-height:1;vertical-align:top}
+.colist td:not([class]):first-child img{max-width:none}
+.colist td:not([class]):last-child{padding:.25em 0}
+.thumb,.th{line-height:0;display:inline-block;border:solid 4px #fff;-webkit-box-shadow:0 0 0 1px #ddd;box-shadow:0 0 0 1px #ddd}
+.imageblock.left{margin:.25em .625em 1.25em 0}
+.imageblock.right{margin:.25em 0 1.25em .625em}
+.imageblock>.title{margin-bottom:0}
+.imageblock.thumb,.imageblock.th{border-width:6px}
+.imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
+.image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
+.image.left{margin-right:.625em}
+.image.right{margin-left:.625em}
+a.image{text-decoration:none;display:inline-block}
+a.image object{pointer-events:none}
+sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
+sup.footnote a,sup.footnoteref a{text-decoration:none}
+sup.footnote a:active,sup.footnoteref a:active{text-decoration:underline}
+#footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
+#footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em;border-width:1px 0 0}
+#footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;margin-bottom:.2em}
+#footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none;margin-left:-1.05em}
+#footnotes .footnote:last-of-type{margin-bottom:0}
+#content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
+.gist .file-data>table{border:0;background:#fff;width:100%;margin-bottom:0}
+.gist .file-data>table td.line-data{width:99%}
+div.unbreakable{page-break-inside:avoid}
+.big{font-size:larger}
+.small{font-size:smaller}
+.underline{text-decoration:underline}
+.overline{text-decoration:overline}
+.line-through{text-decoration:line-through}
+.aqua{color:#00bfbf}
+.aqua-background{background:#00fafa}
+.black{color:#000}
+.black-background{background:#000}
+.blue{color:#0000bf}
+.blue-background{background:#0000fa}
+.fuchsia{color:#bf00bf}
+.fuchsia-background{background:#fa00fa}
+.gray{color:#606060}
+.gray-background{background:#7d7d7d}
+.green{color:#006000}
+.green-background{background:#007d00}
+.lime{color:#00bf00}
+.lime-background{background:#00fa00}
+.maroon{color:#600000}
+.maroon-background{background:#7d0000}
+.navy{color:#000060}
+.navy-background{background:#00007d}
+.olive{color:#606000}
+.olive-background{background:#7d7d00}
+.purple{color:#600060}
+.purple-background{background:#7d007d}
+.red{color:#bf0000}
+.red-background{background:#fa0000}
+.silver{color:#909090}
+.silver-background{background:#bcbcbc}
+.teal{color:#006060}
+.teal-background{background:#007d7d}
+.white{color:#bfbfbf}
+.white-background{background:#fafafa}
+.yellow{color:#bfbf00}
+.yellow-background{background:#fafa00}
+span.icon>.fa{cursor:default}
+a span.icon>.fa{cursor:inherit}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note::before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip::before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning::before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution::before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important::before{content:"\f06a";color:#bf0000}
+.conum[data-value]{display:inline-block;color:#fff!important;background:rgba(0,0,0,.8);-webkit-border-radius:100px;border-radius:100px;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value] *{color:#fff!important}
+.conum[data-value]+b{display:none}
+.conum[data-value]::after{content:attr(data-value)}
+pre .conum[data-value]{position:relative;top:-.125em}
+b.conum *{color:inherit!important}
+.conum:not([data-value]):empty{display:none}
+dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
+h1,h2,p,td.content,span.alt{letter-spacing:-.01em}
+p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
+p,blockquote,dt,td.content,span.alt{font-size:1.0625rem}
+p{margin-bottom:1.25rem}
+.sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
+.exampleblock>.content{background:#fffef7;border-color:#e0e0dc;-webkit-box-shadow:0 1px 4px #e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+.print-only{display:none!important}
+@page{margin:1.25cm .75cm}
+@media print{*{-webkit-box-shadow:none!important;box-shadow:none!important;text-shadow:none!important}
+html{font-size:80%}
+a{color:inherit!important;text-decoration:underline!important}
+a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
+a[href^="http:"]:not(.bare)::after,a[href^="https:"]:not(.bare)::after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
+abbr[title]::after{content:" (" attr(title) ")"}
+pre,blockquote,tr,img,object,svg{page-break-inside:avoid}
+thead{display:table-header-group}
+svg{max-width:100%}
+p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
+h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#toc,.sidebarblock,.exampleblock>.content{background:none!important}
+#toc{border-bottom:1px solid #dddddf!important;padding-bottom:0!important}
+body.book #header{text-align:center}
+body.book #header>h1:first-child{border:0!important;margin:2.5em 0 1em}
+body.book #header .details{border:0!important;display:block;padding:0!important}
+body.book #header .details span:first-child{margin-left:0!important}
+body.book #header .details br{display:block}
+body.book #header .details br+span::before{content:none!important}
+body.book #toc{border:0!important;text-align:left!important;padding:0!important;margin:0!important}
+body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-break-before:always}
+.listingblock code[data-lang]::before{display:block}
+#footer{padding:0 .9375em}
+.hide-on-print{display:none!important}
+.print-only{display:block!important}
+.hide-for-print{display:none!important}
+.show-for-print{display:inherit!important}}
+@media print,amzn-kf8{#header>h1:first-child{margin-top:1.25rem}
+.sect1{padding:0!important}
+.sect1+.sect1{border:0}
+#footer{background:none}
+#footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
+@media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
+</style>
+</head>
+<body class="article">
+<div id="header">
+<h1>Rucksack: a flexible, light weight, open source persistence library</h1>
+<div class="details">
+<span id="author" class="author">Arthur Lemmens</span><br>
+<span id="email" class="email"><a href="mailto:alemmens@xs4all.nl">alemmens@xs4all.nl</a></span><br>
+</div>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_introduction">Introduction</a>
+<ul class="sectlevel2">
+<li><a href="#_expertise">EXPERTISE</a></li>
+<li><a href="#_features">FEATURES</a></li>
+<li><a href="#_this_talk">THIS TALK</a></li>
+<li><a href="#_the_jungle">THE JUNGLE</a></li>
+</ul>
+</li>
+<li><a href="#_objects_on_disk_serialization">Objects on disk: serialization</a>
+<ul class="sectlevel2">
+<li><a href="#_intro">INTRO</a></li>
+<li><a href="#_shared_objects">SHARED OBJECTS</a></li>
+<li><a href="#_why_not_write_and_read">WHY NOT WRITE AND READ</a></li>
+<li><a href="#_markers">MARKERS</a></li>
+</ul>
+</li>
+<li><a href="#_findingupdating_objects_object_table_cache">FINDING/UPDATING OBJECTS: OBJECT TABLE, CACHE</a>
+<ul class="sectlevel2">
+<li><a href="#_intro_2">INTRO</a></li>
+<li><a href="#_serializing_persistent_objects">SERIALIZING PERSISTENT OBJECTS</a></li>
+</ul>
+</li>
+<li><a href="#_garbage_collection">GARBAGE COLLECTION</a>
+<ul class="sectlevel2">
+<li><a href="#_delete_instance_yes_or_no">DELETE-INSTANCE: YES OR NO?</a></li>
+<li><a href="#_the_garbage_collector">THE GARBAGE COLLECTOR</a></li>
+</ul>
+</li>
+<li><a href="#_transactions">TRANSACTIONS</a>
+<ul class="sectlevel2">
+<li><a href="#_atomicity_isolation_durability">ATOMICITY, ISOLATION, DURABILITY</a></li>
+<li><a href="#_possible_solutions">POSSIBLE SOLUTIONS</a></li>
+<li><a href="#_rucksacks_solution">RUCKSACK&#8217;S SOLUTION</a></li>
+<li><a href="#_crashes_and_transaction_recovery">CRASHES AND TRANSACTION RECOVERY</a></li>
+</ul>
+</li>
+<li><a href="#_indexing_objects_btrees_slotclass_indexes_mop_magic">INDEXING OBJECTS: BTREES, SLOT/CLASS INDEXES, MOP MAGIC</a>
+<ul class="sectlevel2">
+<li><a href="#_intro_3">INTRO</a></li>
+<li><a href="#_more_mop_magic">MORE MOP MAGIC</a></li>
+<li><a href="#_indexes_and_garbage_collection">INDEXES AND GARBAGE COLLECTION</a></li>
+<li><a href="#_queries_if_time_left">QUERIES (if time left)</a></li>
+<li><a href="#_multi_dimensional_indexes_if_time_left">MULTI-DIMENSIONAL INDEXES (if time left)</a></li>
+</ul>
+</li>
+<li><a href="#_schemas">SCHEMAS</a>
+<ul class="sectlevel2">
+<li><a href="#_intro_4">INTRO</a></li>
+<li><a href="#_the_problem">THE PROBLEM</a></li>
+<li><a href="#_creating_new_schemas">CREATING NEW SCHEMAS</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This is Arthur Lemmens' talk given at the ECLM 2006 in Hamburg</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_introduction">Introduction</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_expertise">EXPERTISE</h3>
+<div class="paragraph">
+<p>Maybe I should start by saying that I don&#8217;t consider myself an expert
+on any of the subjects that I&#8217;m going to talk about today (except
+maybe Lisp programming).  But I&#8217;ve been wanting a Lisp persistence
+library for years, and nobody else was writing it for me (or, if they
+were writing them, they lacked features that I considered essential).
+So I finally decided to ignore the fact that I didn&#8217;t know anything
+about things like database implementation, transactions or garbage
+collectors and just do it.</p>
+</div>
+<div class="paragraph">
+<p>So here we are&#8230;&#8203;</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_features">FEATURES</h3>
+<div class="paragraph">
+<p>Rucksack is a persistence library for Common Lisp.  It&#8217;s a bit similar
+to systems like AllegroCache or PLOB, but it&#8217;s also different in some
+important respects.  Here are some of its features:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Common Lisp only</p>
+</li>
+<li>
+<p>99% portable</p>
+</li>
+<li>
+<p>persistent conses, vectors, CLOS objects, &#8230;&#8203;</p>
+</li>
+<li>
+<p>object cache</p>
+</li>
+<li>
+<p>parallel transactions</p>
+</li>
+<li>
+<p>incremental garbage collector</p>
+</li>
+<li>
+<p>schema evolution</p>
+</li>
+<li>
+<p>use MOP to automatically deal with slot changes</p>
+</li>
+<li>
+<p>btree indexing for class instances and slot values</p>
+</li>
+<li>
+<p>flexible architecture</p>
+</li>
+<li>
+<p>not finished</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Also:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>it&#8217;s all written in Common Lisp</p>
+</li>
+<li>
+<p>it&#8217;s almost all portable, except for process locks and some MOP magic
+(I write and test it with Lispworks)</p>
+</li>
+<li>
+<p>it tries to provide persistent equivalents of Lisp&#8217;s classical
+data structures, including persistent conses, persistent vectors
+and persistent CLOS instances.</p>
+</li>
+<li>
+<p>it has an object based cache; changes to persistent objects are
+written to disk (serialized) during a transaction-commit</p>
+</li>
+<li>
+<p>it supports parallel transactions</p>
+</li>
+<li>
+<p>it has an incremental garbage collector</p>
+</li>
+<li>
+<p>it support schema evolution, in the sense that it can deal with
+changes to persistent class definitions in a way that&#8217;s similar
+to what CL provides with update-instance-for-redefined-class</p>
+</li>
+<li>
+<p>it uses the MOP to automatically deal with slot changes</p>
+</li>
+<li>
+<p>it provides  indexing for instances and slot values
+Btrees are included, user defined indexes are also possible.</p>
+</li>
+<li>
+<p>I try hard to keep it flexible and readable, so it should be
+relatively easy to adapt to your own needs.</p>
+</li>
+<li>
+<p>it&#8217;s not finished yet
+I&#8217;ve written code for almost everything mentioned above, but there
+are still quite a few loose ends and it needs some heavy testing.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_this_talk">THIS TALK</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>serialization
+How do I get it on disk?</p>
+</li>
+<li>
+<p>object ids
+How do I know where I put it?</p>
+</li>
+<li>
+<p>cache
+Déjà vu.</p>
+</li>
+<li>
+<p>garbage collection
+How do I get rid of this mess?</p>
+</li>
+<li>
+<p>parallel transactions
+Have my cake and eat it too.</p>
+</li>
+<li>
+<p>failure recovery
+What if somebody pulls the plug?</p>
+</li>
+<li>
+<p>automatic slot and class indexing
+How do I find it back?</p>
+</li>
+<li>
+<p>schema evolution
+What if my class definition changes?</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>I&#8217;m going to present Rucksack in about the same order as I developed
+it.  This means we&#8217;ll start at the bottom, with things like
+serialization, object ids, cacheing and garbage collection.  Then
+we&#8217;ll move on to headache stuff like parallel transactions, recovering
+from failure, using the MOP for automatic slot and class indexing, and
+schema evolution.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_jungle">THE JUNGLE</h3>
+<div class="paragraph">
+<p>Writing a persistence library is like hacking your way through a
+jungle.  At each point there are difficult decisions to make, and
+making the best decision is almost impossible.  In fact, what&#8217;s best
+will often depend on the application.</p>
+</div>
+<div class="paragraph">
+<p>Garbage collection is a nice example.  One week I thought I should
+write a mark-and-sweep collector, the next week I thought that a
+copying collector would be better.  Or maybe some kind of mixture?  I
+ended up writing half a copying collector, then changed my mind and
+wrote a mark and sweep collector.  Now I&#8217;m having doubts again.</p>
+</div>
+<div class="paragraph">
+<p>But this is nothing new for most Common Lisp programmers.  We&#8217;re used
+to the fact that there is no single best programming paradigm, no
+single best answer.  Instead, Common Lisp provides a flexible
+programming framework that you can adapt to the problem at hand.  I
+try to do the same for Rucksack.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_objects_on_disk_serialization">Objects on disk: serialization</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_intro">INTRO</h3>
+<div class="paragraph">
+<p>The serializer is the low level layer that takes care of writing
+objects to disk and reading them back again.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_shared_objects">SHARED OBJECTS</h3>
+<div class="paragraph">
+<p>One of the things that can complicate serialization is that the
+serializer must deal with shared objects in such a way that they can
+be reconstructed correctly by the 'deserializer'.  This can have quite
+a large effect on the memory usage of a serializer (there&#8217;s a reason
+why Common Lisp has the <strong>print-circle</strong> flag).</p>
+</div>
+<div class="paragraph">
+<p>Fortunately, we don&#8217;t need to worry about shared objects when we&#8217;re
+serializing in Rucksack: Rucksack only respects the object identity of
+objects that are explicitly declared to be persistent objects.  (Erm,
+well, that&#8217;s not entirely true: there are some corner cases like
+symbols and packages, but I&#8217;m not going to go into that now.)</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_why_not_write_and_read">WHY NOT WRITE AND READ</h3>
+<div class="paragraph">
+<p>If you know that you don&#8217;t need to worry about shared objects,
+serializing objects to disk is easy.  In principle, you could just use
+Common Lisp&#8217;s WRITE function to write the object to disk.  Then you
+can use READ to deserialize the object when you need it again.</p>
+</div>
+<div class="paragraph">
+<p>This is possible, but it would be slow.  Lisp&#8217;s syntax for
+representing data was designed to be writable and readable by humans.
+The serializer doesn&#8217;t have to worry about human readability, so it
+can make decisions that allow for smaller representations and much
+faster reading.  In my experience, the speed difference can easily be
+one or two orders of magnitude.</p>
+</div>
+<div class="paragraph">
+<p>Two examples:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>'Container objects' like vectors and lists are prefixed by the
+number of elements they contain.  This means that the deserializer
+can pre-allocate a container of exactly the right size.</p>
+</li>
+<li>
+<p>The serializer prefixes every object by its type.  This is not
+necessarily equivalent to a Common Lisp type, but gives enough
+information to the deserializer so that it can prepare itself for
+what&#8217;s coming.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_markers">MARKERS</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(defconstant +minus-one+                #x09)
+(defconstant +zero+                     #x0A)
+(defconstant +one+                      #x0B)
+(defconstant +two+                      #x0C
+
+(defconstant +object+                   #x70)
+(defconstant +unbound-slot+             #x71)
+(defconstant +shared-object-definition+ #x72)
+(defconstant +shared-object-reference+  #x73)
+
+(defconstant +hash-table+               #x80)
+(defconstant +pathname+                 #x90)
+(defconstant +array+                    #xA0)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The markers above are hard wired constants and I define them
+explicitly.  This may look a bit un-lispy; I&#8217;ve seen other
+serialization libraries where the marker numbers automatically roll
+out of some macro.  I don&#8217;t do that.  I do it the old-fashioned way
+because I want a well defined file format for Rucksack; there should
+not be any implementation or platform dependencies in Rucksack&#8217;s file
+format.</p>
+</div>
+<div class="sect3">
+<h4 id="_code_fragment_deserialize">CODE FRAGMENT: DESERIALIZE</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(defun deserialize (serializer &amp;optional (eof-error-p t) (eof-value nil))
+  "Reads the next object from the serializer stream.  Signals an end-of-file
+error or returns EOF-VALUE when the end of the stream is reached."
+  (let ((marker (read-next-marker serializer)))
+    (if marker
+        (deserialize-contents marker serializer)
+      ;; End of file
+      (if eof-error-p
+          (error 'end-of-file :stream serializer)
+        eof-value))))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The top-level DESERIALIZE function just reads a marker and then calls
+the generic function DESERIALIZE-CONTENTS.  DESERIALIZE-CONTENTS has
+a different method for each marker.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_serializing_a_hash_table">SERIALIZING A HASH TABLE</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(defmethod serialize ((hash-table hash-table) stream)
+  (serialize-marker +hash-table+ stream)
+  ;; Hash-table-test is guaranteed to return a symbol (for the
+  ;; standardized hash-table test functions), so that's nicely
+  ;; portable.
+  (serialize (hash-table-test hash-table) stream)
+  (serialize (hash-table-size hash-table) stream)
+  (serialize (hash-table-rehash-size hash-table) stream)
+  (serialize (hash-table-rehash-threshold hash-table) stream)
+  (serialize (hash-table-count hash-table) stream)
+  (maphash (lambda (key value)
+             (serialize key stream)
+             (serialize value stream))
+           hash-table))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_deserializing_it_again">DESERIALIZING IT AGAIN</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(defmethod deserialize-contents ((marker (eql +hash-table+)) stream)
+  (let* ((test (deserialize stream))
+         (size (deserialize stream))
+         (rehash-size (deserialize stream))
+         (rehash-threshold (deserialize stream))
+         (count (deserialize stream)))
+    (let ((table (make-hash-table :test test
+                                  :size size
+                                  :rehash-size rehash-size
+                                  :rehash-threshold rehash-threshold)))
+      (loop repeat count
+            do (let* ((key (deserialize stream))
+                      (value (deserialize stream)))
+                 (setf (gethash key table) value)))
+      table)))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_objects_that_cant_be_serialized">OBJECTS THAT CAN&#8217;T BE SERIALIZED</h4>
+<div class="paragraph">
+<p>Some Lisp objects can&#8217;t be serialized portably: structs and function
+objects are the most obvious examples.  I think that not serializing
+those is a small price to pay for portability, but I suppose there are
+exceptions</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_findingupdating_objects_object_table_cache">FINDING/UPDATING OBJECTS: OBJECT TABLE, CACHE</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_intro_2">INTRO</h3>
+<div class="paragraph">
+<p>That was easy.</p>
+</div>
+<div class="paragraph">
+<p>So now we&#8217;re able to save normal Lisp objects to disk.  And we can
+even load them back later.  This means we&#8217;re doing fine for settings
+where we can dump the entire world from time to time, and load it back
+when we need it.</p>
+</div>
+<div class="paragraph">
+<p>For many applications, this is all that&#8217;s needed.  And a good
+serializer can be orders of magnitude faster than using WRITE/READ or
+writing MAKE-LOAD-FORM methods, so we&#8217;re already ahead of the game.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_serializing_persistent_objects">SERIALIZING PERSISTENT OBJECTS</h3>
+<div class="paragraph">
+<p>Things get more interesting when we need to serialize persistent
+objects.  For persistent objects we must make sure that we respect
+object identity, for example.  And we must save some kind of
+representation of the object&#8217;s class, so we can recreate it correctly.
+And we must save all slot values, so we need some simple MOP magic to
+find all slots.</p>
+</div>
+<div class="sect3">
+<h4 id="_object_identity">OBJECT IDENTITY</h4>
+<div class="paragraph">
+<p>Let&#8217;s look at object identity first:</p>
+</div>
+<div class="paragraph">
+<p>Suppose we have a simple persistent family:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(let* ((jane (make-instance 'person :name "Jane"))
+       (dick (make-instance 'person :name "Dick" :child jane))
+       (mary (make-instance 'person :name "Mary" :child jane)))
+  (make-instance 'family
+                 ;; Try to be politically correct.
+                 :parent-1 dick
+                 :parent-2 mary))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now JANE is a 'shared object': it is (or 'she is') referenced twice.
+But we don&#8217;t want to save her <strong>twice</strong>.  When serializing either DICK
+or MARY, we just save a <strong>reference</strong> to JANE.</p>
+</div>
+<div class="paragraph">
+<p>When we <strong>deserialize</strong> DICK (or MARY) at a later point, we don&#8217;t deserialize
+JANE either.  Instead we fill the CHILD slot of DICK with a <strong>proxy</strong>.  Only
+when the application tries to read DICK&#8217;S CHILD slot will the JANE object
+be loaded into memory by the deserializer.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_slot_value_using_class">SLOT-VALUE-USING-CLASS</h4>
+<div class="paragraph">
+<p>We use the MetaObject Protocol to detect whenever a persistent slot is
+being accessed.  Here&#8217;s the method that makes sure that proxies are
+automatically dereferenced at the right moment:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(defmethod slot-value-using-class :around ((class persistent-class)
+                                           object
+                                           slot)
+  ;; Automatically dereference proxies.
+  (declare (ignore class slot))
+  (maybe-dereference-proxy (call-next-method)))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We have similar methods on <code>(SETF SLOT-VALUE-USING-CLASS)</code> to hook into
+slot <strong>writes</strong> and on INITIALIZE-INSTANCE to do the right thing when a
+new persistent object is created in memory.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_proxies">PROXIES</h4>
+<div class="paragraph">
+<p>Here&#8217;s the definition of a proxy in Rucksack:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(defclass proxy ()
+  ((object-id :initarg :object-id :reader object-id)
+   (rucksack :initform (current-rucksack)
+             :initarg :rucksack :reader rucksack))
+  (:documentation "Proxies are some kind of in-memory forwarding pointer
+to data in the cache.  They are never saved on disk."))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Instead of a class like this, we could also have used plain object ids
+(no-nonsense raw integers) to represent the objects.  This would be
+more efficient, but it has two problems:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>It would become quite difficult to work with more than one rucksack
+at a time, because you&#8217;d need to keep track of which object id
+belongs to which rucksack in your application code.</p>
+</li>
+<li>
+<p>You lose 'type information': you can&#8217;t distinguish an object id
+from a proxy, because they both look like integers from the
+outside.  This means that the application programmer will have to
+dereference proxies by hand instead of having it done automatically
+by the compiler (unless you force a static distinction between
+slots that always contain proxies and slots that contain other
+value; but such a rigid distinction wouldn&#8217;t really fit with Lisp&#8217;s
+dynamic programming style).</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_updating_persistent_objects">UPDATING PERSISTENT OBJECTS</h4>
+<div class="paragraph">
+<p>One question that I had to answer for Rucksack is: how are slot values
+of persistent objects updated on disk?  I&#8217;ve made a big choice that
+has a strong influence on rest of Rucksack: objects on disk are never
+overwritten (as long as they can be referenced).  Instead of
+serializing a new version of an object into the same disk space as an
+old version, the new version is serialized into some new, freshly
+allocated space on disk.</p>
+</div>
+<div class="paragraph">
+<p>I&#8217;ll return to this decision later, when I talk about parallel
+transactions and recovering from crashes.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_choice_object_table_direct_pointers_btrees">CHOICE: OBJECT TABLE, DIRECT POINTERS, BTREES?</h4>
+<div class="paragraph">
+<p>Another choice that a persistence library has to make is: given an
+object ID, how do I find the corresponding object?  How do I find the
+disk position of the object, so my deserializer can reconstruct it in
+memory when I need it?</p>
+</div>
+<div class="paragraph">
+<p>For Rucksack, I&#8217;ve considered three possibilities:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Use the disk position itself as the object ID.  So an object ID would
+be pretty much like a normal pointer in memory.</p>
+</li>
+<li>
+<p>Use an 'object vector': the vector is indexed by object identifiers, and
+each vector element contains the disk position of the object.</p>
+</li>
+<li>
+<p>Use a more complicated indexing scheme (btrees, for example).</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>In fact, I&#8217;m <strong>still</strong> considering these possibilities.  At the moment,
+Rucksack uses the second scheme.  Each rucksack directory has a file
+called 'heap', which contains serialized versions of all objects, and
+a file called 'objects', which contains a straightforward mapping from
+object IDs to object positions on disk.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_cache">CACHE</h4>
+<div class="paragraph">
+<p>So the object table and the serializer give us a way to reconstruct an
+object, given its ID.  But reconstructing an object from its ID is an
+expensive operation.  We may want to cache this.  Keeping a cache of
+recently reconstructed objects may speed up our programs a lot.</p>
+</div>
+<div class="sect4">
+<h5 id="_getting_an_object_from_the_cache">GETTING AN OBJECT FROM THE CACHE</h5>
+<div class="paragraph">
+<p>Here&#8217;s a code fragment from an old version of Rucksack that shows the
+basic working of the cache:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(defmethod cache-get-object (object-id (cache standard-cache))
+  (let ((result (or (gethash object-id (objects cache))
+                    (gethash object-id (dirty-objects cache))
+                    (let ((object (load-cached-object object-id cache)))
+                      ;; Add to in-memory cache.
+                      (when (cache-full-p cache)
+                        (make-room-in-cache cache))
+                      (setf (gethash object-id (objects cache)) object)
+                      object))))
+    ;; Put it (back) in front of the queue.
+    (add-to-queue object-id cache)
+    result))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So we keep a hashtable of objects that have been loaded from disk and
+a separate hashtable of objects that have been changed since they were
+loaded.  If we can&#8217;t find an object in one of those hashtables we load
+it from disk.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_lower_level_caches">LOWER-LEVEL CACHES</h5>
+<div class="paragraph">
+<p>I&#8217;ve never written a relational database or even looked at the code
+for one, but I&#8217;ve tried to read some of the database literature.  From
+that literature I get the impression that relational databases usually
+do their caching on a much lower level than what I just described.
+For example, here&#8217;s a quote from "Database Systems: The Complete Book"
+by García-Molina, Ullman &amp; Widom:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>A DBMS will manage disk blocks itself, rather than relying on the
+operating system's file manager to move blocks between main and
+secondary memory.</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>I haven&#8217;t taken that route for Rucksack, and I&#8217;ve decided to ignore
+issues like the size of disk blocks entirely, mostly because:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>I hope that the operating system will take care of this</p>
+</li>
+<li>
+<p>I want to keep Rucksack as simple as possible</p>
+</li>
+<li>
+<p>I want Rucksack to be written in portable Common Lisp, which doesn&#8217;t
+know the concept of disk blocks.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_garbage_collection">GARBAGE COLLECTION</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_delete_instance_yes_or_no">DELETE-INSTANCE: YES OR NO?</h3>
+<div class="paragraph">
+<p>One question that persistence libraries need to answer is:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>Do we provide a way to delete a persistent object, so that it
+won't be 'loadable' anymore and its disk space can be reused?</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This question is very similar to the old manual versus automatic
+memory management question.  Of course, Lispers already knew the
+answer to that question before I was born: manual memory management is
+a sin.  And it isn&#8217;t even a pleasant one.</p>
+</div>
+<div class="paragraph">
+<p>Somehow the question looks different when we&#8217;re dealing with
+persistence.  But as soon as you introduce a function that takes an
+object ID and removes the corresponding object from the persistent
+store in such a way that it can&#8217;t be loaded again, you basically
+introduce 'dangling pointers' again.</p>
+</div>
+<div class="paragraph">
+<p>Welcome back to 'pointer hell'!</p>
+</div>
+<div class="paragraph">
+<p>So&#8230;&#8203;  While I&#8217;m uncertain about many of the decisions I&#8217;ve made for
+Rucksack, I&#8217;m pretty sure about this one:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>There will be no delete-instance.  Every object id that's visible to
+the programmer will always refer to a valid persistent object, so
+there will be no 'dangling pointers'.  When necessary, a garbage
+collector will take care of reclaiming unused disk space.  To ensure
+that an object will never be visible again, you can remove it from
+all objects that contain a reference to it.  This is exactly how we
+normally deal with non-persistent objects in Lisp.</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>(I believe Martin Cracauer may tell us that garbage collection is a
+decadent luxury and that real programmers don&#8217;t need it.  And he would
+probably be right too, <strong>if</strong> you <strong>absolutely</strong> need to squeeze maximum
+performance out of your system.  But Rucksack is designed with
+slightly more modest performance goals, and slightly less modest
+usability goals. )</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_garbage_collector">THE GARBAGE COLLECTOR</h3>
+<div class="paragraph">
+<p>I don&#8217;t have time to discuss all details of the memory manager and the
+garbage collector, so I&#8217;ll briefly describe the basics.</p>
+</div>
+<div class="paragraph">
+<p>I&#8217;ve considered both copying and mark-and-sweep collectors.  One
+advantage of a copying collector is that it automatically defragments
+the heap, and that allocating space for a new object can be trivial:
+you just serialize it to the end of the heap file.</p>
+</div>
+<div class="paragraph">
+<p>The biggest problem I see with a copying collector is that it becomes
+inefficient if you have many big objects that don&#8217;t contain references
+to other objects (for example the contents of binary files that we
+want to keep in the database): these objects will need to be copied
+during each collection.</p>
+</div>
+<div class="paragraph">
+<p>An application I wrote a while ago is a simple publication archive
+that fits this model: not much 'structured data' and fairly many
+binary files, with sizes ranging from a few hundred KB to about 100
+MB.  When I was writing my copying collector, I began to imagine my
+collector spending 99 % of its time just copying these files.  Now I&#8217;m
+usually not the kind of programmer who tries to squeeze the last bit
+of performance out of his programs, but this looked painful even to
+me.</p>
+</div>
+<div class="paragraph">
+<p>So I decided to try my luck with a mark and sweep collector.</p>
+</div>
+<div class="paragraph">
+<p>Basically it works like this:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>BEGIN</p>
+<div class="literalblock">
+<div class="content">
+<pre>At the beginning of a garbage collection cycle, all objects are
+marked 'dead'.  If you use the object vector that I described
+earlier, this is very easy to do.  Each element of the object
+vector reserves a few bits for the garbage collector.  One of these
+bits is the so called mark bit.  So we just loop across the vector,
+clearing the mark bit.</pre>
+</div>
+</div>
+</li>
+<li>
+<p>MARK</p>
+<div class="literalblock">
+<div class="content">
+<pre>Now all live objects are traced, beginning with the so called root
+set.  Each object that can be reached from the root set is marked
+'alive' again.  All other objects will remain marked 'dead', which
+is exactly what we need.</pre>
+</div>
+</div>
+</li>
+<li>
+<p>SWEEP</p>
+<div class="literalblock">
+<div class="content">
+<pre>Now the entire heap is 'sweeped', object after object, from left to
+right.  The disk space for each object that is marked dead is
+returned to a free list.</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="sect3">
+<h4 id="_making_it_incremental">MAKING IT INCREMENTAL</h4>
+<div class="paragraph">
+<p>This works well and is not too difficult to implement.  But for big
+databases it can take a while (minutes, maybe even hours) to run.  If
+you&#8217;re writing web servers or other programs that continually need to
+be able to handle user requests, this is unacceptable.</p>
+</div>
+<div class="paragraph">
+<p>So I made it incremental.</p>
+</div>
+<div class="paragraph">
+<p>To make a garbage collector incremental, you need to do two things:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The first thing is that the collector must be able to do its work
+in many small steps.  (The most obvious moment to run such a small
+step is just after some disk space has been allocated for a new
+object.)  Each small step must know where it should continue the
+work of the previous small step.  In other words, all the state
+that&#8217;s normally kept in local variables on the stack must now be
+registered in slots of the garbage collector object.</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(defclass mark-and-sweep-heap (garbage-collector free-list-heap serializer)
+  ((state :initform :ready
+          :type (member :starting
+                        :marking-object-table
+                        :scanning
+                        :sweeping-heap
+                        :sweeping-object-table
+                        :finishing
+                        :ready)
+          :accessor state)
+   ;; Some counters that keep track of the amount of work done by
+   ;; the garbage collector.
+   (nr-object-bytes-marked :initform 0 :accessor nr-object-bytes-marked)
+   (nr-heap-bytes-scanned :initform 0 :accessor nr-heap-bytes-scanned)
+   (nr-heap-bytes-sweeped :initform 0 :accessor nr-heap-bytes-sweeped)
+   (nr-object-bytes-sweeped :initform 0 :accessor nr-object-bytes-sweeped)))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see in the code fragment, there isn&#8217;t really that much state to keep track of.</p>
+</div>
+<div class="paragraph">
+<p>The second thing is that the garbage collector needs to know how much
+   work it should do at each step.  An effective way is to divide the
+   size of the free heap space by the size of the heap that still needs
+   to be garbage collected and try to keep that number more or less
+   constant.</p>
+</div>
+<div class="paragraph">
+<p>In formula form you get something like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>       New / Free = DoNow / Do
+  so:  DoNow = (New / Free) * ToDo
+
+  New   : number of new bytes allocated at this step
+  Free  : number of free bytes in the heap
+  DoNow : number of bytes to collect at this step
+  Do    : number of bytes to collect during this
+          garbage collection</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Fortunately, you don&#8217;t need a degree in mathematics to understand this
+formula.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_transactions">TRANSACTIONS</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_atomicity_isolation_durability">ATOMICITY, ISOLATION, DURABILITY</h3>
+<div class="paragraph">
+<p>Changes to data often need to occur in so called 'atomic' groups.
+This means that either <strong>all</strong> of the changes should be executed, or
+none of them should be executed.  Such an all-or-nothing group of
+changes is usually called a transaction.  When an error occurs in the
+middle of a transaction, all changes that were executed by the
+transaction must be undone: this is called a 'rollback'.  When the
+transaction has finished without any errors, all changes must be saved
+to disk: this is called a 'commit'.</p>
+</div>
+<div class="paragraph">
+<p>Apart from atomicity ('all-or-nothingness') and durability (saving all
+changes) another important requirement for transactions is that they
+may not interfere with each other.  As long as a transaction hasn&#8217;t
+committed its changes, it must run as if it were the only transaction
+using the database.  In other words, it must appear to be 'isolated'
+from all other transactions.</p>
+</div>
+<div class="paragraph">
+<p>Bank accounts are a popular example when discussing transactions.
+Let&#8217;s look at the following function to transfer money from one
+account to another.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(defun transfer-money (amount account-a account-b)
+  "Transfer AMOUNT from ACCOUNT-A to ACCOUNT-B."
+  (with-transaction ()
+    ;; Check that there's enough money in the account.
+    (unless (plusp (- (slot-value account-a 'balance) amount))
+      (error "Not enough money."))
+    ;; Subtract the amount from account A.
+    (decf (slot-value account-a 'balance) amount)
+    ;; Add the same amount to account B.
+    (incf (slot-value account-b 'balance) amount)))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now suppose two transactions T1 and T2 are trying to transfer 100 EURO
+from an account that contains 150 EURO.  If the bank is not careful,
+we could get the following sequence of events:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>T1: check that there&#8217;s enough money &#8594; OK</p>
+</li>
+<li>
+<p>T2: check that there&#8217;s enough money &#8594; OK</p>
+</li>
+<li>
+<p>T1: subtract 100 EURO from the account &#8594; now it contains 50 EURO.</p>
+</li>
+<li>
+<p>T2: subtract 100 EURO from the account &#8594; OOPS.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This is one kind of error that can happen when two transactions are
+not isolated from each other.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_possible_solutions">POSSIBLE SOLUTIONS</h3>
+<div class="paragraph">
+<p>To guarantee that transactions run in isolation, we could:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Let the application programmer worry about it and write locking
+code where necessary.</p>
+<div class="literalblock">
+<div class="content">
+<pre>I haven't chosen this solution.  Keeping transactions isolated is
+a difficult problem where it's easy to make mistakes that are hard
+to detect.</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Use some kind of automatic locking.</p>
+<div class="literalblock">
+<div class="content">
+<pre>The best known automatic locking strategy is called "two phase
+locking".  This basically means that a transaction acquires a
+lock for each object that it wants to change, and then doesn't
+release the lock until the entire transaction has finished.</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>I haven't chosen this solution either.  One potential problem with
+two phase locking is that long-running transactions (for example
+a transaction that looks at all bank accounts to make a monthly
+report) can easily lock up all other transactions.  Now there may
+be solutions for this too, but I felt these were getting too
+complicated.</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_rucksacks_solution">RUCKSACK&#8217;S SOLUTION</h3>
+<div class="paragraph">
+<p>So what does Rucksack do?  It uses so called 'optimistic concurrency
+control' combined with 'multiple object versions'.</p>
+</div>
+<div class="paragraph">
+<p>'Optimistic concurrency control' means that Rucksack doesn&#8217;t use locks
+to keep its transactions isolated from each other.  Instead it just
+rolls back a transaction when it is trying to change data that it
+shouldn&#8217;t change, basically telling it to 'try again later'.</p>
+</div>
+<div class="paragraph">
+<p>Rolling back and retrying a transaction can be rather expensive;
+that&#8217;s why this strategy is called 'optimistic': it assumes that this
+kind of transaction conflict happens rarely.</p>
+</div>
+<div class="paragraph">
+<p>Rucksack tries to make transaction conflicts more rare by using
+multiple object versions.  With multiple object versions, each
+transaction that modifies an object gets its own copy of that object.</p>
+</div>
+<div class="paragraph">
+<p>This means that an older transaction can stay in its own consistent
+little world and happily keep reading older versions of objects that
+are already being changed by younger transactions.  So one transaction
+can have its cake while another transaction is eating it ;-)</p>
+</div>
+<div class="paragraph">
+<p>That doesn&#8217;t mean that both transactions can be eating the cake at the
+same time, of course.  In that case, Rucksack will abort the second
+transaction that tries to eat the cake and give it an opportunity to
+retry later.  If there&#8217;s any cake left, of course.</p>
+</div>
+<div class="sect3">
+<h4 id="_safety_net">SAFETY NET</h4>
+<div class="paragraph">
+<p>The fact that Rucksack uses optimistic concurrency control does not
+mean that you can&#8217;t use manual or automatic locking on a higher level.
+It would be possible to use manual locking and treat Rucksack&#8217;s
+transaction conflict detection mechanism as a sort of safety net, for
+example.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_detecting_conflicts">DETECTING CONFLICTS</h4>
+<div class="paragraph">
+<p>So how are transaction conflicts detected?</p>
+</div>
+<div class="paragraph">
+<p>Each transaction has a unique ID.  For each version of each object, we
+register the ID of the transaction that created/modified the object.
+The ID also functions as a relative timestamp: transaction A is older
+than transaction B if its ID is less than the ID of transaction B.</p>
+</div>
+<div class="paragraph">
+<p>Each object creation/modification always happens in the context of a
+transaction.  A transaction conflict occurs when an old transaction
+tries to modify an object that was modified by a younger transaction.</p>
+</div>
+<div class="paragraph">
+<p>(Actually, there only needs to be a serialization conflict when an old
+transaction tries to modify a slot that was modified by a younger
+transaction.  But Rucksack detects conflicts at the object level, not
+the slot level.)</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_transactions_and_the_cache">TRANSACTIONS AND THE CACHE</h4>
+<div class="paragraph">
+<p>Before we had transactions, the cache was relatively simple: it kept a
+set of 'clean' objects: objects that had been read from disk but had
+not been changed and a set of 'dirty' objects: objects that had been
+modified and needed to be written back to disk.</p>
+</div>
+<div class="paragraph">
+<p>With multiversion transactions, this design needs to change.</p>
+</div>
+<div class="paragraph">
+<p>Here&#8217;s a simplified version of Rucksack&#8217;s class definition for CACHE:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(defclass standard-cache (cache)
+  ((heap :initarg :heap :reader heap)
+   (schema-table :initarg :schema-table :reader schema-table)
+   (commit-file :reader commit-file)
+   ;; Clean objects
+   (objects :initarg :objects :reader objects)
+   (highest-transaction-id :initarg :highest-transaction-id
+                           :initform 0
+                           :accessor highest-transaction-id)
+   (transactions :initform (make-hash-table)
+                 :reader transactions
+                 :documentation "A mapping from transaction ids to
+transactions.  Contains only open transactions, i.e. transactions that
+haven't been rolled back or committed.")))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And here&#8217;s the definition of TRANSACTION:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(defclass standard-transaction (transaction)
+  ((id :initarg :id :reader transaction-id)
+   (dirty-objects :initform (make-hash-table)
+                  :reader dirty-objects
+                  :documentation "A hash-table (from id to object)
+containing all objects of which the slot changes have not been written
+to file yet.")))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_getting_objects_from_the_cache">GETTING OBJECTS FROM THE CACHE</h4>
+<div class="paragraph">
+<p>So what happens when an object must be retrieved from the cache?</p>
+</div>
+<div class="paragraph">
+<p>With multiple object versions, a transaction is only allowed to see
+the version that it has modified itself.  Or, if it hasn&#8217;t modified
+the object, the version that was modified by the youngest transaction
+that&#8217;s older than itself.</p>
+</div>
+<div class="paragraph">
+<p>For example: if the current transaction is #3, and the object has been
+modified by transactions #1 and #5.  Then the 'compatible' object
+version is the one that was modified by #1.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(defmethod cache-get-object (object-id (cache standard-cache))
+  (let ((transaction (current-transaction)))
+    (or ;; Unmodified, already loaded and compatible with the
+        ;; current transaction?  Fine, let's use it.
+        (let ((object (gethash object-id (objects cache))))
+          (and object
+               (&lt;= (transaction-id object) (transaction-id transaction))
+               object))
+        ;; Modified by an open transaction?  Try to find the
+        ;; 'compatible' version.
+        (find-object-version object-id transaction cache)
+        ;; Not in memory at all? Then load the compatible version
+        ;; from disk.
+        (multiple-value-bind (object most-recent-p)
+            (load-object object-id transaction cache)
+          (when most-recent-p
+            ;; Add to in-memory cache if the loaded object is
+            ;; the most recent version of the object.
+            (when (cache-full-p cache)
+              (make-room-in-cache cache))
+            (setf (gethash object-id (objects cache)) object))
+          object))))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_rolling_back_a_transaction">ROLLING BACK A TRANSACTION</h4>
+<div class="paragraph">
+<p>When a transaction is rolled back, all side effects of the transaction
+must be undone.  There must be no noticeable difference between an
+rolled back transaction and a transaction that hasn&#8217;t even started
+yet.</p>
+</div>
+<div class="paragraph">
+<p>Rolling back is only possible for a transaction that hasn&#8217;t been
+committed yet (and is not currently being committed).  This makes
+rolling back easy: the transaction can basically just clear its dirty
+objects table to ensure that no changes to those objects will be
+written to disk.</p>
+</div>
+<div class="paragraph">
+<p>So here&#8217;s some more code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(defmethod transaction-rollback-1 ((transaction standard-transaction)
+                                   (cache standard-cache)
+                                   (rucksack standard-rucksack))
+  (clrhash (dirty-objects transaction))
+  (queue-clear (dirty-queue transaction))
+  (close-transaction cache transaction))</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_crashes_and_transaction_recovery">CRASHES AND TRANSACTION RECOVERY</h3>
+<div class="sect3">
+<h4 id="_recovery">RECOVERY</h4>
+<div class="paragraph">
+<p>The main problem for recovery is that a transaction commit may fail
+halfway.  This would result in an inconsistent state.  To preserve
+consistency, we need to undo the effects of the partially committed
+transaction.</p>
+</div>
+<div class="paragraph">
+<p>As usual, there are different ways of doing this.  And, as usual, I&#8217;ve
+tried to find a strategy that&#8217;s relatively simple to implement,
+integrates well with the rest of Rucksack and is a bit different from
+the most popular way of doing this.</p>
+</div>
+<div class="paragraph">
+<p>Rucksack&#8217;s recovery strategy is based upon two ideas:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The most important idea is that we can use the fact that Rucksack
+never actually overwrites objects but always creates new versions.</p>
+</li>
+<li>
+<p>The second idea is that Rucksack saves a summary of what a
+transaction commit is going to do to a separate file, a so called
+'commit file'.  After saving the summary of what it&#8217;s going to do,
+it actually <strong>does</strong> it and then deletes the summary again.  If a
+transaction-commit fails halfway, the recovery procedure can undo
+the partial effects of the failed transaction by use the
+information in the commit file.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_commit_file">COMMIT FILE</h4>
+<div class="paragraph">
+<p>The following code shows how commit files are created.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(defun create-commit-file (transaction cache)
+  "Write object ids of all dirty objects to the commit file, so
+recovery can do its job if this transaction never completes."
+  (with-open-file (stream (commit-filename cache)
+                          :direction :output
+                          :if-exists :supersede
+                          :if-does-not-exist :create)
+    (serialize (transaction-id transaction) stream)
+    (serialize (hash-table-count (dirty-objects transaction)) stream)
+    (loop for object-id being the hash-key of (dirty-objects transaction)
+          do (serialize object-id stream))))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So the commit file contains the transaction id of the transaction
+that&#8217;s going to be committed <strong>and</strong> it contains the object ids of all
+<strong>objects</strong> that are going to be committed.</p>
+</div>
+<div class="paragraph">
+<p>Once the commit file is created successfully, the actual transaction
+commit will save all dirty objects to disk and then remove the commit
+file.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_recovering">RECOVERING</h4>
+<div class="paragraph">
+<p>Whenever Rucksack is started, it checks to see if there&#8217;s a commit
+file left.  If there is, it knows that is being started after a crash.
+It will then investigate all object ids that were saved in the commit
+file.  For each object that contains a version created by the
+unfinished transaction, it will remove that version from the object
+version list.</p>
+</div>
+<div class="paragraph">
+<p>After that, it can resume normal operation.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_indexing_objects_btrees_slotclass_indexes_mop_magic">INDEXING OBJECTS: BTREES, SLOT/CLASS INDEXES, MOP MAGIC</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_intro_3">INTRO</h3>
+<div class="paragraph">
+<p>So&#8230;&#8203; We know how to save persistent objects and load them back, we
+can cache the load operation for better performance, we can reclaim
+unused disk space when necessary, we can use transactions to keep
+changes isolated from changes in other processes, and we even stand a
+fair chance of recovering from failure.</p>
+</div>
+<div class="paragraph">
+<p>What more could we need?  Ah yes&#8230;&#8203;  Sometimes we want to find some
+objects we&#8217;re interested in without traversing the whole database.  In
+other words, we need a persistent indexing mechanism.</p>
+</div>
+<div class="paragraph">
+<p>Unlike many other database or persistence libraries, Rucksack builds
+indexes on top of persistent objects, not the other way round.  Maybe
+this costs us a bit in performance because we can&#8217;t use any low level
+tricks for the indexing.  But in return for that we get a flexible and
+easily extendible indexing mechanism.</p>
+</div>
+<div class="paragraph">
+<p>Here&#8217;s how it works:</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_more_mop_magic">MORE MOP MAGIC</h3>
+<div class="paragraph">
+<p>We already needed some MOP magic to hook into SLOT-VALUE-USING-CLASS
+and INITIALIZE-INSTANCE for persistent objects.  Now we need some more
+magic to add our own slot and class options for specifying indexes.</p>
+</div>
+<div class="paragraph">
+<p>This means we can specify something like the following:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(defclass person ()
+  ((name :index (btree :key&lt; string&lt; :key= string=))
+   (year-of-birth :index (btree :key&lt; &lt; :key= =))
+   (age :persistence nil))
+  (:indexed t)
+  (:metaclass persistent-class))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You see an :INDEX slot option being used for the NAME and
+YEAR-OF-BIRTH slots, a :PERSISTENCE slot option for the AGE slot and
+an :INDEX class option for the whole PERSON class.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s look at the class option first: by specifying :INDEXED T, we
+specify that the object IDs of all instances of this class (or one of
+its subclasses) will be added to an index.  Then the generic function
+RUCKSACK-MAP-INSTANCES can be used to iterate over all instances of
+this class (or one of its subclasses, unless those subclasses have an
+:INDEXED NIL class option).</p>
+</div>
+<div class="paragraph">
+<p>For slot options the situation is similar, except that you can use so
+called index specs to specify explicitly what kind of indexing should
+be used.  An index spec has a simple structure: it is either a symbol
+or a list.  If it&#8217;s a symbol, it&#8217;s the name of an index class.  If
+it&#8217;s a list, the car of the list is the name of an index class, and
+the cdr contains a plist of initargs for the index.</p>
+</div>
+<div class="paragraph">
+<p>The index class can be an arbitrary class (including classes that you
+define yourself) as long as it&#8217;s persistent and follows a simple
+indexing protocol.  At the moment, Rucksack has only one index class:
+a no-nonsense, catch-as-catch-can implementation of btrees, written on
+top of persistent conses and persistent vectors.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_indexes_and_garbage_collection">INDEXES AND GARBAGE COLLECTION</h3>
+<div class="paragraph">
+<p>All class and slot indexes are automatically added to Rucksack&#8217;s set
+of root objects, so indexed objects won&#8217;t be removed by the garbage
+collector. All non-indexed objects are NOT part of the root set, so
+they will be garbage collected if they&#8217;re unreachable from one of the
+indexes.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_queries_if_time_left">QUERIES (if time left)</h3>
+<div class="paragraph">
+<p>I think it should be relatively easy to build a simple query language
+on top of RUCKSACK-MAP-INSTANCES and RUCKSACK-MAP-SLOT-VALUES.  This
+should make it possible to generate relatively efficient code for
+queries like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(select 'event
+        (lambda (event) ...)
+        :where '(and (string= name "ECLM")
+                     (= year 2006))
+        :order-by 'name)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>I think there&#8217;s quite a bit of literature on query optimization and
+Lisp&#8217;s fantastic code transformation and run-time compilation features
+may add some interesting new possibilites to the standard repertoire.
+But that&#8217;s still open territory.  At least for me ;-)</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_multi_dimensional_indexes_if_time_left">MULTI-DIMENSIONAL INDEXES (if time left)</h3>
+<div class="paragraph">
+<p>Another interesting Rucksack extension that I haven&#8217;t written yet
+would be to define multi-dimensional indexes (i.e. indexes that look
+at the value of more than one slot).</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(defclass point ()
+  ((x :type number)
+   (y :type number))
+  (;; Don't use standard indexing (by object id), because we're not
+   ;; interested in EQL-ness for points.
+   :indexed nil
+   ;; Index points by their coordinates instead.
+   :index ((x y) (2d-index :key&lt; (&lt; &lt;) :key= (= =))))
+  (:metaclass persistent-class))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>I&#8217;m just making something up here.  Maybe another syntax would be
+needed for multi-dimensional indexing.  My main point here is that it
+is relatively easy to create such extensions yourself and integrate
+them with the rest of Rucksack without having to resort to low-level
+hacks.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_schemas">SCHEMAS</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_intro_4">INTRO</h3>
+<div class="paragraph">
+<p>Suppose we have some persistent objects that were created with the
+following class definition:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(defclass person ()
+  ((name :initarg :name)
+   (age :initarg :age))
+  (:metaclass persistent-class))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now we decide to change the class definition of PERSON to:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-lisp" data-lang="lisp">(defclass person ()
+  ((name :initarg :name)
+   (birth-date :initarg :birth-date))
+   (:metaclass persistent-class))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_problem">THE PROBLEM</h3>
+<div class="paragraph">
+<p>What should happen when we try to load one of the old person
+instances?</p>
+</div>
+<div class="paragraph">
+<p>We can&#8217;t rely on UPDATE-INSTANCE-FOR-REDEFINED-CLASS, because as far
+as our Lisp implementation is concerned, the disk version of our
+persistent PERSON isn&#8217;t an instance of any class at all: it&#8217;s just
+some bytes in a file.</p>
+</div>
+<div class="paragraph">
+<p>And when we load the object from disk, we can&#8217;t ALLOCATE an INSTANCE
+of the obsolete PERSON class, because we have no portable way of finding
+that obsolete class.</p>
+</div>
+<div class="sect3">
+<h4 id="_versions_of_class_definitions">VERSIONS OF CLASS DEFINITIONS</h4>
+<div class="paragraph">
+<p>Rucksack&#8217;s solution is to keep track of the schema of each persistent
+object.  Each schema corresponds to <strong>a version of</strong> a class definition.</p>
+</div>
+<div class="paragraph">
+<p>The most important elements of a schema are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>schema ID</p>
+</li>
+<li>
+<p>class name</p>
+</li>
+<li>
+<p>list of effective persistent slots</p>
+</li>
+<li>
+<p>version number</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>All schemas are kept in a schema table.  They&#8217;re indexed both by
+ID and by class name.</p>
+</div>
+<div class="paragraph">
+<p>Whenever Rucksack saves a persistent object, it saves the schema
+id that corresponds to the object&#8217;s class.</p>
+</div>
+<div class="paragraph">
+<p>When a persistent object must be loaded from disk, Rucksack loads the
+schema nr and finds the corresponding schema.  If the schema has an
+old version number, Rucksack calls a generic function after calling
+ALLOCATE-INSTANCE for the current class version.  The generic function
+is very similar to UPDATE-INSTANCE-FOR-REDEFINED-CLASS: it takes a
+list of added slots, a list of deleted slots and a property list
+containing the slot names and values for slots that were discarded and
+had values.</p>
+</div>
+<div class="paragraph">
+<p>The default method for this function ignores the deleted slots,
+initializes added slots according to their initargs or initforms and
+initializes shared slots (that did not change) with the values that
+were saved on disk.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_creating_new_schemas">CREATING NEW SCHEMAS</h3>
+<div class="paragraph">
+<p>When a class definition changes (e.g. because of DEFCLASS), this must
+be detected by Rucksack. (This can be done with the MOP by hooking
+into (RE)INITIALIZE-INSTANCE for persistent classes.  We&#8217;re doing that
+anyway for keeping the class and slot indexes up to date.)</p>
+</div>
+<div class="paragraph">
+<p>Rucksack analyzes the new class definition; if it&#8217;s different from the
+previous version, a new schema is added to the database.  From that
+moment, when an instance of the redefined class is created it will be
+saved with the new schema number.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2022-10-20 08:37:49 -0300
+</div>
+</div>
+</body>
+</html>
