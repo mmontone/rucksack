@@ -1,0 +1,46 @@
+<html
+  ><head
+    ><title
+      >Function COPY-SLOT-DEFINITION</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: COPY-SLOT-DEFINITION</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun copy-slot-definition (slot-def)
+  (make-instance (class-of slot-def)
+                 :name (slot-definition-name slot-def)
+                 :initargs (slot-definition-initargs slot-def)
+                 :readers (slot-definition-readers slot-def)
+                 :writers (slot-definition-writers slot-def)
+                 :allocation (slot-definition-allocation slot-def)
+                 :type (slot-definition-type slot-def)
+                 ;; Our own options.
+                 :persistence (slot-persistence slot-def)
+                 :index (slot-index slot-def)
+                 :unique (slot-unique slot-def)))</code
+            ></pre
+          ><a href="../MOP.html#function_005FRUCKSACK_003A_003ACOPY-SLOT-DEFINITION"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

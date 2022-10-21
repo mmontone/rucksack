@@ -1,0 +1,87 @@
+<html
+  ><head
+    ><title
+      >Class SCHEMA-TABLE</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Class: SCHEMA-TABLE</h1
+        ><div class="contents"
+          ><h2
+  >Slots</h2
+><ul class="slots"
+  ><li
+  ><em
+    >PATHNAME</em
+  ></li
+><li
+  ><em
+    >BY-NAME</em
+  ><p class="slot-description"
+  >A mapping from class names to a list (most
+recent version first) of schemas.</p
+></li
+><li
+  ><em
+    >BY-ID</em
+  ><p class="slot-description"
+  >A mapping from a schema id to a schema.</p
+></li
+><li
+  ><em
+    >HIGHEST-SCHEMA-ID</em
+  ></li
+><li
+  ><em
+    >DIRTY-P</em
+  ><p class="slot-description"
+  >When dirty, the schema table will be saved
+at the next commit.</p
+></li
+></ul
+><h2
+  >Hierachy</h2
+><h3
+  >Precedence List</h3
+><ul
+  ><li
+  >STANDARD-OBJECT</li
+></ul
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defclass schema-table ()
+  ((pathname :initarg :pathname :accessor schema-table-pathname)
+   (by-name :initform (make-hash-table)
+            :documentation &quot;A mapping from class names to a list (most
+recent version first) of schemas.&quot;
+            :reader schema-table-by-name)
+   (by-id :initform (make-hash-table)
+          :documentation &quot;A mapping from a schema id to a schema.&quot;
+          :accessor schema-table-by-id)
+   (highest-schema-id :initform 0 :accessor highest-schema-id)
+   (dirty-p :initform nil :accessor dirty-p
+            :documentation &quot;When dirty, the schema table will be saved
+at the next commit.&quot;)))</code
+            ></pre
+          ><a href="../Schemas.html#class_005FRUCKSACK_003A_003ASCHEMA-TABLE"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

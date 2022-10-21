@@ -1,0 +1,105 @@
+<html
+  ><head
+    ><title
+      >Class PERSISTENT-SLOT-MIXIN</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Class: PERSISTENT-SLOT-MIXIN</h1
+        ><div class="contents"
+          ><h2
+  >Slots</h2
+><ul class="slots"
+  ><li
+  ><em
+    >PERSISTENCE</em
+  ><p class="slot-description"
+  >T for persistent slots, NIL for
+transient slots.  Default value is T.</p
+></li
+><li
+  ><em
+    >INDEX</em
+  ><p class="slot-description"
+  >An index spec designator for indexed slots,
+NIL for non-indexed slots.  Default value is NIL.</p
+></li
+><li
+  ><em
+    >UNIQUE</em
+  ><p class="slot-description"
+  >Only relevant for indexed slots.  Can be
+either NIL (slot values are not unique), T (slot values are unique,
+and an error will be signaled for attempts to add a duplicate slot
+value) or :NO-ERROR (slot values are unique, but no error will be
+signaled for attempts to add a duplicate slot value).  :NO-ERROR
+should only be used when speed is critical.
+  The default value is NIL.</p
+></li
+></ul
+><h2
+  >Hierachy</h2
+><h3
+  >Precedence List</h3
+><ul
+  ><li
+  >STANDARD-OBJECT</li
+></ul
+><h3
+  >Sub Classes</h3
+><ul
+  ><li
+  ><a href="../api/class_005FRUCKSACK_003A_003APERSISTENT-EFFECTIVE-SLOT-DEFINITION.html"
+  >PERSISTENT-EFFECTIVE-SLOT-DEFINITION</a
+></li
+><li
+  ><a href="../api/class_005FRUCKSACK_003A_003APERSISTENT-DIRECT-SLOT-DEFINITION.html"
+  >PERSISTENT-DIRECT-SLOT-DEFINITION</a
+></li
+></ul
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defclass persistent-slot-mixin ()
+  ((persistence :initarg :persistence
+                :initform t
+                :reader slot-persistence
+                :documentation &quot;T for persistent slots, NIL for
+transient slots.  Default value is T.&quot;)
+   (index :initarg :index
+          :initform nil
+          :reader slot-index
+          :documentation &quot;An index spec designator for indexed slots,
+NIL for non-indexed slots.  Default value is NIL.&quot;)
+   (unique :initarg :unique
+           :initform nil
+           :reader slot-unique
+           :documentation &quot;Only relevant for indexed slots.  Can be
+either NIL (slot values are not unique), T (slot values are unique,
+and an error will be signaled for attempts to add a duplicate slot
+value) or :NO-ERROR (slot values are unique, but no error will be
+signaled for attempts to add a duplicate slot value).  :NO-ERROR
+should only be used when speed is critical.
+  The default value is NIL.&quot;)))</code
+            ></pre
+          ><a href="../MOP.html#class_005FRUCKSACK_003A_003APERSISTENT-SLOT-MIXIN"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

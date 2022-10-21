@@ -1,0 +1,47 @@
+<html
+  ><head
+    ><title
+      >Function MAYBE-ADD-PERSISTENT-OBJECT-CLASS</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: MAYBE-ADD-PERSISTENT-OBJECT-CLASS</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun maybe-add-persistent-object-class (class direct-superclasses)
+  ;; Add PERSISTENT-OBJECT to the superclass list if necessary.
+  (let ((root-class (find-class 'persistent-object nil))
+        (persistent-class (find-class 'persistent-class)))
+    (if (or (null root-class)
+            (eql class root-class)
+            (find-if (lambda (direct-superclass)
+                       (member persistent-class
+                               (compute-class-precedence-list
+                                (class-of direct-superclass))))
+                     direct-superclasses))
+        direct-superclasses
+      (cons root-class direct-superclasses))))</code
+            ></pre
+          ><a href="../MOP.html#function_005FRUCKSACK_003A_003AMAYBE-ADD-PERSISTENT-OBJECT-CLASS"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

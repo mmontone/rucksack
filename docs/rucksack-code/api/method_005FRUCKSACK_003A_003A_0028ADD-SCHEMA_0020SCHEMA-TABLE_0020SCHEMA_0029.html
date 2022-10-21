@@ -1,0 +1,40 @@
+<html
+  ><head
+    ><title
+      >Method (ADD-SCHEMA SCHEMA-TABLE SCHEMA)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (ADD-SCHEMA SCHEMA-TABLE SCHEMA)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod add-schema ((table schema-table) (schema schema))
+  (setf (gethash (schema-id schema) (schema-table-by-id table))
+        schema)
+  (push schema
+        (gethash (schema-class-name schema) (schema-table-by-name table) '()))
+  (setf (dirty-p table) t))</code
+            ></pre
+          ><a href="../Schemas.html#method_005FRUCKSACK_003A_003A_0028ADD-SCHEMA_0020SCHEMA-TABLE_0020SCHEMA_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

@@ -1,0 +1,38 @@
+<html
+  ><head
+    ><title
+      >Function SLOT-DEFINITION-EQUAL</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: SLOT-DEFINITION-EQUAL</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun slot-definition-equal (slot-1 slot-2)
+  (and (equal (slot-persistence slot-1) (slot-persistence slot-2))
+       (index-spec-equal (slot-index slot-1) (slot-index slot-2))
+       (equal (slot-unique slot-1) (slot-unique slot-2))))</code
+            ></pre
+          ><a href="../MOP.html#function_005FRUCKSACK_003A_003ASLOT-DEFINITION-EQUAL"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

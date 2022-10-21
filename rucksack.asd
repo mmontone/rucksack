@@ -26,9 +26,13 @@
 
 ;;;;@include "rucksack.lisp"
 
+;;;;@include "mop.lisp"
+
 ;;;;@include "heap.lisp"
 
 ;;;;@include "transactions.lisp"
+
+;;;;@include "schema-table.lisp"
 
 ;;;;@include "cache.lisp"
 

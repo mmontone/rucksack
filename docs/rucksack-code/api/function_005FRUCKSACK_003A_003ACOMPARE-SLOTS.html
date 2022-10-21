@@ -1,0 +1,54 @@
+<html
+  ><head
+    ><title
+      >Function COMPARE-SLOTS</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: COMPARE-SLOTS</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Returns three values: a list of added slots, a list of discarded slots
+and a list of changed (according to SLOT-DEFINITION-EQUAL) slots.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun compare-slots (old-slots slots)
+  &quot;Returns three values: a list of added slots, a list of discarded slots
+and a list of changed (according to SLOT-DEFINITION-EQUAL) slots.&quot;
+  (let ((added-slots (set-difference slots old-slots
+                                     :key #'slot-definition-name))
+        (discarded-slots (set-difference old-slots slots
+                                         :key #'slot-definition-name))
+        (changed-slots
+         (loop for slot in slots
+               for old-slot = (find (slot-definition-name slot) old-slots
+                                    :key #'slot-definition-name)
+               if (and old-slot
+                       (not (slot-definition-equal slot old-slot)))
+               collect slot)))
+    (values added-slots discarded-slots changed-slots)))</code
+            ></pre
+          ><a href="../MOP.html#function_005FRUCKSACK_003A_003ACOMPARE-SLOTS"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

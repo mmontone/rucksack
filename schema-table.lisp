@@ -2,16 +2,14 @@
 
 (in-package :rucksack)          
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Schema table
-;;;
-;;; The schema table keeps track of all classes that have instances that
-;;; were saved by the cache.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * Schemas
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Schema
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; Schema table
+;;;;
+;;;; The schema table keeps track of all classes that have instances that
+;;;; were saved by the cache.
+
+;;;; ** Schema
 
 (defclass schema ()
   ((id :initarg :id :reader schema-id
@@ -48,9 +46,7 @@ persistent effective slots.")))
             (schema-version schema)
             (nr-persistent-slots schema))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Schema table
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Schema table
 
 (defclass schema-table ()
   ((pathname :initarg :pathname :accessor schema-table-pathname)
@@ -66,9 +62,7 @@ recent version first) of schemas."
             :documentation "When dirty, the schema table will be saved
 at the next commit.")))
 
-;;
-;; Serializing schema table
-;;
+;;;; ** Serializing schema table
 
 (defmethod saved-slots ((table schema-table))
   ;; Don't serialize the BY-ID hash table, but rebuild it by hand after the
@@ -90,9 +84,7 @@ at the next commit.")))
   (setf (dirty-p table) nil)
   table)
 
-;;
-;; Finding schemas
-;;
+;;;; ** Finding schemas
 
 (defmethod fresh-schema-id ((table schema-table))
   (prog1 (highest-schema-id table)
@@ -187,9 +179,7 @@ at the next commit.")))
   (when (and commit (dirty-p table))
     (save-schema-table table)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Schema updates
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Schema updates
 
 (defmethod maybe-update-schemas ((table schema-table) class)
   ;; Rucksack analyzes the new class definition; if it's different from the

@@ -1,0 +1,37 @@
+<html
+  ><head
+    ><title
+      >Function CLOSE-SCHEMA-TABLE</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: CLOSE-SCHEMA-TABLE</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun close-schema-table (table &amp;key (commit t))
+  (when (and commit (dirty-p table))
+    (save-schema-table table)))</code
+            ></pre
+          ><a href="../Schemas.html#function_005FRUCKSACK_003A_003ACLOSE-SCHEMA-TABLE"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

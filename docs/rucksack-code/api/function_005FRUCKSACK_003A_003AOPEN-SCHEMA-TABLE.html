@@ -1,0 +1,59 @@
+<html
+  ><head
+    ><title
+      >Function OPEN-SCHEMA-TABLE</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: OPEN-SCHEMA-TABLE</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun open-schema-table (pathname &amp;key if-exists if-does-not-exist)
+  ;; Load existing schemas from the file.
+  (if (probe-file pathname)
+      (ecase if-exists
+        (:error (error &quot;Schema table file ~S already exists.&quot; pathname))
+        (:supersede
+         ;; Create an empty schema table, save it and return it.
+         (let ((table (make-instance 'schema-table :pathname pathname)))
+           (save-schema-table table)
+           table))
+        (:overwrite
+         ;; Normal case
+         (let ((table (first (load-objects pathname))))
+           (when (not (equal pathname (schema-table-pathname table)))
+             ;; The table was moved; update the pathname info.
+             (setf (schema-table-pathname table) pathname)
+             (save-schema-table table))
+           table)))
+    (ecase if-does-not-exist
+      (:error (error &quot;Schema table file ~S does not exist.&quot; pathname))
+      (:create
+         ;; Create an empty schema table, save it and return it.
+         (let ((table (make-instance 'schema-table :pathname pathname)))
+           (save-schema-table table)
+           table)))))</code
+            ></pre
+          ><a href="../Schemas.html#function_005FRUCKSACK_003A_003AOPEN-SCHEMA-TABLE"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

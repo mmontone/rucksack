@@ -1,0 +1,77 @@
+<html
+  ><head
+    ><title
+      >Class PERSISTENT-CLASS</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Class: PERSISTENT-CLASS</h1
+        ><div class="contents"
+          ><h2
+  >Slots</h2
+><ul class="slots"
+  ><li
+  ><em
+    >PERSISTENT-SLOTS</em
+  ></li
+><li
+  ><em
+    >INDEX</em
+  ><p class="slot-description"
+  >Can be either NIL (for no class index) or T
+(for the standard class index).  Default value is NIL.</p
+></li
+><li
+  ><em
+    >CHANGED-P</em
+  ><p class="slot-description"
+  >True iff the class definition was changed
+but the schemas haven't been updated yet.  This flag is necessary because
+some MOP implementations don't call FINALIZE-INHERITANCE when a class
+was redefined and a new instance of the redefined class is created.</p
+></li
+></ul
+><h2
+  >Hierachy</h2
+><h3
+  >Precedence List</h3
+><ul
+  ><li
+  >STANDARD-CLASS</li
+></ul
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defclass persistent-class (standard-class)
+  ((persistent-slots :initform '()
+                     :accessor class-persistent-slots)
+   (index :initarg :index :initform nil
+          :documentation &quot;Can be either NIL (for no class index) or T
+(for the standard class index).  Default value is NIL.&quot;)
+   (changed-p :initform nil :accessor class-changed-p
+              :documentation &quot;True iff the class definition was changed
+but the schemas haven't been updated yet.  This flag is necessary because
+some MOP implementations don't call FINALIZE-INHERITANCE when a class
+was redefined and a new instance of the redefined class is created.&quot;)))</code
+            ></pre
+          ><a href="../MOP.html#class_005FRUCKSACK_003A_003APERSISTENT-CLASS"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

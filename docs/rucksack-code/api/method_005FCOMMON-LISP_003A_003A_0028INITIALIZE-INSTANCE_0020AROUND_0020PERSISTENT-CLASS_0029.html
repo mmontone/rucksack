@@ -1,0 +1,50 @@
+<html
+  ><head
+    ><title
+      >Method (INITIALIZE-INSTANCE AROUND PERSISTENT-CLASS)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (INITIALIZE-INSTANCE AROUND PERSISTENT-CLASS)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod initialize-instance :around ((class persistent-class)
+                                        &amp;rest args
+                                        &amp;key direct-superclasses
+                                        &amp;allow-other-keys)
+  ;; Make sure the class inherits from persistent-object.
+  (let ((result (apply #'call-next-method
+                       class
+                       :direct-superclasses (maybe-add-persistent-object-class
+                                             class
+                                             direct-superclasses)
+                       ;; Tell Lispworks that it shouldn't bypass
+                       ;; slot-value-using-class.
+                       #+lispworks :optimize-slot-access #+lispworks nil 
+                       args)))
+    (update-indexes class)
+    result))</code
+            ></pre
+          ><a href="../MOP.html#method_005FCOMMON-LISP_003A_003A_0028INITIALIZE-INSTANCE_0020AROUND_0020PERSISTENT-CLASS_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

@@ -1,0 +1,71 @@
+<html
+  ><head
+    ><title
+      >Method (COMPUTE-EFFECTIVE-SLOT-DEFINITION PERSISTENT-CLASS T T)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (COMPUTE-EFFECTIVE-SLOT-DEFINITION PERSISTENT-CLASS T T)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod compute-effective-slot-definition ((class persistent-class)
+                                              slot-name
+                                              direct-slot-definitions)
+  (let ((effective-slotdef (call-next-method))
+        (persistent-slotdefs
+         (remove-if-not (lambda (slotdef)
+                          (typep slotdef 'persistent-direct-slot-definition))
+                        direct-slot-definitions)))
+
+    ;; If any direct slot is persistent, then the effective one is too.
+    (setf (slot-value effective-slotdef 'persistence)
+          (some #'slot-persistence persistent-slotdefs))
+
+    ;; If exactly one direct slot is indexed, then the effective one is
+    ;; too. If more then one is indexed, signal an error.
+    (let ((index-slotdefs (remove-if-not #'slot-index persistent-slotdefs)))
+      (cond ((cdr index-slotdefs)
+             (error &quot;Multiple indexes for slot ~S in ~S:~% ~{~S~^, ~}.&quot;
+                    slot-name class
+                    (mapcar #'slot-index index-slotdefs)))
+            (index-slotdefs
+             (setf (slot-value effective-slotdef 'index)
+                   (slot-index (car index-slotdefs))))))
+     
+    ;; If exactly one direct slot is unique, then the effective one is
+    ;; too. If more then one is unique, signal an error.
+    (let ((unique-slotdefs (remove-if-not #'slot-unique persistent-slotdefs)))
+      (cond ((cdr unique-slotdefs)
+             (error &quot;Multiple uniques for slot ~S in ~S:~% ~{~S~^, ~}.&quot;
+                    slot-name class
+                    (mapcar #'slot-unique unique-slotdefs)))
+            (unique-slotdefs
+             (setf (slot-value effective-slotdef 'unique)
+                   (slot-unique (car unique-slotdefs))))))
+     
+    ;; Return the effective slot definition.
+    effective-slotdef))</code
+            ></pre
+          ><a href="../MOP.html#method_005FSB-MOP_003A_003A_0028COMPUTE-EFFECTIVE-SLOT-DEFINITION_0020PERSISTENT-CLASS_0020T_0020T_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

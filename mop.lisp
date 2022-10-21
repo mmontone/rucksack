@@ -2,13 +2,9 @@
 
 (in-package :rucksack)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; MOP Magic
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * MOP
 
-;;;  
-;;; Metaclass PERSISTENT-CLASS
-;;; 
+;;;; ** PERSISTENT-CLASS metaclass
 
 (defclass persistent-class (standard-class)
   ((persistent-slots :initform '()
@@ -29,9 +25,7 @@ was redefined and a new instance of the redefined class is created.")))
   ;; interested in the first item of that list.
   (first (slot-value class 'index)))
 
-;;
-;; Persistent slot definitions
-;;
+;;;; ** Persistent slots
 
 (defclass persistent-slot-mixin ()
   ((persistence :initarg :persistence
@@ -64,9 +58,7 @@ should only be used when speed is critical.
   ())
 
 
-;;
-;; Copying and comparing slot definitions
-;;
+;;;; ** Copying and comparing slot definitions
 
 (defun copy-slot-definition (slot-def)
   (make-instance (class-of slot-def)
@@ -105,8 +97,6 @@ and a list of changed (according to SLOT-DEFINITION-EQUAL) slots."
     (values added-slots discarded-slots changed-slots)))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defmethod validate-superclass ((class standard-class)
                                 (superclass persistent-class))
   t)
@@ -117,9 +107,7 @@ and a list of changed (according to SLOT-DEFINITION-EQUAL) slots."
   t)
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Initializing the persistent-class metaobjects
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Initializing the persistent-class metaobjects
 ;;
 ;; The (RE)INITIALIZE-INSTANCE methods below get called whenever a class with
 ;; metaclass PERSISTENT-CLASS is (re-)defined. When that happens, we: 
@@ -210,9 +198,7 @@ and a list of changed (according to SLOT-DEFINITION-EQUAL) slots."
   (when (class-changed-p class)
     (update-slot-info class)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Computing slot definitions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Computing slot definitions
 
 (defmethod direct-slot-definition-class ((class persistent-class)
                                          &rest initargs)

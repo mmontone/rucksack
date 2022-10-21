@@ -1,0 +1,113 @@
+<html
+  ><head
+    ><title
+      >Class SCHEMA</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Class: SCHEMA</h1
+        ><div class="contents"
+          ><h2
+  >Slots</h2
+><ul class="slots"
+  ><li
+  ><em
+    >ID</em
+  ><p class="slot-description"
+  >A unique number that identifies a schema.</p
+></li
+><li
+  ><em
+    >CLASS-NAME</em
+  ></li
+><li
+  ><em
+    >VERSION</em
+  ><p class="slot-description"
+  >The combination of class-name and version number
+also uniquely identifies a schema.</p
+></li
+><li
+  ><em
+    >OBSOLETE-P</em
+  ></li
+><li
+  ><em
+    >ADDED-SLOT-NAMES</em
+  ><p class="slot-description"
+  >A list with the names of all
+persistent slots that were added by the most recent version (compared
+to this version).</p
+></li
+><li
+  ><em
+    >DISCARDED-SLOT-NAMES</em
+  ><p class="slot-description"
+  >A list with the names of all
+persistent slots that were discarded by the most recent version
+(compared to this version).</p
+></li
+><li
+  ><em
+    >PERSISTENT-SLOT-NAMES</em
+  ><p class="slot-description"
+  >A list with the names of all
+persistent effective slots.</p
+></li
+></ul
+><h2
+  >Hierachy</h2
+><h3
+  >Precedence List</h3
+><ul
+  ><li
+  >STANDARD-OBJECT</li
+></ul
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defclass schema ()
+  ((id :initarg :id :reader schema-id
+       :documentation &quot;A unique number that identifies a schema.&quot;)
+   (class-name :initarg :class-name :reader schema-class-name)
+   (version :initarg :version :initform 0 :reader schema-version
+            :documentation &quot;The combination of class-name and version number
+also uniquely identifies a schema.&quot;)
+   (obsolete-p :initform nil :accessor schema-obsolete-p)
+   ;; Slot info (computed during FINALIZE-INHERITANCE).
+   (added-slot-names :initform '()
+                     :accessor added-slot-names
+                     :documentation &quot;A list with the names of all
+persistent slots that were added by the most recent version (compared
+to this version).&quot;)
+   (discarded-slot-names :initform '()
+                         :accessor discarded-slot-names
+                         :documentation &quot;A list with the names of all
+persistent slots that were discarded by the most recent version
+(compared to this version).&quot;)
+   (persistent-slot-names :initarg :persistent-slot-names
+                          :accessor persistent-slot-names
+                          :documentation &quot;A list with the names of all
+persistent effective slots.&quot;)))</code
+            ></pre
+          ><a href="../Schemas.html#class_005FRUCKSACK_003A_003ASCHEMA"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>
