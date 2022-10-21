@@ -1,0 +1,50 @@
+<html
+  ><head
+    ><title
+      >Function P-LAST</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: P-LAST</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Returns the last persistent cons cell of a persistent list (or
+NIL if the list is empty).</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun p-last (list &amp;optional (n 1))
+  &quot;Returns the last persistent cons cell of a persistent list (or
+NIL if the list is empty).&quot;
+  (unless (= n 1)
+    ;; DO: Implement this case.
+    (error &quot;The optional argument for P-LAST isn't implemented yet.&quot;))
+  (let ((result list)
+        (tail (p-cdr list)))
+    (loop until (p-endp tail)
+          do (shiftf result tail (p-cdr tail)))
+    result))</code
+            ></pre
+          ><a href="../Persistent_0020objects.html#function_005FRUCKSACK_003A_003AP-LAST"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

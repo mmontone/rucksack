@@ -46,9 +46,25 @@ list contains 32-octet blocks, the third has 64-octet blo</dd
   >A lazy cache doesn't bother with fancy mechanisms
 for deciding which objects to remove from the cache.</dd
 ><dt
+  ><a href="../api/class_005FRUCKSACK_003A_003APERSISTENT-ARRAY.html"
+    >PERSISTENT-ARRAY</a
+  ></dt
+><dt
   ><a href="../api/class_005FRUCKSACK_003A_003APERSISTENT-CLASS.html"
     >PERSISTENT-CLASS</a
   ></dt
+><dt
+  ><a href="../api/class_005FRUCKSACK_003A_003APERSISTENT-CONS.html"
+    >PERSISTENT-CONS</a
+  ></dt
+><dt
+  ><a href="../api/class_005FRUCKSACK_003A_003APERSISTENT-DATA.html"
+    >PERSISTENT-DATA</a
+  ></dt
+><dd
+  >PERSISTENT-DATA classes do not have PERSISTENT-CLASS as metaclass
+because we don't want to specialize SLOT-VALUE-USING-CLASS &amp; friends
+for persistent-data instances.</dd
 ><dt
   ><a href="../api/class_005FRUCKSACK_003A_003APERSISTENT-DIRECT-SLOT-DEFINITION.html"
     >PERSISTENT-DIRECT-SLOT-DEFINITION</a
@@ -58,9 +74,23 @@ for deciding which objects to remove from the cache.</dd
     >PERSISTENT-EFFECTIVE-SLOT-DEFINITION</a
   ></dt
 ><dt
+  ><a href="../api/class_005FRUCKSACK_003A_003APERSISTENT-OBJECT.html"
+    >PERSISTENT-OBJECT</a
+  ></dt
+><dd
+  >Classes of metaclass PERSISTENT-CLASS automatically
+inherit from this class.</dd
+><dt
   ><a href="../api/class_005FRUCKSACK_003A_003APERSISTENT-SLOT-MIXIN.html"
     >PERSISTENT-SLOT-MIXIN</a
   ></dt
+><dt
+  ><a href="../api/class_005FRUCKSACK_003A_003APROXY.html"
+    >PROXY</a
+  ></dt
+><dd
+  >Proxies are some kind of in-memory forwarding pointer
+to data in the cache.</dd
 ><dt
   ><a href="../api/class_005FRUCKSACK_003A_003ARUCKSACK.html"
     >RUCKSACK</a

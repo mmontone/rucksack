@@ -31,6 +31,14 @@
     >ADD-SLOT-INDEX</a
   ></dt
 ><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ACACHE.html"
+    >CACHE</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ACHECK-P-VECTOR.html"
+    >CHECK-P-VECTOR</a
+  ></dt
+><dt
   ><a href="../api/function_005FRUCKSACK_003A_003ACLOSE-RUCKSACK.html"
     >CLOSE-RUCKSACK</a
   ></dt
@@ -65,6 +73,10 @@ and a list of changed (according to SLOT-DEFINITION-EQUAL) slots.</dd
   >Write object ids of all dirty objects to the commit file, so
 recovery can do its job if this transaction never completes.</dd
 ><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ACURRENT-RUCKSACK.html"
+    >CURRENT-RUCKSACK</a
+  ></dt
+><dt
   ><a href="../api/function_005FRUCKSACK_003A_003ACURRENT-TRANSACTION.html"
     >CURRENT-TRANSACTION</a
   ></dt
@@ -72,6 +84,13 @@ recovery can do its job if this transaction never completes.</dd
   ><a href="../api/function_005FRUCKSACK_003A_003ADELETE-COMMIT-FILE.html"
     >DELETE-COMMIT-FILE</a
   ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AFIND-COMMITTED-OBJECT-VERSION.html"
+    >FIND-COMMITTED-OBJECT-VERSION</a
+  ></dt
+><dd
+  >Returns the buffer, id, nr-slots and schema-id of the object
+containing the compatible version for the given transaction id.</dd
 ><dt
   ><a href="../api/function_005FRUCKSACK_003A_003AFIND-OBJECT-VERSION.html"
     >FIND-OBJECT-VERSION</a
@@ -98,12 +117,23 @@ memory.</dd
   >Returns two values: a transaction id and a list of object ids
 (of objects that may be partially committed).</dd
 ><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ALOAD-OBJECT-FIELDS.html"
+    >LOAD-OBJECT-FIELDS</a
+  ></dt
+><dd
+  >Returns id, nr-slots, schema-id, transaction-id and prev-version
+(as 5 values).</dd
+><dt
   ><a href="../api/function_005FRUCKSACK_003A_003ALOAD-ROOTS.html"
     >LOAD-ROOTS</a
   ></dt
 ><dt
   ><a href="../api/function_005FRUCKSACK_003A_003AMAKE-LOCK.html"
     >MAKE-LOCK</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AMAKE-PERSISTENT-DATA.html"
+    >MAKE-PERSISTENT-DATA</a
   ></dt
 ><dt
   ><a href="../api/function_005FRUCKSACK_003A_003AMAP-CLASS-INDEXES.html"
@@ -145,6 +175,69 @@ OLD-BLOCK.</dd
 ><dt
   ><a href="../api/function_005FRUCKSACK_003A_003AOPEN-SCHEMA-TABLE.html"
     >OPEN-SCHEMA-TABLE</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AP-CAAR.html"
+    >P-CAAR</a
+  ></dt
+><dd
+  >The persistent equivalent of CAAR.</dd
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AP-CADR.html"
+    >P-CADR</a
+  ></dt
+><dd
+  >The persistent equivalenet of CADR.</dd
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AP-CDAR.html"
+    >P-CDAR</a
+  ></dt
+><dd
+  >The persistent equivalent of CDAR.</dd
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AP-CDDR.html"
+    >P-CDDR</a
+  ></dt
+><dd
+  >The persistent equivalent of CDDR.</dd
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AP-CONS.html"
+    >P-CONS</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AP-LAST.html"
+    >P-LAST</a
+  ></dt
+><dd
+  >Returns the last persistent cons cell of a persistent list (or
+NIL if the list is empty).</dd
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AP-LIST.html"
+    >P-LIST</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AP-MAKE-ARRAY.html"
+    >P-MAKE-ARRAY</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AP-MAPC.html"
+    >P-MAPC</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AP-MAPCAR.html"
+    >P-MAPCAR</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AP-MAPL.html"
+    >P-MAPL</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AP-MAPLIST.html"
+    >P-MAPLIST</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AP-MEMBER-IF.html"
+    >P-MEMBER-IF</a
   ></dt
 ><dt
   ><a href="../api/function_005FRUCKSACK_003A_003APOINTER-VALUE.html"
@@ -222,6 +315,16 @@ in the specified directory.</dd
     >SAVE-ROOTS-IF-NECESSARY</a
   ></dt
 ><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ASERIALIZE-PREVIOUS-VERSION-POINTER.html"
+    >SERIALIZE-PREVIOUS-VERSION-POINTER</a
+  ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003ASLOT-DEF-AND-NAME.html"
+    >SLOT-DEF-AND-NAME</a
+  ></dt
+><dd
+  >Returns (1) slot definition and (2) slot name.</dd
+><dt
   ><a href="../api/function_005FRUCKSACK_003A_003ASLOT-DEFINITION-EQUAL.html"
     >SLOT-DEFINITION-EQUAL</a
   ></dt
@@ -243,6 +346,12 @@ in the specified directory.</dd
   ><a href="../api/function_005FRUCKSACK_003A_003ATRANSACTION-START.html"
     >TRANSACTION-START</a
   ></dt
+><dt
+  ><a href="../api/function_005FRUCKSACK_003A_003AUNWRAP-PERSISTENT-LIST.html"
+    >UNWRAP-PERSISTENT-LIST</a
+  ></dt
+><dd
+  >Converts a persistent list to a 'normal' Lisp list.</dd
 ><dt
   ><a href="../api/function_005FRUCKSACK_003A_003AUPDATE-INDEXES.html"
     >UPDATE-INDEXES</a

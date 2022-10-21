@@ -1,0 +1,46 @@
+<html
+  ><head
+    ><title
+      >Macro P-POP</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Macro: P-POP</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Pop an item from the persistent list specified by PLACE.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmacro p-pop (place &amp;environment env)
+  &quot;Pop an item from the persistent list specified by PLACE.&quot;
+  (multiple-value-bind (dummies vals new setter getter)
+      (get-setf-expansion place env)
+    `(let* (,@(mapcar #'list dummies vals) (,(car new) ,getter))
+       (prog1 (p-car ,(car new))
+         (setq ,(car new) (p-cdr ,(car new)))
+         ,setter))))</code
+            ></pre
+          ><a href="../Persistent_0020objects.html#macro_005FRUCKSACK_003A_003AP-POP"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

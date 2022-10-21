@@ -1,0 +1,78 @@
+<html
+  ><head
+    ><title
+      >Method (SAVE-OBJECT T T STANDARD-CACHE T T)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (SAVE-OBJECT T T STANDARD-CACHE T T)</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Serializes the object to a buffer, allocates a heap block of the right
+size and writes the buffer to the block.  Returns the (heap position of the)
+block containing the object.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod save-object (object object-id (cache standard-cache)
+                               transaction-id previous-block
+                               &amp;key schema)
+  &quot;Serializes the object to a buffer, allocates a heap block of the right
+size and writes the buffer to the block.  Returns the (heap position of the)
+block containing the object.&quot;
+  (unless schema
+    (setq schema
+          (find-or-create-schema-for-object (schema-table cache) object)))
+  (let* ((heap (heap cache))
+         (schema-id (schema-id schema))
+         (nr-slots (nr-persistent-slots schema))
+         (buffer (serialization-buffer heap)))
+    (reset-buffer buffer)
+    ;; Serialize standard fields.
+    (serialize-previous-version-pointer previous-block buffer)
+    (serialize transaction-id buffer)
+    (serialize object-id buffer)
+    (serialize nr-slots buffer)
+    (serialize schema-id buffer)
+    ;; Serialize slot values.
+    ;; (Bind *dont-dereference-proxies* to T to make sure that
+    ;; the slot-value-using-class method doesn't intercept here.)
+    (let ((*dont-dereference-proxies* t))
+      (loop for slot-name in (persistent-slot-names schema)
+            do (if (slot-boundp object slot-name)
+                   (serialize (slot-value object slot-name) buffer)
+                 (serialize-marker +unbound-slot+ buffer))))
+    ;; Allocate a heap block of the right size.
+    (let* ((size (+ (buffer-count buffer)
+                    (block-header-size heap)))
+           (block (allocate-block heap :size size)))
+      ;; Save the serialized buffer in the block.
+      (save-buffer buffer (heap-stream heap)
+                   :file-position (+ block (block-header-size heap)))
+      (handle-written-object object-id block heap)
+      ;; Return the block.
+      block)))</code
+            ></pre
+          ><a href="../Persistent_0020objects.html#method_005FRUCKSACK_003A_003A_0028SAVE-OBJECT_0020T_0020T_0020STANDARD-CACHE_0020T_0020T_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

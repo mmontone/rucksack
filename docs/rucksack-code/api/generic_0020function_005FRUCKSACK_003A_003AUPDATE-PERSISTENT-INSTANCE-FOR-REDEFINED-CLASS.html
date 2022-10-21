@@ -1,0 +1,53 @@
+<html
+  ><head
+    ><title
+      >Generic Function UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Generic Function: UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defgeneric update-persistent-instance-for-redefined-class
+    (instance added-slots discarded-slots property-list &amp;key)
+  (:method ((instance persistent-object) added-slots discarded-slots plist
+            &amp;key)
+   ;; Default method: ignore the discarded slots and initialize added slots
+   ;; according to their initforms.  We do this 'by hand' and not by calling
+   ;; SHARED-INITIALIZE because slot indexes may need to be updated too.
+   (let ((slots (class-slots (class-of instance))))
+     (loop for slot-name in added-slots
+           for slot = (find slot-name slots :key #'slot-definition-name)
+           for initfunction = (and slot
+                                   (slot-definition-initfunction slot))
+           when initfunction
+           ;; NOTE: We don't handle initargs, and I think we don't need to.
+           ;; We follow the CLHS description of UPDATE-INSTANCE-FOR-REDEFINED-CLASS,
+           ;; which says: &quot;When it is called by the system to update an
+           ;; instance whose class has been redefined, no initialization
+           ;; arguments are provided.&quot; 
+           do (setf (slot-value instance slot-name) (funcall initfunction))))))</code
+            ></pre
+          ><a href="../Persistent_0020objects.html#generic_0020function_005FRUCKSACK_003A_003AUPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

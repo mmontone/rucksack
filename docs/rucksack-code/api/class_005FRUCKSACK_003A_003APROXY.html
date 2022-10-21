@@ -1,0 +1,64 @@
+<html
+  ><head
+    ><title
+      >Class PROXY</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Class: PROXY</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Proxies are some kind of in-memory forwarding pointer
+to data in the cache.  They are never saved on disk.</blockquote
+><h2
+  >Slots</h2
+><ul class="slots"
+  ><li
+  ><em
+    >OBJECT-ID</em
+  ></li
+><li
+  ><em
+    >RUCKSACK</em
+  ></li
+></ul
+><h2
+  >Hierachy</h2
+><h3
+  >Precedence List</h3
+><ul
+  ><li
+  >STANDARD-OBJECT</li
+></ul
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defclass proxy ()
+  ((object-id :initarg :object-id :reader object-id)
+   (rucksack :initform (current-rucksack) :initarg :rucksack :reader rucksack))
+  (:documentation &quot;Proxies are some kind of in-memory forwarding pointer
+to data in the cache.  They are never saved on disk.&quot;))</code
+            ></pre
+          ><a href="../Persistent_0020objects.html#class_005FRUCKSACK_003A_003APROXY"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

@@ -1,0 +1,46 @@
+<html
+  ><head
+    ><title
+      >Method (SCAN-CONTENTS (EQL +P-OBJECT+) SERIALIZATION-BUFFER MARK-AND-SWEEP-HEAP)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (SCAN-CONTENTS (EQL +P-OBJECT+) SERIALIZATION-BUFFER MARK-AND-SWEEP-HEAP)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod scan-contents ((marker (eql +p-object+))
+                          (buffer serialization-buffer)
+                          (gc mark-and-sweep-heap))
+  ;; Hook into the garbage collector's scanner: when the scanner
+  ;; finds a p-object, it adds that object to the gc's roots and
+  ;; returns.
+  (let ((object-id (deserialize buffer)))
+    ;; Add the object to the root set unless it's already marked.
+    (unless (object-alive-p (object-table gc) object-id)
+      ;; By just pushing the child's id on the root list, we effectively
+      ;; get a depth-first traversal.
+      (push object-id (roots gc)))))</code
+            ></pre
+          ><a href="../Persistent_0020objects.html#method_005FRUCKSACK_003A_003A_0028SCAN-CONTENTS_0020_0028EQL_0020_002BP-OBJECT_002B_0029_0020SERIALIZATION-BUFFER_0020MARK-AND-SWEEP-HEAP_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

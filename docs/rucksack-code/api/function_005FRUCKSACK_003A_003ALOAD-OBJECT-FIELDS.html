@@ -1,0 +1,51 @@
+<html
+  ><head
+    ><title
+      >Function LOAD-OBJECT-FIELDS</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: LOAD-OBJECT-FIELDS</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Returns id, nr-slots, schema-id, transaction-id and prev-version
+(as 5 values).</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun load-object-fields (buffer object-id)
+  &quot;Returns id, nr-slots, schema-id, transaction-id and prev-version
+(as 5 values).&quot;
+  (let ((prev-version (deserialize buffer))
+        (transaction-id (deserialize buffer))
+        (id (deserialize buffer))
+        (nr-slots (deserialize buffer))
+        (schema-id (deserialize buffer)))
+    (unless (= id object-id)
+      (internal-rucksack-error &quot;Object-id mismatch (required: ~D; actual: ~D).&quot;
+                               object-id id))
+    (values id nr-slots schema-id transaction-id prev-version)))</code
+            ></pre
+          ><a href="../Persistent_0020objects.html#function_005FRUCKSACK_003A_003ALOAD-OBJECT-FIELDS"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

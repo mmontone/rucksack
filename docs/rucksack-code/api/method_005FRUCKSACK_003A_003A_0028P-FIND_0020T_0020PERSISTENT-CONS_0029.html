@@ -1,0 +1,50 @@
+<html
+  ><head
+    ><title
+      >Method (P-FIND T PERSISTENT-CONS)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (P-FIND T PERSISTENT-CONS)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod p-find (value (list persistent-cons)
+                         &amp;key (key #'identity) (test #'p-eql)
+                         (start 0) (end nil))
+  ;; Move list to start position.
+  (loop repeat start
+        do (setq list (p-cdr list)))
+  ;; The real work.
+  (loop for i from start do
+        (if (or (p-endp list) (and end (= i end)))
+            (return-from p-find nil)
+          (let ((elt (funcall key (p-car list))))
+            (if (funcall test value elt)
+                (return-from p-find (p-car list))
+              (setq list (p-cdr list))))))
+  ;; Return nil if not found.
+  nil)</code
+            ></pre
+          ><a href="../Persistent_0020objects.html#method_005FRUCKSACK_003A_003A_0028P-FIND_0020T_0020PERSISTENT-CONS_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

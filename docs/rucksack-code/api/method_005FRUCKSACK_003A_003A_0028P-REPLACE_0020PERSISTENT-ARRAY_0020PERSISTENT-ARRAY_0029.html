@@ -1,0 +1,48 @@
+<html
+  ><head
+    ><title
+      >Method (P-REPLACE PERSISTENT-ARRAY PERSISTENT-ARRAY)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (P-REPLACE PERSISTENT-ARRAY PERSISTENT-ARRAY)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod p-replace ((vector-1 persistent-array)
+                      (vector-2 persistent-array)
+                      &amp;key (start1 0) end1 (start2 0) end2)
+  ;; We don't need to look at the cached sequence elements,
+  ;; so we can just use CL:REPLACE on the vector contents and bypass
+  ;; the p-aref calls.
+  (replace (contents vector-1) (contents vector-2)
+           :start1 start1
+           :end1 end1
+           :start2 start2
+           :end2 end2)
+  ;; Touch the vector because it has changed.
+  (cache-touch-object vector-1 (cache vector-1))
+  vector-1)</code
+            ></pre
+          ><a href="../Persistent_0020objects.html#method_005FRUCKSACK_003A_003A_0028P-REPLACE_0020PERSISTENT-ARRAY_0020PERSISTENT-ARRAY_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

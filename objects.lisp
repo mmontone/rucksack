@@ -2,15 +2,15 @@
 
 (in-package :rucksack)
 
+;;;; * Persistent objects
+
 (defvar *rucksack* nil
   "The current rucksack (NIL if there is no open rucksack).")
 
 (defun current-rucksack ()
   *rucksack*)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Persistent objects API
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Persistent objects API
 
 ;; Conventions:
 ;;  Persistent equivalents of CL functions always have a "p-" prefix.
@@ -53,9 +53,7 @@ p-position
   (eql a b))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Proxy
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Proxy
 
 (defclass proxy ()
   ((object-id :initarg :object-id :reader object-id)
@@ -79,9 +77,7 @@ to data in the cache.  They are never saved on disk."))
        (rucksack object)
        (rucksack-cache (rucksack object))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Low level persistent data structures.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Low level persistent data structures
 
 (defclass persistent-data ()
   ((object-id :initarg :object-id :reader object-id)
@@ -138,9 +134,7 @@ functions like P-CAR instead."))
 
 
 
-;;
-;; Array
-;;
+;;;; ** Persistent array
 
 (defclass persistent-array (persistent-data)
   ())
@@ -164,13 +158,7 @@ functions like P-CAR instead."))
 ;; DO: Other array functions
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Conses
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;
-;; Basics
-;;
+;;;; ** Persistent CONS
 
 (defclass persistent-cons (persistent-data)
   ())
@@ -333,10 +321,7 @@ modified persistent list. ITEM is evaluated before place."
 
 
         
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Persistent sequence functions
-;; (Just a start...)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Persistent sequence
 
 (defun check-p-vector (persistent-array function-name)
   (unless (= 1 (length (p-array-dimensions persistent-array)))
@@ -487,9 +472,7 @@ modified persistent list. ITEM is evaluated before place."
 ;; DO: Implement P-NREVERSE for persistent vectors.
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Full fledged persistent objects
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Full fledged persistent objects
 
 (defclass persistent-object ()
   ((object-id :initarg :object-id :reader object-id
@@ -651,9 +634,7 @@ inherit from this class."))
                      (slot-definition-name slot-name-or-def)))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Serializing/deserializing cached data
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Serializing/deserializing cached data
 
 (defconstant +p-object+ +extension-0+
   "The serialization marker for cached objects.")
@@ -713,9 +694,7 @@ inherit from this class."))
           do (scan block gc))))
 
   
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Loading/updating cached objects
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Loading/updating cached objects
 
 (defmethod save-object (object object-id (cache standard-cache)
                                transaction-id previous-block
@@ -875,18 +854,16 @@ version for object #~D and transaction ~D."
     (values id nr-slots schema-id transaction-id prev-version)))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Updating persistent instances
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Updating persistent instances
 
-;; When a persistent object must be loaded from disk, Rucksack loads the
-;; schema nr and finds the corresponding schema.  If the schema is obsolete
-;; (i.e. there is a schema for the same class with a higher version number),
-;; Rucksack calls the generic function UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS
-;; after calling ALLOCATE-INSTANCE for the current class version.  The generic
-;; function is very similar to UPDATE-INSTANCE-FOR-REDEFINED-CLASS: it takes a
-;; list of added slots, a list of deleted slots and a property list containing
-;; the slot names and values for slots that were discarded and had values.
+;;;; When a persistent object must be loaded from disk, Rucksack loads the
+;;;; schema nr and finds the corresponding schema.  If the schema is obsolete
+;;;; (i.e. there is a schema for the same class with a higher version number),
+;;;; Rucksack calls the generic function UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS
+;;;; after calling ALLOCATE-INSTANCE for the current class version.  The generic
+;;;; function is very similar to UPDATE-INSTANCE-FOR-REDEFINED-CLASS: it takes a
+;;;; list of added slots, a list of deleted slots and a property list containing
+;;;; the slot names and values for slots that were discarded and had values.
 
 (defgeneric update-persistent-instance-for-redefined-class
     (instance added-slots discarded-slots property-list &key)

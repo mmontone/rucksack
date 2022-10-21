@@ -1,0 +1,89 @@
+<html
+  ><head
+    ><title
+      >Method (LOAD-OBJECT T T STANDARD-CACHE)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (LOAD-OBJECT T T STANDARD-CACHE)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod load-object (object-id transaction (cache standard-cache))
+  (multiple-value-bind (buffer id nr-slots schema-id most-recent-p)
+      (find-committed-object-version object-id
+                                     (transaction-id transaction)
+                                     (heap cache))
+    (declare (ignore id))
+    (let* ((table (schema-table cache))
+           (schema (find-schema-for-id table schema-id))
+           (object (allocate-instance (find-class (schema-class-name schema)))))
+      (unless (= nr-slots (nr-persistent-slots schema))
+        (internal-rucksack-error
+         &quot;Schema inconsistency (expected ~D slots, got ~D slots).&quot;
+         (nr-persistent-slots schema)
+         nr-slots))
+      (let ((added-slots '())
+            (discarded-slots '())
+            ;; DISCARDED-SLOT-VALUES is a list of discarded slot names and
+            ;; their (obsolete) values.
+            (discarded-slot-values '()))
+        (when (schema-obsolete-p schema)
+          (setf added-slots (added-slot-names schema)
+                discarded-slots (discarded-slot-names schema)))
+        ;; Load and set slot values.
+        ;; DO: We should probably initialize the transient slots to their
+        ;; initforms here.
+        ;; NOTE: The MOP doesn't intercept the (setf slot-value) here,
+        ;; because the rucksack and object-id slots are still unbound.
+        (loop for slot-name in (persistent-slot-names schema)
+              do (let ((marker (read-next-marker buffer))
+                       (old-slot-p (member slot-name discarded-slots)))
+                   (if (eql marker +unbound-slot+)
+                       (unless old-slot-p
+                         (slot-makunbound object slot-name))
+                     ;; Deserialize the value
+                     (let ((value (deserialize-contents marker buffer)))
+                       (if old-slot-p
+                           (progn 
+                             (push value discarded-slot-values)
+                             (push slot-name discarded-slot-values))
+                         (setf (slot-value object slot-name) value))))))
+        ;; Set CACHE, OBJECT-ID and TRANSACTION-ID slots if it's a persistent
+        ;; object.
+        (when (typep object '(or persistent-object persistent-data))
+          (setf (slot-value object 'rucksack) (current-rucksack)
+                (slot-value object 'object-id) object-id
+                (slot-value object 'transaction-id) (transaction-id transaction)))
+        ;; Call UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS if necessary.
+        (when (schema-obsolete-p schema)
+          (update-persistent-instance-for-redefined-class
+           object
+           added-slots
+           discarded-slots
+           discarded-slot-values)))
+      ;;
+      (values object most-recent-p))))</code
+            ></pre
+          ><a href="../Persistent_0020objects.html#method_005FRUCKSACK_003A_003A_0028LOAD-OBJECT_0020T_0020T_0020STANDARD-CACHE_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

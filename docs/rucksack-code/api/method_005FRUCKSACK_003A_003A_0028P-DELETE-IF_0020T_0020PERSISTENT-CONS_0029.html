@@ -1,0 +1,68 @@
+<html
+  ><head
+    ><title
+      >Method (P-DELETE-IF T PERSISTENT-CONS)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (P-DELETE-IF T PERSISTENT-CONS)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod p-delete-if (test (list persistent-cons)
+                        &amp;key (from-end nil) (start 0) end count key)
+  ;; DO: Implement FROM-END.
+  ;; DO: Write tests.
+  (declare (ignore from-end))
+  (unless key
+    (setq key #'identity))
+  ;; Move list to start position.
+  (let ((tail list)
+        (prev nil))
+    (loop repeat start
+          do (setq prev tail
+                   tail (p-cdr tail)))
+    ;; The real work.
+    (let ((nr-deleted 0))
+      (loop for i from start do
+            (if (or (p-endp tail)
+                    (and end (= i end))
+                    (and count (&gt;= nr-deleted count)))
+                (return-from p-delete-if list)
+              (if (funcall test (funcall key (p-car tail)))
+                  ;; Delete the element.
+                  (progn
+                    (if prev
+                        (setf (p-cdr prev) (p-cdr tail))
+                      (setq list (p-cdr tail)))
+                    ;; Keep count.
+                    (incf nr-deleted))
+                ;; Don't delete anything.
+                (setq prev tail)))
+            ;; Keep moving.
+            (setq tail (p-cdr tail)))))
+  ;; Return the (possibly modified) list.
+  list)</code
+            ></pre
+          ><a href="../Persistent_0020objects.html#method_005FRUCKSACK_003A_003A_0028P-DELETE-IF_0020T_0020PERSISTENT-CONS_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

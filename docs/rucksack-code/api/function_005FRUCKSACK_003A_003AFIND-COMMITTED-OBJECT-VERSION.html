@@ -1,0 +1,71 @@
+<html
+  ><head
+    ><title
+      >Function FIND-COMMITTED-OBJECT-VERSION</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: FIND-COMMITTED-OBJECT-VERSION</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Returns the buffer, id, nr-slots and schema-id of the object
+containing the compatible version for the given transaction id.  The
+buffer points to the first octet after the standard object fields.
+As a fifth value, it returns a boolean that's true when the object
+version is the most recent committed object version (i.e. in the head
+of the object version list).</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun find-committed-object-version (object-id current-transaction-id heap)
+  &quot;Returns the buffer, id, nr-slots and schema-id of the object
+containing the compatible version for the given transaction id.  The
+buffer points to the first octet after the standard object fields.
+As a fifth value, it returns a boolean that's true when the object
+version is the most recent committed object version (i.e. in the head
+of the object version list).&quot;
+  ;; The object table points to a list of object versions (youngest
+  ;; transaction first).
+  (let ((block (object-heap-position (object-table heap) object-id))
+        (most-recent-p t))
+    (loop
+     (let ((buffer (load-block heap block :skip-header t)))
+       (multiple-value-bind (id nr-slots schema-id transaction-id prev-version)
+           (load-object-fields buffer object-id)
+         (cond ((&lt;= transaction-id current-transaction-id)
+                ;; We found the 'compatible' object version: the most recent
+                ;; version that's not younger than the current transaction.
+                (return (values buffer id nr-slots schema-id most-recent-p)))
+               ((null prev-version)
+                ;; Oh oh.
+                (internal-rucksack-error &quot;Can't find compatible object
+version for object #~D and transaction ~D.&quot;
+                                         object-id current-transaction-id))
+               (t
+                ;; Keep trying previous versions.
+                (setq block prev-version
+                      most-recent-p nil))))))))</code
+            ></pre
+          ><a href="../Persistent_0020objects.html#function_005FRUCKSACK_003A_003AFIND-COMMITTED-OBJECT-VERSION"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

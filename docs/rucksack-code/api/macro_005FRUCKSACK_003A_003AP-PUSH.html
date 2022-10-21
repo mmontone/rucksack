@@ -1,0 +1,49 @@
+<html
+  ><head
+    ><title
+      >Macro P-PUSH</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Macro: P-PUSH</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Push ITEM onto the persistent list specified by PLACE.  Return the
+modified persistent list. ITEM is evaluated before place.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmacro p-push (item place &amp;environment env)
+  &quot;Push ITEM onto the persistent list specified by PLACE.  Return the
+modified persistent list. ITEM is evaluated before place.&quot;
+  (multiple-value-bind (dummies vals newval setter getter)
+      (get-setf-expansion place env)
+    (let ((item-var (gensym &quot;ITEM&quot;)))
+      `(let* ((,item-var ,item)
+              ,@(mapcar #'list dummies vals)
+              (,(car newval) (p-cons ,item-var ,getter)))
+         ,setter))))</code
+            ></pre
+          ><a href="../Persistent_0020objects.html#macro_005FRUCKSACK_003A_003AP-PUSH"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

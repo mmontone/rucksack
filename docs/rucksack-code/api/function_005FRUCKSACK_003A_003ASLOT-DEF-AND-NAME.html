@@ -1,0 +1,45 @@
+<html
+  ><head
+    ><title
+      >Function SLOT-DEF-AND-NAME</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Function: SLOT-DEF-AND-NAME</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Returns (1) slot definition and (2) slot name.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defun slot-def-and-name (class slot-name-or-def)
+  &quot;Returns (1) slot definition and (2) slot name.&quot;
+  #+lispworks(values (find slot-name-or-def (class-slots class)
+                           :key #'slot-definition-name)
+                     slot-name-or-def)
+  #-lispworks(values slot-name-or-def
+                     (slot-definition-name slot-name-or-def)))</code
+            ></pre
+          ><a href="../Persistent_0020objects.html#function_005FRUCKSACK_003A_003ASLOT-DEF-AND-NAME"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

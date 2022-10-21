@@ -1,0 +1,940 @@
+<html
+  ><head
+    ><title
+      >Rucksack code</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="style.css" rel="stylesheet"
+    /><link title="Print" href="print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><h1 class="title"
+        >Rucksack code</h1
+      ><div class="contents"
+        ><h2
+  ><a name="Persistent_0020objects"
+  >Persistent objects</a
+>&nbsp;</h2
+><div class="nav-links"
+  ><a class="nav-link" href="Cache.html#Recovery"
+  >prev</a
+> | <span class="dead-nav-link"
+  >up</span
+> | <a href="Persistent_0020objects.html#Persistent_0020objects_0020API"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-variable"
+  ><p
+    ><a class="descriptor variable" href="api/variable_005FRUCKSACK_003A_003A_002ARUCKSACK_002A.html" name="variable_005FRUCKSACK_003A_003A_002ARUCKSACK_002A"
+      >Variable *RUCKSACK*</a
+    > The current rucksack (NIL if there is no open rucksack).</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ACURRENT-RUCKSACK.html" name="function_005FRUCKSACK_003A_003ACURRENT-RUCKSACK"
+      >Function CURRENT-RUCKSACK</a
+    > </p
+  ></div
+>
+
+<h3
+  ><a name="Persistent_0020objects_0020API"
+  >Persistent objects API</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Persistent_0020objects.html"
+  >prev</a
+> | <a class="nav-link" href="Persistent_0020objects.html"
+  >up</a
+> | <a href="Persistent_0020objects.html#Proxy"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003AOBJECT-ID.html" name="generic_0020function_005FRUCKSACK_003A_003AOBJECT-ID"
+      >Generic Function OBJECT-ID</a
+    > Returns the object id of a persistent-object or
+persistent-data.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003AP-EQL.html" name="generic_0020function_005FRUCKSACK_003A_003AP-EQL"
+      >Generic Function P-EQL</a
+    > The persistent equivalent of EQL.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-EQL_0020T_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-EQL_0020T_0020T_0029"
+      >Method (P-EQL T T)</a
+    > </p
+  ></div
+>
+
+
+<h3
+  ><a name="Proxy"
+  >Proxy</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Persistent_0020objects.html#Persistent_0020objects_0020API"
+  >prev</a
+> | <a class="nav-link" href="Persistent_0020objects.html"
+  >up</a
+> | <a href="Persistent_0020objects.html#Low_0020level_0020persistent_0020data_0020structures"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003APROXY.html" name="class_005FRUCKSACK_003A_003APROXY"
+      >Class PROXY</a
+    > Proxies are some kind of in-memory forwarding pointer
+to data in the cache.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-variable"
+  ><p
+    ><a class="descriptor variable" href="api/variable_005FRUCKSACK_003A_003A_002ADONT-DEREFERENCE-PROXIES_002A.html" name="variable_005FRUCKSACK_003A_003A_002ADONT-DEREFERENCE-PROXIES_002A"
+      >Variable *DONT-DEREFERENCE-PROXIES*</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028MAYBE-DEREFERENCE-PROXY_0020PROXY_0029.html" name="method_005FRUCKSACK_003A_003A_0028MAYBE-DEREFERENCE-PROXY_0020PROXY_0029"
+      >Method (MAYBE-DEREFERENCE-PROXY PROXY)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028MAYBE-DEREFERENCE-PROXY_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028MAYBE-DEREFERENCE-PROXY_0020T_0029"
+      >Method (MAYBE-DEREFERENCE-PROXY T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ACACHE.html" name="function_005FRUCKSACK_003A_003ACACHE"
+      >Function CACHE</a
+    > </p
+  ></div
+>
+
+<h3
+  ><a name="Low_0020level_0020persistent_0020data_0020structures"
+  >Low level persistent data structures</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Persistent_0020objects.html#Proxy"
+  >prev</a
+> | <a class="nav-link" href="Persistent_0020objects.html"
+  >up</a
+> | <a href="Persistent_0020objects.html#Persistent_0020array"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003APERSISTENT-DATA.html" name="class_005FRUCKSACK_003A_003APERSISTENT-DATA"
+      >Class PERSISTENT-DATA</a
+    > PERSISTENT-DATA classes do not have PERSISTENT-CLASS as metaclass
+because we don't want to specialize SLOT-VALUE-USING-CLASS &amp; friends
+for persistent-data instances.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FCOMMON-LISP_003A_003A_0028PRINT-OBJECT_0020PERSISTENT-DATA_0020T_0029.html" name="method_005FCOMMON-LISP_003A_003A_0028PRINT-OBJECT_0020PERSISTENT-DATA_0020T_0029"
+      >Method (PRINT-OBJECT PERSISTENT-DATA T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028COMPUTE-PERSISTENT-SLOT-NAMES_0020STANDARD-CLASS_0020PERSISTENT-DATA_0029.html" name="method_005FRUCKSACK_003A_003A_0028COMPUTE-PERSISTENT-SLOT-NAMES_0020STANDARD-CLASS_0020PERSISTENT-DATA_0029"
+      >Method (COMPUTE-PERSISTENT-SLOT-NAMES STANDARD-CLASS PERSISTENT-DATA)</a
+    > </p
+  ></div
+>
+
+  
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-EQL_0020PERSISTENT-DATA_0020PERSISTENT-DATA_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-EQL_0020PERSISTENT-DATA_0020PERSISTENT-DATA_0029"
+      >Method (P-EQL PERSISTENT-DATA PERSISTENT-DATA)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028PERSISTENT-DATA-READ_0020T_0020PERSISTENT-DATA_0029.html" name="method_005FRUCKSACK_003A_003A_0028PERSISTENT-DATA-READ_0020T_0020PERSISTENT-DATA_0029"
+      >Method (PERSISTENT-DATA-READ T PERSISTENT-DATA)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028PERSISTENT-DATA-WRITE_0020T_0020PERSISTENT-DATA_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028PERSISTENT-DATA-WRITE_0020T_0020PERSISTENT-DATA_0020T_0029"
+      >Method (PERSISTENT-DATA-WRITE T PERSISTENT-DATA T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AMAKE-PERSISTENT-DATA.html" name="function_005FRUCKSACK_003A_003AMAKE-PERSISTENT-DATA"
+      >Function MAKE-PERSISTENT-DATA</a
+    > </p
+  ></div
+>
+
+
+
+<h3
+  ><a name="Persistent_0020array"
+  >Persistent array</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Persistent_0020objects.html#Low_0020level_0020persistent_0020data_0020structures"
+  >prev</a
+> | <a class="nav-link" href="Persistent_0020objects.html"
+  >up</a
+> | <a href="Persistent_0020objects.html#Persistent_0020CONS"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003APERSISTENT-ARRAY.html" name="class_005FRUCKSACK_003A_003APERSISTENT-ARRAY"
+      >Class PERSISTENT-ARRAY</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AP-MAKE-ARRAY.html" name="function_005FRUCKSACK_003A_003AP-MAKE-ARRAY"
+      >Function P-MAKE-ARRAY</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-AREF_0020PERSISTENT-ARRAY_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-AREF_0020PERSISTENT-ARRAY_0029"
+      >Method (P-AREF PERSISTENT-ARRAY)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028_0028SETF_0020P-AREF_0029_0020T_0020PERSISTENT-ARRAY_0029.html" name="method_005FRUCKSACK_003A_003A_0028_0028SETF_0020P-AREF_0029_0020T_0020PERSISTENT-ARRAY_0029"
+      >Method ((SETF P-AREF) T PERSISTENT-ARRAY)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-ARRAY-DIMENSIONS_0020PERSISTENT-ARRAY_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-ARRAY-DIMENSIONS_0020PERSISTENT-ARRAY_0029"
+      >Method (P-ARRAY-DIMENSIONS PERSISTENT-ARRAY)</a
+    > </p
+  ></div
+>
+
+
+
+<h3
+  ><a name="Persistent_0020CONS"
+  >Persistent CONS</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Persistent_0020objects.html#Persistent_0020array"
+  >prev</a
+> | <a class="nav-link" href="Persistent_0020objects.html"
+  >up</a
+> | <a href="Persistent_0020objects.html#Persistent_0020sequence"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003APERSISTENT-CONS.html" name="class_005FRUCKSACK_003A_003APERSISTENT-CONS"
+      >Class PERSISTENT-CONS</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AP-CONS.html" name="function_005FRUCKSACK_003A_003AP-CONS"
+      >Function P-CONS</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-CAR_0020PERSISTENT-CONS_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-CAR_0020PERSISTENT-CONS_0029"
+      >Method (P-CAR PERSISTENT-CONS)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-CAR_0020_0028EQL_0020NIL_0029_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-CAR_0020_0028EQL_0020NIL_0029_0029"
+      >Method (P-CAR (EQL NIL))</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028_0028SETF_0020P-CAR_0029_0020T_0020PERSISTENT-CONS_0029.html" name="method_005FRUCKSACK_003A_003A_0028_0028SETF_0020P-CAR_0029_0020T_0020PERSISTENT-CONS_0029"
+      >Method ((SETF P-CAR) T PERSISTENT-CONS)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-CDR_0020PERSISTENT-CONS_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-CDR_0020PERSISTENT-CONS_0029"
+      >Method (P-CDR PERSISTENT-CONS)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-CDR_0020_0028EQL_0020NIL_0029_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-CDR_0020_0028EQL_0020NIL_0029_0029"
+      >Method (P-CDR (EQL NIL))</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028_0028SETF_0020P-CDR_0029_0020T_0020PERSISTENT-CONS_0029.html" name="method_005FRUCKSACK_003A_003A_0028_0028SETF_0020P-CDR_0029_0020T_0020PERSISTENT-CONS_0029"
+      >Method ((SETF P-CDR) T PERSISTENT-CONS)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AP-LIST.html" name="function_005FRUCKSACK_003A_003AP-LIST"
+      >Function P-LIST</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AUNWRAP-PERSISTENT-LIST.html" name="function_005FRUCKSACK_003A_003AUNWRAP-PERSISTENT-LIST"
+      >Function UNWRAP-PERSISTENT-LIST</a
+    > Converts a persistent list to a 'normal' Lisp list.</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AP-CAAR.html" name="function_005FRUCKSACK_003A_003AP-CAAR"
+      >Function P-CAAR</a
+    > The persistent equivalent of CAAR.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AP-CADR.html" name="function_005FRUCKSACK_003A_003AP-CADR"
+      >Function P-CADR</a
+    > The persistent equivalenet of CADR.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AP-CDAR.html" name="function_005FRUCKSACK_003A_003AP-CDAR"
+      >Function P-CDAR</a
+    > The persistent equivalent of CDAR.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AP-CDDR.html" name="function_005FRUCKSACK_003A_003AP-CDDR"
+      >Function P-CDDR</a
+    > The persistent equivalent of CDDR.</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-CONSP_0020PERSISTENT-CONS_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-CONSP_0020PERSISTENT-CONS_0029"
+      >Method (P-CONSP PERSISTENT-CONS)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-CONSP_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-CONSP_0020T_0029"
+      >Method (P-CONSP T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-ENDP_0020_0028EQL_0020NIL_0029_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-ENDP_0020_0028EQL_0020NIL_0029_0029"
+      >Method (P-ENDP (EQL NIL))</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-ENDP_0020PERSISTENT-CONS_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-ENDP_0020PERSISTENT-CONS_0029"
+      >Method (P-ENDP PERSISTENT-CONS)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-ENDP_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-ENDP_0020T_0029"
+      >Method (P-ENDP T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AP-LAST.html" name="function_005FRUCKSACK_003A_003AP-LAST"
+      >Function P-LAST</a
+    > Returns the last persistent cons cell of a persistent list (or
+NIL if the list is empty).</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AP-MAPCAR.html" name="function_005FRUCKSACK_003A_003AP-MAPCAR"
+      >Function P-MAPCAR</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AP-MAPC.html" name="function_005FRUCKSACK_003A_003AP-MAPC"
+      >Function P-MAPC</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AP-MAPLIST.html" name="function_005FRUCKSACK_003A_003AP-MAPLIST"
+      >Function P-MAPLIST</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AP-MAPL.html" name="function_005FRUCKSACK_003A_003AP-MAPL"
+      >Function P-MAPL</a
+    > </p
+  ></div
+>
+  
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AP-MEMBER-IF.html" name="function_005FRUCKSACK_003A_003AP-MEMBER-IF"
+      >Function P-MEMBER-IF</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-macro"
+  ><p
+    ><a class="descriptor macro" href="api/macro_005FRUCKSACK_003A_003AP-POP.html" name="macro_005FRUCKSACK_003A_003AP-POP"
+      >Macro P-POP</a
+    > Pop an item from the persistent list specified by PLACE.</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-macro"
+  ><p
+    ><a class="descriptor macro" href="api/macro_005FRUCKSACK_003A_003AP-PUSH.html" name="macro_005FRUCKSACK_003A_003AP-PUSH"
+      >Macro P-PUSH</a
+    > Push ITEM onto the persistent list specified by PLACE.</p
+  ></div
+>
+
+
+        
+<h3
+  ><a name="Persistent_0020sequence"
+  >Persistent sequence</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Persistent_0020objects.html#Persistent_0020CONS"
+  >prev</a
+> | <a class="nav-link" href="Persistent_0020objects.html"
+  >up</a
+> | <a href="Persistent_0020objects.html#Full_0020fledged_0020persistent_0020objects"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ACHECK-P-VECTOR.html" name="function_005FRUCKSACK_003A_003ACHECK-P-VECTOR"
+      >Function CHECK-P-VECTOR</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-LENGTH_0020PERSISTENT-ARRAY_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-LENGTH_0020PERSISTENT-ARRAY_0029"
+      >Method (P-LENGTH PERSISTENT-ARRAY)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-LENGTH_0020PERSISTENT-CONS_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-LENGTH_0020PERSISTENT-CONS_0029"
+      >Method (P-LENGTH PERSISTENT-CONS)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-FIND_0020T_0020PERSISTENT-ARRAY_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-FIND_0020T_0020PERSISTENT-ARRAY_0029"
+      >Method (P-FIND T PERSISTENT-ARRAY)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-FIND_0020T_0020PERSISTENT-CONS_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-FIND_0020T_0020PERSISTENT-CONS_0029"
+      >Method (P-FIND T PERSISTENT-CONS)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-FIND_0020T_0020_0028EQL_0020NIL_0029_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-FIND_0020T_0020_0028EQL_0020NIL_0029_0029"
+      >Method (P-FIND T (EQL NIL))</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-POSITION_0020T_0020PERSISTENT-ARRAY_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-POSITION_0020T_0020PERSISTENT-ARRAY_0029"
+      >Method (P-POSITION T PERSISTENT-ARRAY)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-POSITION_0020T_0020PERSISTENT-CONS_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-POSITION_0020T_0020PERSISTENT-CONS_0029"
+      >Method (P-POSITION T PERSISTENT-CONS)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-REPLACE_0020PERSISTENT-ARRAY_0020PERSISTENT-ARRAY_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-REPLACE_0020PERSISTENT-ARRAY_0020PERSISTENT-ARRAY_0029"
+      >Method (P-REPLACE PERSISTENT-ARRAY PERSISTENT-ARRAY)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-DELETE-IF_0020T_0020PERSISTENT-CONS_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-DELETE-IF_0020T_0020PERSISTENT-CONS_0029"
+      >Method (P-DELETE-IF T PERSISTENT-CONS)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-NREVERSE_0020_0028EQL_0020NIL_0029_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-NREVERSE_0020_0028EQL_0020NIL_0029_0029"
+      >Method (P-NREVERSE (EQL NIL))</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-NREVERSE_0020PERSISTENT-CONS_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-NREVERSE_0020PERSISTENT-CONS_0029"
+      >Method (P-NREVERSE PERSISTENT-CONS)</a
+    > </p
+  ></div
+>
+
+
+
+<h3
+  ><a name="Full_0020fledged_0020persistent_0020objects"
+  >Full fledged persistent objects</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Persistent_0020objects.html#Persistent_0020sequence"
+  >prev</a
+> | <a class="nav-link" href="Persistent_0020objects.html"
+  >up</a
+> | <a href="Persistent_0020objects.html#Serializing_002Fdeserializing_0020cached_0020data"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003APERSISTENT-OBJECT.html" name="class_005FRUCKSACK_003A_003APERSISTENT-OBJECT"
+      >Class PERSISTENT-OBJECT</a
+    > Classes of metaclass PERSISTENT-CLASS automatically
+inherit from this class.</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-variable"
+  ><p
+    ><a class="descriptor variable" href="api/variable_005FRUCKSACK_003A_003A_002AINITIALIZING-INSTANCE_002A.html" name="variable_005FRUCKSACK_003A_003A_002AINITIALIZING-INSTANCE_002A"
+      >Variable *INITIALIZING-INSTANCE*</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FCOMMON-LISP_003A_003A_0028INITIALIZE-INSTANCE_0020AROUND_0020PERSISTENT-OBJECT_0029.html" name="method_005FCOMMON-LISP_003A_003A_0028INITIALIZE-INSTANCE_0020AROUND_0020PERSISTENT-OBJECT_0029"
+      >Method (INITIALIZE-INSTANCE AROUND PERSISTENT-OBJECT)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FCOMMON-LISP_003A_003A_0028PRINT-OBJECT_0020PERSISTENT-OBJECT_0020T_0029.html" name="method_005FCOMMON-LISP_003A_003A_0028PRINT-OBJECT_0020PERSISTENT-OBJECT_0020T_0029"
+      >Method (PRINT-OBJECT PERSISTENT-OBJECT T)</a
+    > </p
+  ></div
+>
+
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-EQL_0020PERSISTENT-OBJECT_0020PERSISTENT-OBJECT_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-EQL_0020PERSISTENT-OBJECT_0020PERSISTENT-OBJECT_0029"
+      >Method (P-EQL PERSISTENT-OBJECT PERSISTENT-OBJECT)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-EQL_0020PERSISTENT-DATA_0020PERSISTENT-OBJECT_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-EQL_0020PERSISTENT-DATA_0020PERSISTENT-OBJECT_0029"
+      >Method (P-EQL PERSISTENT-DATA PERSISTENT-OBJECT)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028P-EQL_0020PERSISTENT-OBJECT_0020PERSISTENT-DATA_0029.html" name="method_005FRUCKSACK_003A_003A_0028P-EQL_0020PERSISTENT-OBJECT_0020PERSISTENT-DATA_0029"
+      >Method (P-EQL PERSISTENT-OBJECT PERSISTENT-DATA)</a
+    > </p
+  ></div
+>
+
+
+
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FSB-MOP_003A_003A_0028SLOT-VALUE-USING-CLASS_0020AROUND_0020PERSISTENT-CLASS_0020T_0020T_0029.html" name="method_005FSB-MOP_003A_003A_0028SLOT-VALUE-USING-CLASS_0020AROUND_0020PERSISTENT-CLASS_0020T_0020T_0029"
+      >Method (SLOT-VALUE-USING-CLASS AROUND PERSISTENT-CLASS T T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FSB-MOP_003A_003A_0028_0028SETF_0020SLOT-VALUE-USING-CLASS_0029_0020AROUND_0020T_0020PERSISTENT-CLASS_0020T_0020T_0029.html" name="method_005FSB-MOP_003A_003A_0028_0028SETF_0020SLOT-VALUE-USING-CLASS_0029_0020AROUND_0020T_0020PERSISTENT-CLASS_0020T_0020T_0029"
+      >Method ((SETF SLOT-VALUE-USING-CLASS) AROUND T PERSISTENT-CLASS T T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FSB-MOP_003A_003A_0028SLOT-MAKUNBOUND-USING-CLASS_0020AROUND_0020PERSISTENT-CLASS_0020T_0020T_0029.html" name="method_005FSB-MOP_003A_003A_0028SLOT-MAKUNBOUND-USING-CLASS_0020AROUND_0020PERSISTENT-CLASS_0020T_0020T_0029"
+      >Method (SLOT-MAKUNBOUND-USING-CLASS AROUND PERSISTENT-CLASS T T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ASLOT-DEF-AND-NAME.html" name="function_005FRUCKSACK_003A_003ASLOT-DEF-AND-NAME"
+      >Function SLOT-DEF-AND-NAME</a
+    > Returns (1) slot definition and (2) slot name.</p
+  ></div
+>
+
+
+<h3
+  ><a name="Serializing_002Fdeserializing_0020cached_0020data"
+  >Serializing/deserializing cached data</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Persistent_0020objects.html#Full_0020fledged_0020persistent_0020objects"
+  >prev</a
+> | <a class="nav-link" href="Persistent_0020objects.html"
+  >up</a
+> | <a href="Persistent_0020objects.html#Loading_002Fupdating_0020cached_0020objects"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-constant"
+  ><p
+    ><a class="descriptor constant" href="api/constant_005FRUCKSACK_003A_003A_002BP-OBJECT_002B.html" name="constant_005FRUCKSACK_003A_003A_002BP-OBJECT_002B"
+      >Constant +P-OBJECT+</a
+    > The serialization marker for cached objects.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028SERIALIZE_0020PERSISTENT-OBJECT_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028SERIALIZE_0020PERSISTENT-OBJECT_0020T_0029"
+      >Method (SERIALIZE PERSISTENT-OBJECT T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028SERIALIZE_0020PERSISTENT-DATA_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028SERIALIZE_0020PERSISTENT-DATA_0020T_0029"
+      >Method (SERIALIZE PERSISTENT-DATA T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028SERIALIZE_0020PROXY_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028SERIALIZE_0020PROXY_0020T_0029"
+      >Method (SERIALIZE PROXY T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028DESERIALIZE-CONTENTS_0020_0028EQL_0020_002BP-OBJECT_002B_0029_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028DESERIALIZE-CONTENTS_0020_0028EQL_0020_002BP-OBJECT_002B_0029_0020T_0029"
+      >Method (DESERIALIZE-CONTENTS (EQL +P-OBJECT+) T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028SCAN-CONTENTS_0020_0028EQL_0020_002BP-OBJECT_002B_0029_0020SERIALIZATION-BUFFER_0020MARK-AND-SWEEP-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028SCAN-CONTENTS_0020_0028EQL_0020_002BP-OBJECT_002B_0029_0020SERIALIZATION-BUFFER_0020MARK-AND-SWEEP-HEAP_0029"
+      >Method (SCAN-CONTENTS (EQL +P-OBJECT+) SERIALIZATION-BUFFER MARK-AND-SWEEP-HEAP)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028SCAN-OBJECT_0020T_0020SERIALIZATION-BUFFER_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028SCAN-OBJECT_0020T_0020SERIALIZATION-BUFFER_0020T_0029"
+      >Method (SCAN-OBJECT T SERIALIZATION-BUFFER T)</a
+    > </p
+  ></div
+>
+
+  
+<h3
+  ><a name="Loading_002Fupdating_0020cached_0020objects"
+  >Loading/updating cached objects</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Persistent_0020objects.html#Serializing_002Fdeserializing_0020cached_0020data"
+  >prev</a
+> | <a class="nav-link" href="Persistent_0020objects.html"
+  >up</a
+> | <a href="Persistent_0020objects.html#Updating_0020persistent_0020instances"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028SAVE-OBJECT_0020T_0020T_0020STANDARD-CACHE_0020T_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028SAVE-OBJECT_0020T_0020T_0020STANDARD-CACHE_0020T_0020T_0029"
+      >Method (SAVE-OBJECT T T STANDARD-CACHE T T)</a
+    > Serializes the object to a buffer, allocates a heap block of the right
+size and writes the buffer to the block.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ASERIALIZE-PREVIOUS-VERSION-POINTER.html" name="function_005FRUCKSACK_003A_003ASERIALIZE-PREVIOUS-VERSION-POINTER"
+      >Function SERIALIZE-PREVIOUS-VERSION-POINTER</a
+    > </p
+  ></div
+>
+
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028LOAD-OBJECT_0020T_0020T_0020STANDARD-CACHE_0029.html" name="method_005FRUCKSACK_003A_003A_0028LOAD-OBJECT_0020T_0020T_0020STANDARD-CACHE_0029"
+      >Method (LOAD-OBJECT T T STANDARD-CACHE)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AFIND-COMMITTED-OBJECT-VERSION.html" name="function_005FRUCKSACK_003A_003AFIND-COMMITTED-OBJECT-VERSION"
+      >Function FIND-COMMITTED-OBJECT-VERSION</a
+    > Returns the buffer, id, nr-slots and schema-id of the object
+containing the compatible version for the given transaction id.</p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003ALOAD-OBJECT-FIELDS.html" name="function_005FRUCKSACK_003A_003ALOAD-OBJECT-FIELDS"
+      >Function LOAD-OBJECT-FIELDS</a
+    > Returns id, nr-slots, schema-id, transaction-id and prev-version
+(as 5 values).</p
+  ></div
+>
+
+
+<h3
+  ><a name="Updating_0020persistent_0020instances"
+  >Updating persistent instances</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Persistent_0020objects.html#Loading_002Fupdating_0020cached_0020objects"
+  >prev</a
+> | <a class="nav-link" href="Persistent_0020objects.html"
+  >up</a
+> | <span class="nav-link"
+  >next</span
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<p> When a persistent object must be loaded from disk, Rucksack loads the
+ schema nr and finds the corresponding schema.  If the schema is obsolete
+ (i.e. there is a schema for the same class with a higher version number),
+ Rucksack calls the generic function UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS
+ after calling ALLOCATE-INSTANCE for the current class version.  The generic
+ function is very similar to UPDATE-INSTANCE-FOR-REDEFINED-CLASS: it takes a
+ list of added slots, a list of deleted slots and a property list containing
+ the slot names and values for slots that were discarded and had values.
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003AUPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS.html" name="generic_0020function_005FRUCKSACK_003A_003AUPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS"
+      >Generic Function UPDATE-PERSISTENT-INSTANCE-FOR-REDEFINED-CLASS</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FCOMMON-LISP_003A_003A_0028UPDATE-INSTANCE-FOR-REDEFINED-CLASS_0020PERSISTENT-OBJECT_0020T_0020T_0020T_0029.html" name="method_005FCOMMON-LISP_003A_003A_0028UPDATE-INSTANCE-FOR-REDEFINED-CLASS_0020PERSISTENT-OBJECT_0020T_0020T_0020T_0029"
+      >Method (UPDATE-INSTANCE-FOR-REDEFINED-CLASS PERSISTENT-OBJECT T T T)</a
+    > </p
+  ></div
+>
+
+
+
+
+</div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>
