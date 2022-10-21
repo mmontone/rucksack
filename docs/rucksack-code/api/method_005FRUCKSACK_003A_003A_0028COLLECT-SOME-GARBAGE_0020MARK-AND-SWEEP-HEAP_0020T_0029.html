@@ -1,0 +1,78 @@
+<html
+  ><head
+    ><title
+      >Method (COLLECT-SOME-GARBAGE MARK-AND-SWEEP-HEAP T)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (COLLECT-SOME-GARBAGE MARK-AND-SWEEP-HEAP T)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod collect-some-garbage ((heap mark-and-sweep-heap) amount)
+  ;; Collect at least the specified amount of garbage
+  ;; (i.e. mark or sweep at least the specified amount of octets).
+  ;; DO: We probably need a heap lock here?
+  (unless (gc-doing-work heap) ; Don't do recursive GCs.
+    (unwind-protect
+        (progn
+          (setf (gc-doing-work heap) t)
+          (loop until (or (eql (state heap) :ready) (&lt;= amount 0))
+                do (ecase (state heap)
+                     (:starting
+                      (let ((rucksack (rucksack heap)))
+                        ;; We were not collecting garbage; start doing that now.
+                        (setf (nr-object-bytes-marked heap) 0
+                              (nr-heap-bytes-scanned heap) 0
+                              (nr-heap-bytes-sweeped heap) 0
+                              (nr-object-bytes-sweeped heap) 0
+                              ;; We don't need to copy the roots, because we're not
+                              ;; going to modify the list (just push and pop).
+                              ;; But we do need to add the btrees for the class-index-table
+                              ;; and slot-index-tables to the GC roots.
+                              (roots heap) (append (and (slot-boundp rucksack 'class-index-table)
+                                                        (list (slot-value rucksack 'class-index-table)))
+                                                   (and (slot-boundp rucksack 'slot-index-tables)
+                                                        (list (slot-value rucksack 'slot-index-tables)))
+                                                   (slot-value (rucksack heap) 'roots))))
+                      (setf (state heap) :marking-object-table))
+                     (:marking-object-table
+                      (decf amount (mark-some-objects-in-table heap amount)))
+                     (:scanning
+                      (decf amount (mark-some-roots heap amount)))
+                     (:sweeping-heap
+                      (decf amount (sweep-some-heap-blocks heap amount)))
+                     (:sweeping-object-table
+                      (decf amount (sweep-some-object-blocks heap amount)))
+                     (:finishing
+                      ;;  Grow the heap by the specified GROW-SIZE.
+                      (if (integerp (grow-size heap))
+                          (incf (max-heap-end heap) (grow-size heap))
+                        (setf (max-heap-end heap)
+                              (round (* (grow-size heap) (max-heap-end heap)))))
+                      ;;
+                      (setf (state heap) :ready)))))
+      (setf (gc-doing-work heap) nil))))</code
+            ></pre
+          ><a href="../Garbage_0020collection.html#method_005FRUCKSACK_003A_003A_0028COLLECT-SOME-GARBAGE_0020MARK-AND-SWEEP-HEAP_0020T_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

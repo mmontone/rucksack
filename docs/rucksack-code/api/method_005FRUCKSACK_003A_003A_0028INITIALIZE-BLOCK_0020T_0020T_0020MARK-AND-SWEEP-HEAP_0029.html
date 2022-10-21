@@ -1,0 +1,42 @@
+<html
+  ><head
+    ><title
+      >Method (INITIALIZE-BLOCK T T MARK-AND-SWEEP-HEAP)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (INITIALIZE-BLOCK T T MARK-AND-SWEEP-HEAP)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod initialize-block (block block-size (heap mark-and-sweep-heap))
+  ;; This is called by a free list heap while creating free blocks.
+  ;; Write the block size (as a negative number) in the start of the
+  ;; block (just behind the header) to indicate that this is a free
+  ;; block.  This is necessary for the sweep phase of a mark-and-sweep
+  ;; collector to distinguish it from a block that contains an object.
+  (file-position (heap-stream heap) (+ block (block-header-size heap)))
+  (serialize (- block-size) (heap-stream heap)))</code
+            ></pre
+          ><a href="../Garbage_0020collection.html#method_005FRUCKSACK_003A_003A_0028INITIALIZE-BLOCK_0020T_0020T_0020MARK-AND-SWEEP-HEAP_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

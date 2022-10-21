@@ -1,0 +1,47 @@
+<html
+  ><head
+    ><title
+      >Method (LOAD-BLOCK MARK-AND-SWEEP-HEAP T)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (LOAD-BLOCK MARK-AND-SWEEP-HEAP T)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod load-block ((heap mark-and-sweep-heap) block
+                       &amp;key (buffer (serialization-buffer heap))
+                       (skip-header nil))
+  ;; Loads the block at the specified position into the
+  ;; serialization buffer.  If SKIP-HEADER is T, the block
+  ;; header is not included.  Returns the buffer.
+  (load-buffer buffer
+               (heap-stream heap)
+               (block-size block heap)
+               :eof-error-p nil
+               :file-position (if skip-header
+                                  (+ block (block-header-size heap))
+                                block)))</code
+            ></pre
+          ><a href="../Garbage_0020collection.html#method_005FRUCKSACK_003A_003A_0028LOAD-BLOCK_0020MARK-AND-SWEEP-HEAP_0020T_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

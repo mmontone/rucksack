@@ -31,6 +31,12 @@
     >ALLOCATE-BLOCK</a
   ></dt
 ><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028BLOCK-ALIVE-P_0020OBJECT-TABLE_0020T_0020T_0029.html"
+    >BLOCK-ALIVE-P</a
+  ></dt
+><dd
+  >Returns true iff the object in the block is alive.</dd
+><dt
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028BLOCK-HEADER_0020T_0020FREE-LIST-HEAP_0029.html"
     >BLOCK-HEADER</a
   ></dt
@@ -117,12 +123,20 @@ specified size-class.</dd
     >CLOSE-CACHE</a
   ></dt
 ><dt
-  ><a href="../api/method_005FRUCKSACK_003A_003A_0028CLOSE-HEAP_0020HEAP_0029.html"
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028CLOSE-HEAP_0020AFTER_0020MARK-AND-SWEEP-HEAP_0029.html"
     >CLOSE-HEAP</a
   ></dt
 ><dt
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028CLOSE-TRANSACTION_0020STANDARD-CACHE_0020T_0029.html"
     >CLOSE-TRANSACTION</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028COLLECT-GARBAGE_0020MARK-AND-SWEEP-HEAP_0029.html"
+    >COLLECT-GARBAGE</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028COLLECT-SOME-GARBAGE_0020MARK-AND-SWEEP-HEAP_0020T_0029.html"
+    >COLLECT-SOME-GARBAGE</a
   ></dt
 ><dt
   ><a href="../api/method_005FSB-MOP_003A_003A_0028COMPUTE-EFFECTIVE-SLOT-DEFINITION_0020PERSISTENT-CLASS_0020T_0020T_0029.html"
@@ -165,7 +179,7 @@ specified size-class.</dd
     >EXPAND-FREE-LIST</a
   ></dt
 ><dt
-  ><a href="../api/method_005FRUCKSACK_003A_003A_0028EXPAND-HEAP_0020HEAP_0020T_0029.html"
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028EXPAND-HEAP_0020AFTER_0020MARK-AND-SWEEP-HEAP_0020T_0029.html"
     >EXPAND-HEAP</a
   ></dt
 ><dt
@@ -197,6 +211,10 @@ specified size-class.</dd
     >FINISH-ALL-OUTPUT</a
   ></dt
 ><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028FINISH-GARBAGE-COLLECTION_0020MARK-AND-SWEEP-HEAP_0029.html"
+    >FINISH-GARBAGE-COLLECTION</a
+  ></dt
+><dt
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028FINISH-HEAP-OUTPUT_0020HEAP_0029.html"
     >FINISH-HEAP-OUTPUT</a
   ></dt
@@ -219,8 +237,20 @@ specified size-class.</dd
     >SETF FREE-LIST-START</a
   ></dt
 ><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028FREE-SPACE_0020HEAP_0029.html"
+    >FREE-SPACE</a
+  ></dt
+><dt
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028FRESH-SCHEMA-ID_0020SCHEMA-TABLE_0029.html"
     >FRESH-SCHEMA-ID</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028GC-WORK-FOR-SIZE_0020HEAP_0020T_0029.html"
+    >GC-WORK-FOR-SIZE</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028HANDLE-WRITTEN-OBJECT_0020T_0020T_0020MARK-AND-SWEEP-HEAP_0029.html"
+    >HANDLE-WRITTEN-OBJECT</a
   ></dt
 ><dt
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028_0028SETF_0020HEAP-END_0029_0020AFTER_0020T_0020FREE-LIST-HEAP_0029.html"
@@ -243,8 +273,16 @@ specified size-class.</dd
     >HEAP-START</a
   ></dt
 ><dt
-  ><a href="../api/method_005FCOMMON-LISP_003A_003A_0028INITIALIZE-INSTANCE_0020AROUND_0020PERSISTENT-OBJECT_0029.html"
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028INITIALIZE-BLOCK_0020T_0020T_0020MARK-AND-SWEEP-HEAP_0029.html"
+    >INITIALIZE-BLOCK</a
+  ></dt
+><dt
+  ><a href="../api/method_005FCOMMON-LISP_003A_003A_0028INITIALIZE-INSTANCE_0020AFTER_0020MARK-AND-SWEEP-HEAP_0029.html"
     >INITIALIZE-INSTANCE</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028LOAD-BLOCK_0020MARK-AND-SWEEP-HEAP_0020T_0029.html"
+    >LOAD-BLOCK</a
   ></dt
 ><dt
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028LOAD-BUFFER_0020AFTER_0020SERIALIZATION-BUFFER_0020T_0020T_0029.html"
@@ -275,6 +313,25 @@ specified size-class.</dd
     >MAP-TRANSACTIONS</a
   ></dt
 ><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028MARK-ROOT_0020MARK-AND-SWEEP-HEAP_0020INTEGER_0029.html"
+    >MARK-ROOT</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028MARK-SOME-OBJECTS-IN-TABLE_0020MARK-AND-SWEEP-HEAP_0020T_0029.html"
+    >MARK-SOME-OBJECTS-IN-TABLE</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028MARK-SOME-ROOTS_0020MARK-AND-SWEEP-HEAP_0020T_0029.html"
+    >MARK-SOME-ROOTS</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028MAX-WORK_0020MARK-AND-SWEEP-HEAP_0029.html"
+    >MAX-WORK</a
+  ></dt
+><dd
+  >Returns the maximum possible amount of work that the garbage
+collector needs to do for one complete garbage collection.</dd
+><dt
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028MAYBE-DEREFERENCE-PROXY_0020T_0029.html"
     >MAYBE-DEREFERENCE-PROXY</a
   ></dt
@@ -282,6 +339,20 @@ specified size-class.</dd
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028MAYBE-UPDATE-SCHEMAS_0020SCHEMA-TABLE_0020T_0029.html"
     >MAYBE-UPDATE-SCHEMAS</a
   ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028NR-HEAP-BYTES_0020MARK-AND-SWEEP-HEAP_0029.html"
+    >NR-HEAP-BYTES</a
+  ></dt
+><dd
+  >Returns the number of heap bytes that must be handled by the garbage
+collector.</dd
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028NR-OBJECT-BYTES_0020MARK-AND-SWEEP-HEAP_0029.html"
+    >NR-OBJECT-BYTES</a
+  ></dt
+><dd
+  >Returns the number of object bytes that must be handled by the garbage
+collector.</dd
 ><dt
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028NR-PERSISTENT-SLOTS_0020SCHEMA_0029.html"
     >NR-PERSISTENT-SLOTS</a
@@ -494,6 +565,10 @@ size and writes the buffer to the block.</dd
     >SAVE-SCHEMA-TABLE-IF-NECESSARY</a
   ></dt
 ><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028SCAN_0020T_0020GARBAGE-COLLECTOR_0029.html"
+    >SCAN</a
+  ></dt
+><dt
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028SCAN-BYTE_0020SERIALIZATION-BUFFER_0029.html"
     >SCAN-BYTE</a
   ></dt
@@ -541,6 +616,14 @@ with sizes at least as big as the specified size.</dd
     >SETF SLOT-VALUE-USING-CLASS</a
   ></dt
 ><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028SWEEP-SOME-HEAP-BLOCKS_0020MARK-AND-SWEEP-HEAP_0020INTEGER_0029.html"
+    >SWEEP-SOME-HEAP-BLOCKS</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028SWEEP-SOME-OBJECT-BLOCKS_0020MARK-AND-SWEEP-HEAP_0020INTEGER_0029.html"
+    >SWEEP-SOME-OBJECT-BLOCKS</a
+  ></dt
+><dt
   ><a href="../api/method_005FRUCKSACK_003A_003A_0028TRANSACTION-CHANGED-OBJECT_0020STANDARD-TRANSACTION_0020T_0029.html"
     >TRANSACTION-CHANGED-OBJECT</a
   ></dt
@@ -580,6 +663,16 @@ with sizes at least as big as the specified size.</dd
   ><a href="../api/method_005FSB-MOP_003A_003A_0028VALIDATE-SUPERCLASS_0020PERSISTENT-CLASS_0020STANDARD-CLASS_0029.html"
     >VALIDATE-SUPERCLASS</a
   ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028WORK-DONE_0020MARK-AND-SWEEP-HEAP_0029.html"
+    >WORK-DONE</a
+  ></dt
+><dt
+  ><a href="../api/method_005FRUCKSACK_003A_003A_0028WORK-LEFT_0020MARK-AND-SWEEP-HEAP_0029.html"
+    >WORK-LEFT</a
+  ></dt
+><dd
+  >Returns the amount of work that needs to be done (i.</dd
 ></dl
           ></div
         ></div

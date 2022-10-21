@@ -1,0 +1,52 @@
+<html
+  ><head
+    ><title
+      >Method (MARK-ROOT MARK-AND-SWEEP-HEAP INTEGER)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (MARK-ROOT MARK-AND-SWEEP-HEAP INTEGER)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod mark-root ((heap mark-and-sweep-heap) (object-id integer))
+  ;; Returns the number of octets scanned.
+  (let ((object-table (object-table heap)))
+    (if (member (object-info object-table object-id) '(:reserved :live-object))
+        ;; Reserved objects aren't written to the heap yet (they just
+        ;; have an object table entry), so we don't need to scan them
+        ;; for child objects.  And live objects were already marked earlier,
+        ;; so don't need to be scanned again now.
+        0
+      (let* ((block (object-heap-position object-table object-id))
+             (buffer (load-block heap block :skip-header t)))
+        (setf (object-info object-table object-id) :live-object)
+        (scan-object object-id buffer heap)
+        ;; Keep track of statistics.
+        (let ((block-size (block-size block heap)))
+          (incf (nr-heap-bytes-scanned heap) block-size)
+          ;; Return the amount of work done.
+          block-size)))))</code
+            ></pre
+          ><a href="../Garbage_0020collection.html#method_005FRUCKSACK_003A_003A_0028MARK-ROOT_0020MARK-AND-SWEEP-HEAP_0020INTEGER_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

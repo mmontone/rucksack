@@ -1,0 +1,109 @@
+<html
+  ><head
+    ><title
+      >Class MARK-AND-SWEEP-HEAP</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Class: MARK-AND-SWEEP-HEAP</h1
+        ><div class="contents"
+          ><h2
+  >Slots</h2
+><ul class="slots"
+  ><li
+  ><em
+    >NR-OBJECT-BYTES-MARKED</em
+  ></li
+><li
+  ><em
+    >NR-HEAP-BYTES-SCANNED</em
+  ></li
+><li
+  ><em
+    >NR-HEAP-BYTES-SWEEPED</em
+  ></li
+><li
+  ><em
+    >NR-OBJECT-BYTES-SWEEPED</em
+  ></li
+><li
+  ><em
+    >MAX-HEAP-END</em
+  ><p class="slot-description"
+  >The maximum acceptable value for heap-end
+during the current garbage collection.</p
+></li
+><li
+  ><em
+    >GROW-SIZE</em
+  ><p class="slot-description"
+  >Specifies a minimum amount to grow the heap when it needs to grow.
+If 'grow size' is an integer, the expected growth rate is additive and
+the integer is the number of octets to add; if it is a float, the
+expected growth rate for the heap is multiplicative and the float is
+the ratio of the new size to the old size.  (The actual size might be
+rounded up.)</p
+></li
+></ul
+><h2
+  >Hierachy</h2
+><h3
+  >Precedence List</h3
+><ul
+  ><li
+  ><a href="../api/class_005FRUCKSACK_003A_003AGARBAGE-COLLECTOR.html"
+  >GARBAGE-COLLECTOR</a
+></li
+><li
+  ><a href="../api/class_005FRUCKSACK_003A_003AFREE-LIST-HEAP.html"
+  >FREE-LIST-HEAP</a
+></li
+><li
+  >SERIALIZER</li
+></ul
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defclass mark-and-sweep-heap (garbage-collector free-list-heap serializer)
+  (;; Some counters that keep track of the amount of work done by
+   ;; the garbage collector.
+   (nr-object-bytes-marked :initform 0 :accessor nr-object-bytes-marked)
+   (nr-heap-bytes-scanned :initform 0 :accessor nr-heap-bytes-scanned)
+   (nr-heap-bytes-sweeped :initform 0 :accessor nr-heap-bytes-sweeped)
+   (nr-object-bytes-sweeped :initform 0 :accessor nr-object-bytes-sweeped)
+   ;; Heap growth related slots.
+   (max-heap-end :accessor max-heap-end
+                 :documentation &quot;The maximum acceptable value for heap-end
+during the current garbage collection.&quot;)
+   (grow-size :initarg :grow-size
+              :initform nil
+              :accessor grow-size
+              :documentation
+ &quot;Specifies a minimum amount to grow the heap when it needs to grow.
+If 'grow size' is an integer, the expected growth rate is additive and
+the integer is the number of octets to add; if it is a float, the
+expected growth rate for the heap is multiplicative and the float is
+the ratio of the new size to the old size.  (The actual size might be
+rounded up.)&quot;)))</code
+            ></pre
+          ><a href="../Garbage_0020collection.html#class_005FRUCKSACK_003A_003AMARK-AND-SWEEP-HEAP"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

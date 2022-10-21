@@ -1,0 +1,59 @@
+<html
+  ><head
+    ><title
+      >Method (SWEEP-SOME-OBJECT-BLOCKS MARK-AND-SWEEP-HEAP INTEGER)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (SWEEP-SOME-OBJECT-BLOCKS MARK-AND-SWEEP-HEAP INTEGER)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod sweep-some-object-blocks ((heap mark-and-sweep-heap)
+                                     (amount integer))
+  ;; Deallocate some dead object blocks.
+  (let* ((object-table (object-table heap))
+         (object-block-size (min-block-size object-table))
+         (current-id (floor (nr-object-bytes-sweeped heap)
+                            object-block-size))
+         (work-done 0))
+    (loop for object-id from current-id
+          while (and (&lt; work-done amount)
+                     (&lt; object-id (object-table-size object-table)))
+          do (progn
+               ;; Hook dead object blocks back into the free list.
+               (when (eql (object-info object-table object-id) :dead-object)
+                 (delete-object-id object-table object-id)
+                 ;; Don't forget to remove the id-&gt;object mapping from
+                 ;; the cache!  (This was a difficult bug to find.)
+                 (cache-delete-object object-id (rucksack-cache (rucksack heap))))
+               (incf (nr-object-bytes-sweeped heap) object-block-size)))
+    ;;
+    (when (&gt;= (nr-object-bytes-sweeped heap) (nr-object-bytes heap))
+      ;; We've finished sweeping the object table: move to the next state.
+      (setf (state heap) :finishing))
+    ;; Return the amount of work done.
+    work-done))</code
+            ></pre
+          ><a href="../Garbage_0020collection.html#method_005FRUCKSACK_003A_003A_0028SWEEP-SOME-OBJECT-BLOCKS_0020MARK-AND-SWEEP-HEAP_0020INTEGER_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

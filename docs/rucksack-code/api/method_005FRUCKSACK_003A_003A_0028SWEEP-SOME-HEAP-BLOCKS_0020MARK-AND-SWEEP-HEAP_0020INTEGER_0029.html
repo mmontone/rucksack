@@ -1,0 +1,76 @@
+<html
+  ><head
+    ><title
+      >Method (SWEEP-SOME-HEAP-BLOCKS MARK-AND-SWEEP-HEAP INTEGER)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (SWEEP-SOME-HEAP-BLOCKS MARK-AND-SWEEP-HEAP INTEGER)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod sweep-some-heap-blocks ((heap mark-and-sweep-heap)
+                                   (amount integer))
+  (let* ((object-table (object-table heap))
+         (block (+ (heap-start heap) (nr-heap-bytes-sweeped heap)))
+         (work-done 0))
+    ;; Sweep across the heap, looking for dead blocks.
+    (loop
+     while (and (&lt; work-done amount)
+                (&lt; block (heap-end heap)))
+     do (multiple-value-bind (block-header block-start)
+            (read-block-start heap block)
+          ;; For non-free blocks, the block start contains a previous-pointer,
+          ;; which can be either nil or a positive integer.
+          ;; A negative block-start means the block already belongs to
+          ;; a free list. In that case, the block size is the abs of
+          ;; the block start.
+          ;; A non-negative (or nil) block-start means the block is occupied.
+          ;; In that case, the block size is in the header.
+          (let* ((free-p (and (integerp block-start) (minusp block-start)))
+                 (block-size (if free-p (- block-start) block-header)))
+            ;; Reclaim dead blocks.
+            (when (not free-p) ; only non-free blocks
+              (let* ((heap-stream (heap-stream heap))
+                     (object-id (progn
+                                  (deserialize heap-stream)
+                                  (deserialize heap-stream))))
+                (when (not (block-alive-p object-table object-id block))
+                  ;; The block is dead (either because the object is dead
+                  ;; or because the block contains an old version): return
+                  ;; the block to its free list.
+                  (deallocate-block block heap))))
+            ;;
+            (incf work-done block-size)
+            ;; Move to next block (if there is one).
+            (incf block block-size))))
+    ;;
+    (incf (nr-heap-bytes-sweeped heap) work-done)
+    (when (&gt;= block (heap-end heap))
+      ;; We've finished sweeping the heap: move to the next state.
+      (setf (state heap) :sweeping-object-table))
+    ;; Return the amount of work done.
+    work-done))</code
+            ></pre
+          ><a href="../Garbage_0020collection.html#method_005FRUCKSACK_003A_003A_0028SWEEP-SOME-HEAP-BLOCKS_0020MARK-AND-SWEEP-HEAP_0020INTEGER_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

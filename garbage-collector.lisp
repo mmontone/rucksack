@@ -2,9 +2,9 @@
 
 (in-package :rucksack)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Garbage collector
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; * Garbage collection
+
+;;;; ** Garbage collector
 
 (defclass garbage-collector ()
   ((object-table :initarg :object-table :reader object-table)
@@ -77,9 +77,7 @@ evacuating (depending on garbage collector type) any child objects."))
   ;; block).
   (- (max-heap-end heap) (heap-end heap)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Mark and sweep collector
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Mark and sweep collector
 
 (defclass mark-and-sweep-heap (garbage-collector free-list-heap serializer)
   (;; Some counters that keep track of the amount of work done by
@@ -149,11 +147,7 @@ rounded up.)")))
   (when (eql (state heap) :scanning)
     (push object-id (roots heap))))
 
-;;
-;; Hooking into free list methods
-;;
-
-
+;;;; ** Hooking into free list methods
 
 
 (defmethod expand-heap :after ((heap mark-and-sweep-heap) block-size)
@@ -164,9 +158,7 @@ rounded up.)")))
     (setf (state heap) :starting)))
 
 
-;;
-;; Counting work
-;;
+;;;; ** Counting work
 
 (defmethod work-left ((heap mark-and-sweep-heap))
   "Returns the amount of work that needs to be done (i.e. octets that must be
@@ -200,9 +192,7 @@ collector."
   (heap-size heap))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Collect some garbage
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Collect some garbage
 
 (defmethod collect-garbage ((heap mark-and-sweep-heap))
   ;; A simple test of COLLECT-SOME-GARBAGE: keep collecting 1024 bytes of
@@ -261,9 +251,7 @@ collector."
                       (setf (state heap) :ready)))))
       (setf (gc-doing-work heap) nil))))
   
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Marking the object table
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Marking the object table
 
 (defmethod mark-some-objects-in-table ((heap mark-and-sweep-heap) amount)
   ;; Mark all 'live' objects in the object table as dead (temporarily).
@@ -289,9 +277,7 @@ collector."
     work-done))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Marking roots
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Marking roots
 
 (defmethod mark-some-roots ((heap mark-and-sweep-heap) amount)
   ;; Mark some roots and their descendants as alive.
@@ -341,10 +327,7 @@ collector."
                                   (+ block (block-header-size heap))
                                 block)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Sweeping the heap
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;;;; ** Sweeping the heap
 
 (defmethod sweep-some-heap-blocks ((heap mark-and-sweep-heap)
                                    (amount integer))
@@ -416,9 +399,7 @@ collector."
 (defun object-alive-p (object-table object-id)
   (eql (object-info object-table object-id) :live-object))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Sweeping the object table
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Sweeping the object table
 
 (defmethod sweep-some-object-blocks ((heap mark-and-sweep-heap)
                                      (amount integer))
@@ -446,17 +427,13 @@ collector."
     ;; Return the amount of work done.
     work-done))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;              
-;;; Parameters to control GC
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ** Parameters to control GC
 
 (defparameter *collect-garbage-on-commit* t
   "A flag to indicate whether or not transaction-commit collects garbage")
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;              
 ;;; MAYBE LATER: MERGING DEAD BLOCKS.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #|
 ;; The object is dead: try to merge neighbouring dead blocks
@@ -487,11 +464,9 @@ collector."
 
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Copying garbage collector
 ;;;
 ;;; This code is incomplete.  At the moment we use a mark & sweep collector.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #| MAYBE LATER
 

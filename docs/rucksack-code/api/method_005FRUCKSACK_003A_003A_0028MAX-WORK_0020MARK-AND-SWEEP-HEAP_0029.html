@@ -1,0 +1,47 @@
+<html
+  ><head
+    ><title
+      >Method (MAX-WORK MARK-AND-SWEEP-HEAP)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (MAX-WORK MARK-AND-SWEEP-HEAP)</h1
+        ><div class="contents"
+          ><h2
+  >Documentation</h2
+><blockquote
+  >Returns the maximum possible amount of work that the garbage
+collector needs to do for one complete garbage collection.</blockquote
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod max-work ((heap mark-and-sweep-heap))
+  &quot;Returns the maximum possible amount of work that the garbage
+collector needs to do for one complete garbage collection.&quot;
+  (+ 
+   ;; Mark and sweep the object table
+   (* 2 (nr-object-bytes heap))
+   ;; Mark and sweep the heap
+   (* 2 (nr-heap-bytes heap))))</code
+            ></pre
+          ><a href="../Garbage_0020collection.html#method_005FRUCKSACK_003A_003A_0028MAX-WORK_0020MARK-AND-SWEEP-HEAP_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

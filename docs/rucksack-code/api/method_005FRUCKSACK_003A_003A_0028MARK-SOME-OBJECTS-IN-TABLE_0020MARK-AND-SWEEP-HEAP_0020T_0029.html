@@ -1,0 +1,56 @@
+<html
+  ><head
+    ><title
+      >Method (MARK-SOME-OBJECTS-IN-TABLE MARK-AND-SWEEP-HEAP T)</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Method: (MARK-SOME-OBJECTS-IN-TABLE MARK-AND-SWEEP-HEAP T)</h1
+        ><div class="contents"
+          ><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defmethod mark-some-objects-in-table ((heap mark-and-sweep-heap) amount)
+  ;; Mark all 'live' objects in the object table as dead (temporarily).
+  ;; Returns the amount of work done.
+  (let* ((object-table (object-table heap))
+         (object-block-size (min-block-size object-table))
+         (first-object-id (floor (nr-object-bytes-marked heap)
+                                 object-block-size))
+         (work-done 0))
+    (loop for object-id from first-object-id
+          while (and (&lt; object-id (object-table-size object-table))
+                     (&lt; work-done amount))
+          do (progn 
+               (when (eql (object-info object-table object-id) :live-object)
+                 ;; Don't touch free or reserved blocks.
+                 (setf (object-info object-table object-id) :dead-object))
+               (incf (nr-object-bytes-marked heap) object-block-size)
+               (incf work-done object-block-size)))
+    (when (&gt;= (nr-object-bytes-marked heap) (nr-object-bytes heap))
+      ;; We've finished this stage.  Move to the next step.
+      (setf (state heap) :scanning))
+    ;; Return the amount of work done.
+    work-done))</code
+            ></pre
+          ><a href="../Garbage_0020collection.html#method_005FRUCKSACK_003A_003A_0028MARK-SOME-OBJECTS-IN-TABLE_0020MARK-AND-SWEEP-HEAP_0020T_0029"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

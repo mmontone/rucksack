@@ -1,0 +1,459 @@
+<html
+  ><head
+    ><title
+      >Rucksack code</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="style.css" rel="stylesheet"
+    /><link title="Print" href="print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><h1 class="title"
+        >Rucksack code</h1
+      ><div class="contents"
+        ><h2
+  ><a name="Garbage_0020collection"
+  >Garbage collection</a
+>&nbsp;</h2
+><div class="nav-links"
+  ><a class="nav-link" href="Persistent_0020objects.html#Updating_0020persistent_0020instances"
+  >prev</a
+> | <span class="dead-nav-link"
+  >up</span
+> | <a href="Garbage_0020collection.html#Garbage_0020collector"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<h3
+  ><a name="Garbage_0020collector"
+  >Garbage collector</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Garbage_0020collection.html"
+  >prev</a
+> | <a class="nav-link" href="Garbage_0020collection.html"
+  >up</a
+> | <a href="Garbage_0020collection.html#Mark_0020and_0020sweep_0020collector"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003AGARBAGE-COLLECTOR.html" name="class_005FRUCKSACK_003A_003AGARBAGE-COLLECTOR"
+      >Class GARBAGE-COLLECTOR</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-generic function"
+  ><p
+    ><a class="descriptor generic function" href="api/generic_0020function_005FRUCKSACK_003A_003ASCAN.html" name="generic_0020function_005FRUCKSACK_003A_003ASCAN"
+      >Generic Function SCAN</a
+    > Scans the object in the serialization buffer, marking or
+evacuating (depending on garbage collector type) any child objects.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028SCAN_0020T_0020GARBAGE-COLLECTOR_0029.html" name="method_005FRUCKSACK_003A_003A_0028SCAN_0020T_0020GARBAGE-COLLECTOR_0029"
+      >Method (SCAN T GARBAGE-COLLECTOR)</a
+    > </p
+  ></div
+>
+
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028GC-WORK-FOR-SIZE_0020HEAP_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028GC-WORK-FOR-SIZE_0020HEAP_0020T_0029"
+      >Method (GC-WORK-FOR-SIZE HEAP T)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028FREE-SPACE_0020HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028FREE-SPACE_0020HEAP_0029"
+      >Method (FREE-SPACE HEAP)</a
+    > </p
+  ></div
+>
+
+<h3
+  ><a name="Mark_0020and_0020sweep_0020collector"
+  >Mark and sweep collector</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Garbage_0020collection.html#Garbage_0020collector"
+  >prev</a
+> | <a class="nav-link" href="Garbage_0020collection.html"
+  >up</a
+> | <a href="Garbage_0020collection.html#Hooking_0020into_0020free_0020list_0020methods"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-class"
+  ><p
+    ><a class="descriptor class" href="api/class_005FRUCKSACK_003A_003AMARK-AND-SWEEP-HEAP.html" name="class_005FRUCKSACK_003A_003AMARK-AND-SWEEP-HEAP"
+      >Class MARK-AND-SWEEP-HEAP</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-variable"
+  ><p
+    ><a class="descriptor variable" href="api/variable_005FRUCKSACK_003A_003A_002AINITIAL-HEAP-SIZE_002A.html" name="variable_005FRUCKSACK_003A_003A_002AINITIAL-HEAP-SIZE_002A"
+      >Variable *INITIAL-HEAP-SIZE*</a
+    > The default initial heap size is 10 MB.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FCOMMON-LISP_003A_003A_0028INITIALIZE-INSTANCE_0020AFTER_0020MARK-AND-SWEEP-HEAP_0029.html" name="method_005FCOMMON-LISP_003A_003A_0028INITIALIZE-INSTANCE_0020AFTER_0020MARK-AND-SWEEP-HEAP_0029"
+      >Method (INITIALIZE-INSTANCE AFTER MARK-AND-SWEEP-HEAP)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028CLOSE-HEAP_0020AFTER_0020MARK-AND-SWEEP-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028CLOSE-HEAP_0020AFTER_0020MARK-AND-SWEEP-HEAP_0029"
+      >Method (CLOSE-HEAP AFTER MARK-AND-SWEEP-HEAP)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028INITIALIZE-BLOCK_0020T_0020T_0020MARK-AND-SWEEP-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028INITIALIZE-BLOCK_0020T_0020T_0020MARK-AND-SWEEP-HEAP_0029"
+      >Method (INITIALIZE-BLOCK T T MARK-AND-SWEEP-HEAP)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028HANDLE-WRITTEN-OBJECT_0020T_0020T_0020MARK-AND-SWEEP-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028HANDLE-WRITTEN-OBJECT_0020T_0020T_0020MARK-AND-SWEEP-HEAP_0029"
+      >Method (HANDLE-WRITTEN-OBJECT T T MARK-AND-SWEEP-HEAP)</a
+    > </p
+  ></div
+>
+
+<h3
+  ><a name="Hooking_0020into_0020free_0020list_0020methods"
+  >Hooking into free list methods</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Garbage_0020collection.html#Mark_0020and_0020sweep_0020collector"
+  >prev</a
+> | <a class="nav-link" href="Garbage_0020collection.html"
+  >up</a
+> | <a href="Garbage_0020collection.html#Counting_0020work"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028EXPAND-HEAP_0020AFTER_0020MARK-AND-SWEEP-HEAP_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028EXPAND-HEAP_0020AFTER_0020MARK-AND-SWEEP-HEAP_0020T_0029"
+      >Method (EXPAND-HEAP AFTER MARK-AND-SWEEP-HEAP T)</a
+    > </p
+  ></div
+>
+
+
+<h3
+  ><a name="Counting_0020work"
+  >Counting work</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Garbage_0020collection.html#Hooking_0020into_0020free_0020list_0020methods"
+  >prev</a
+> | <a class="nav-link" href="Garbage_0020collection.html"
+  >up</a
+> | <a href="Garbage_0020collection.html#Collect_0020some_0020garbage"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028WORK-LEFT_0020MARK-AND-SWEEP-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028WORK-LEFT_0020MARK-AND-SWEEP-HEAP_0029"
+      >Method (WORK-LEFT MARK-AND-SWEEP-HEAP)</a
+    > Returns the amount of work that needs to be done (i.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028WORK-DONE_0020MARK-AND-SWEEP-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028WORK-DONE_0020MARK-AND-SWEEP-HEAP_0029"
+      >Method (WORK-DONE MARK-AND-SWEEP-HEAP)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028MAX-WORK_0020MARK-AND-SWEEP-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028MAX-WORK_0020MARK-AND-SWEEP-HEAP_0029"
+      >Method (MAX-WORK MARK-AND-SWEEP-HEAP)</a
+    > Returns the maximum possible amount of work that the garbage
+collector needs to do for one complete garbage collection.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028NR-OBJECT-BYTES_0020MARK-AND-SWEEP-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028NR-OBJECT-BYTES_0020MARK-AND-SWEEP-HEAP_0029"
+      >Method (NR-OBJECT-BYTES MARK-AND-SWEEP-HEAP)</a
+    > Returns the number of object bytes that must be handled by the garbage
+collector.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028NR-HEAP-BYTES_0020MARK-AND-SWEEP-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028NR-HEAP-BYTES_0020MARK-AND-SWEEP-HEAP_0029"
+      >Method (NR-HEAP-BYTES MARK-AND-SWEEP-HEAP)</a
+    > Returns the number of heap bytes that must be handled by the garbage
+collector.</p
+  ></div
+>
+
+
+<h3
+  ><a name="Collect_0020some_0020garbage"
+  >Collect some garbage</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Garbage_0020collection.html#Counting_0020work"
+  >prev</a
+> | <a class="nav-link" href="Garbage_0020collection.html"
+  >up</a
+> | <a href="Garbage_0020collection.html#Marking_0020the_0020object_0020table"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028COLLECT-GARBAGE_0020MARK-AND-SWEEP-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028COLLECT-GARBAGE_0020MARK-AND-SWEEP-HEAP_0029"
+      >Method (COLLECT-GARBAGE MARK-AND-SWEEP-HEAP)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028FINISH-GARBAGE-COLLECTION_0020MARK-AND-SWEEP-HEAP_0029.html" name="method_005FRUCKSACK_003A_003A_0028FINISH-GARBAGE-COLLECTION_0020MARK-AND-SWEEP-HEAP_0029"
+      >Method (FINISH-GARBAGE-COLLECTION MARK-AND-SWEEP-HEAP)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028COLLECT-SOME-GARBAGE_0020MARK-AND-SWEEP-HEAP_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028COLLECT-SOME-GARBAGE_0020MARK-AND-SWEEP-HEAP_0020T_0029"
+      >Method (COLLECT-SOME-GARBAGE MARK-AND-SWEEP-HEAP T)</a
+    > </p
+  ></div
+>
+  
+<h3
+  ><a name="Marking_0020the_0020object_0020table"
+  >Marking the object table</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Garbage_0020collection.html#Collect_0020some_0020garbage"
+  >prev</a
+> | <a class="nav-link" href="Garbage_0020collection.html"
+  >up</a
+> | <a href="Garbage_0020collection.html#Marking_0020roots"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028MARK-SOME-OBJECTS-IN-TABLE_0020MARK-AND-SWEEP-HEAP_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028MARK-SOME-OBJECTS-IN-TABLE_0020MARK-AND-SWEEP-HEAP_0020T_0029"
+      >Method (MARK-SOME-OBJECTS-IN-TABLE MARK-AND-SWEEP-HEAP T)</a
+    > </p
+  ></div
+>
+
+
+<h3
+  ><a name="Marking_0020roots"
+  >Marking roots</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Garbage_0020collection.html#Marking_0020the_0020object_0020table"
+  >prev</a
+> | <a class="nav-link" href="Garbage_0020collection.html"
+  >up</a
+> | <a href="Garbage_0020collection.html#Sweeping_0020the_0020heap"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028MARK-SOME-ROOTS_0020MARK-AND-SWEEP-HEAP_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028MARK-SOME-ROOTS_0020MARK-AND-SWEEP-HEAP_0020T_0029"
+      >Method (MARK-SOME-ROOTS MARK-AND-SWEEP-HEAP T)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028MARK-ROOT_0020MARK-AND-SWEEP-HEAP_0020INTEGER_0029.html" name="method_005FRUCKSACK_003A_003A_0028MARK-ROOT_0020MARK-AND-SWEEP-HEAP_0020INTEGER_0029"
+      >Method (MARK-ROOT MARK-AND-SWEEP-HEAP INTEGER)</a
+    > </p
+  ></div
+>
+
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028LOAD-BLOCK_0020MARK-AND-SWEEP-HEAP_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028LOAD-BLOCK_0020MARK-AND-SWEEP-HEAP_0020T_0029"
+      >Method (LOAD-BLOCK MARK-AND-SWEEP-HEAP T)</a
+    > </p
+  ></div
+>
+
+<h3
+  ><a name="Sweeping_0020the_0020heap"
+  >Sweeping the heap</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Garbage_0020collection.html#Marking_0020roots"
+  >prev</a
+> | <a class="nav-link" href="Garbage_0020collection.html"
+  >up</a
+> | <a href="Garbage_0020collection.html#Sweeping_0020the_0020object_0020table"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028SWEEP-SOME-HEAP-BLOCKS_0020MARK-AND-SWEEP-HEAP_0020INTEGER_0029.html" name="method_005FRUCKSACK_003A_003A_0028SWEEP-SOME-HEAP-BLOCKS_0020MARK-AND-SWEEP-HEAP_0020INTEGER_0029"
+      >Method (SWEEP-SOME-HEAP-BLOCKS MARK-AND-SWEEP-HEAP INTEGER)</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028BLOCK-ALIVE-P_0020OBJECT-TABLE_0020T_0020T_0029.html" name="method_005FRUCKSACK_003A_003A_0028BLOCK-ALIVE-P_0020OBJECT-TABLE_0020T_0020T_0029"
+      >Method (BLOCK-ALIVE-P OBJECT-TABLE T T)</a
+    > Returns true iff the object in the block is alive.</p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AREAD-BLOCK-START.html" name="function_005FRUCKSACK_003A_003AREAD-BLOCK-START"
+      >Function READ-BLOCK-START</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003A_0028SETF_0020OBJECT-ALIVE-P_0029.html" name="function_005FRUCKSACK_003A_003A_0028SETF_0020OBJECT-ALIVE-P_0029"
+      >Function SETF OBJECT-ALIVE-P</a
+    > </p
+  ></div
+>
+
+<div class="computational-element-link computational-element-link-function"
+  ><p
+    ><a class="descriptor function" href="api/function_005FRUCKSACK_003A_003AOBJECT-ALIVE-P.html" name="function_005FRUCKSACK_003A_003AOBJECT-ALIVE-P"
+      >Function OBJECT-ALIVE-P</a
+    > </p
+  ></div
+>
+
+<h3
+  ><a name="Sweeping_0020the_0020object_0020table"
+  >Sweeping the object table</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Garbage_0020collection.html#Sweeping_0020the_0020heap"
+  >prev</a
+> | <a class="nav-link" href="Garbage_0020collection.html"
+  >up</a
+> | <a href="Garbage_0020collection.html#Parameters_0020to_0020control_0020GC"
+  >next</a
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-method"
+  ><p
+    ><a class="descriptor method" href="api/method_005FRUCKSACK_003A_003A_0028SWEEP-SOME-OBJECT-BLOCKS_0020MARK-AND-SWEEP-HEAP_0020INTEGER_0029.html" name="method_005FRUCKSACK_003A_003A_0028SWEEP-SOME-OBJECT-BLOCKS_0020MARK-AND-SWEEP-HEAP_0020INTEGER_0029"
+      >Method (SWEEP-SOME-OBJECT-BLOCKS MARK-AND-SWEEP-HEAP INTEGER)</a
+    > </p
+  ></div
+>
+
+<h3
+  ><a name="Parameters_0020to_0020control_0020GC"
+  >Parameters to control GC</a
+>&nbsp;</h3
+><div class="nav-links"
+  ><a class="nav-link" href="Garbage_0020collection.html#Sweeping_0020the_0020object_0020table"
+  >prev</a
+> | <a class="nav-link" href="Garbage_0020collection.html"
+  >up</a
+> | <span class="nav-link"
+  >next</span
+> | <a href="index.html"
+    >toc</a
+  ></div
+>
+<div class="computational-element-link computational-element-link-variable"
+  ><p
+    ><a class="descriptor variable" href="api/variable_005FRUCKSACK_003A_003A_002ACOLLECT-GARBAGE-ON-COMMIT_002A.html" name="variable_005FRUCKSACK_003A_003A_002ACOLLECT-GARBAGE-ON-COMMIT_002A"
+      >Variable *COLLECT-GARBAGE-ON-COMMIT*</a
+    > A flag to indicate whether or not transaction-commit collects garbage</p
+  ></div
+>
+
+
+
+
+
+
+</div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>

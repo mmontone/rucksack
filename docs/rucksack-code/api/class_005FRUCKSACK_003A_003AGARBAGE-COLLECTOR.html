@@ -1,0 +1,110 @@
+<html
+  ><head
+    ><title
+      >Class GARBAGE-COLLECTOR</title
+    ><meta content="text/html; charset=utf-8" http-equiv="Content-Type"
+    /><link href="../style.css" rel="stylesheet"
+    /><link title="Print" href="../print.css" rel="alternate stylesheet"
+    /><link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/styles/default.min.css" rel="stylesheet"
+/></head
+  ><body
+    ><div class="qbook"
+      ><div class="computational-element"
+        ><h1
+          >Class: GARBAGE-COLLECTOR</h1
+        ><div class="contents"
+          ><h2
+  >Slots</h2
+><ul class="slots"
+  ><li
+  ><em
+    >OBJECT-TABLE</em
+  ></li
+><li
+  ><em
+    >BUFFER</em
+  ></li
+><li
+  ><em
+    >RUCKSACK</em
+  ></li
+><li
+  ><em
+    >ROOTS</em
+  ><p class="slot-description"
+  >A list of object-ids of roots that must be kept alive.</p
+></li
+><li
+  ><em
+    >STATE</em
+  > <span class="slot-type"
+  >(MEMBER STARTING FINISHING READY COPYING MARKING-OBJECT-TABLE SCANNING
+        SWEEPING-HEAP SWEEPING-OBJECT-TABLE)</span
+></li
+><li
+  ><em
+    >DOING-WORK</em
+  ><p class="slot-description"
+  >A flag to prevent recursive calls to COLLECT-SOME-GARBAGE.</p
+></li
+></ul
+><h2
+  >Hierachy</h2
+><h3
+  >Precedence List</h3
+><ul
+  ><li
+  >STANDARD-OBJECT</li
+></ul
+><h3
+  >Sub Classes</h3
+><ul
+  ><li
+  ><a href="../api/class_005FRUCKSACK_003A_003AMARK-AND-SWEEP-HEAP.html"
+  >MARK-AND-SWEEP-HEAP</a
+></li
+></ul
+><h2
+            >Source</h2
+          ><pre
+            ><code class="code"
+              >(defclass garbage-collector ()
+  ((object-table :initarg :object-table :reader object-table)
+   (buffer :initform (make-instance 'serialization-buffer)
+           :reader serialization-buffer)
+   (rucksack :initarg :rucksack :reader rucksack)
+   ;; Some state used for incremental garbage collection.
+   (roots :initarg :roots :initform '() :accessor roots
+          :documentation &quot;A list of object-ids of roots that must be kept alive.&quot;)
+   (state :initform :ready
+          :type (member :starting
+                        :finishing
+                        :ready
+                        ;; For copying collector
+                        :copying
+                        ;; For mark-and-sweep collector
+                        :marking-object-table
+                        :scanning
+                        :sweeping-heap
+                        :sweeping-object-table)
+          :accessor state)
+   (doing-work :initform nil :accessor gc-doing-work
+               ;; NOTE: This flag is probably not necessary anymore and
+               ;; should probably be removed.
+               :documentation
+               &quot;A flag to prevent recursive calls to COLLECT-SOME-GARBAGE.&quot;)))</code
+            ></pre
+          ><a href="../Garbage_0020collection.html#class_005FRUCKSACK_003A_003AGARBAGE-COLLECTOR"
+            >Source Context</a
+          ></div
+        ></div
+      ></div
+    ><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/highlight.min.js"
+  ></script
+><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.3/build/languages/lisp.min.js"
+  ></script
+><script
+  >hljs.initHighlightingOnLoad();</script
+></body
+  ></html
+>
